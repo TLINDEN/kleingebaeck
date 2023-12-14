@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/tlinden/kleingebaeck)](https://goreportcard.com/report/github.com/tlinden/kleingebaeck) 
 
 Mit    diesem   kleinen    aber   feinen    Tool   kann    man   seine
-[https://kleinanzeigen.de](Anzeigen bei kleinanzeigen.de) sichern. Das
+Anzeigen bei https://kleinanzeigen.de sichern. Das
 Problem ist  ja bekanntlich,  dass Kleinanzeigen  nach einer  Weile (2
 Monate?) automatisch  gelöscht werden.  Wenn man  keine Sicherung hat,
 wird es schwierig,  die erneut einzustellen. Mit dem  Tool braucht man
