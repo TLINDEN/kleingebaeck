@@ -1,5 +1,7 @@
 ## Kleingebäck - kleinanzeigen.de Backup
 
+![Kleingebaeck Logo](https://github.com/tlinden/kleingebaeck/.github/assets/kleingebaecklogo-small.png)
+
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](https://github.com/tlinden/kleingebaeck/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/tlinden/kleingebaeck)](https://goreportcard.com/report/github.com/tlinden/kleingebaeck) 
 
