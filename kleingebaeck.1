@@ -133,11 +133,83 @@
 .\" ========================================================================
 .\"
 .IX Title "KLEINGEBAECK 1"
-.TH KLEINGEBAECK 1 "2023-12-14" "1" "User Commands"
+.TH KLEINGEBAECK 1 "2023-12-15" "1" "User Commands"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
 .nh
-.SS "kleingebaeck"
-.IX Subsection "kleingebaeck"
-Backup of kleinanzeigen.de
+.SH "NAME"
+kleingebaeck \- kleinanzeigen.de backup tool
+.SH "SYNOPSYS"
+.IX Header "SYNOPSYS"
+.Vb 9
+\&    This is kleingebaeck, the kleinanzeigen.de backup tool.
+\&    Usage: kleingebaeck [\-dvVhmoc] [<ad\-listing\-url>,...]
+\&    Options:
+\&    \-\-user,\-u <uid>        Backup ads from user with uid <uid>.
+\&    \-\-debug, \-d            Enable debug output.
+\&    \-\-verbose,\-v           Enable verbose output.
+\&    \-\-output\-dir,\-o <dir>  Set output dir (default: current directory)
+\&    \-\-manual,\-m            Show manual.
+\&    \-\-config,\-c <file>     Use config file <file> (default: ~/.kleingebaeck).
+.Ve
+.SH "DESCRIPTION"
+.IX Header "DESCRIPTION"
+This tool can be used to backup ads on the german ad page <https://kleinanzeigen.de>.
+.PP
+It downloads all (or  only the specified ones) ads of  one user into a
+directory, each ad into its own subdirectory. The backup will contain
+a textfile \fBAdlisting.txt\fR which contains the ad contents such as
+title, body, price etc. All images will be downloaded as well.
+.SH "CONFIGURATION"
+.IX Header "CONFIGURATION"
+You can create a config file to save typing. By default
+\&\f(CW\*(C`~/.kleingebaeck.hcl\*(C'\fR is being used but you can specify one with
+\&\f(CW\*(C`\-c\*(C'\fR as well.
+.PP
+Format is simple:
+.PP
+.Vb 3
+\&    user = 1010101
+\&    verbose = true
+\&    outdir = "test"
+.Ve
+.SH "SETUP"
+.IX Header "SETUP"
+To setup the tool, you need to lookup your userid on
+kleinanzeigen.de. Go to your ad overview page while \s-1NOT\s0 being logged
+in:
+.PP
+.Vb 1
+\&    https://www.kleinanzeigen.de/s\-bestandsliste.html?userId=XXXXXX
+.Ve
+.PP
+The \fB\s-1XXXXX\s0\fR part is your userid.
+.PP
+Put it into the configfile as outlined above. Also specify an output
+directory. Then just execute \f(CW\*(C`kleingebaeck\*(C'\fR.
+.PP
+You can use the \fB\-v\fR option to  get verbose output or \fB\-d\fR to enable
+debugging.
+.SH "BUGS"
+.IX Header "BUGS"
+In order to report a bug, unexpected behavior, feature requests
+or to submit a patch, please open an issue on github:
+<https://github.com/TLINDEN/kleingebaeck/issues>.
+.PP
+Please repeat the failing command with debugging enabled \f(CW\*(C`\-d\*(C'\fR and
+include the output in the issue.
+.SH "LIMITATIONS"
+.IX Header "LIMITATIONS"
+The \f(CW\*(C`kleingebaeck\*(C'\fR doesn't currently check if it has downloaded a
+file already, so it downloads everything again every time you execute
+it. Be aware of it. This will change in the future.
+.PP
+Also there's currently no parallelization implemented. This will
+change in the future.
+.SH "LICENSE"
+.IX Header "LICENSE"
+Licensed under the \s-1GNU GENERAL PUBLIC LICENSE\s0 version 3.
+.SH "Author"
+.IX Header "Author"
+T.v.Dein <tom \s-1AT\s0 vondein \s-1DOT\s0 org>

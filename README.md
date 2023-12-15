@@ -3,22 +3,87 @@
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](https://github.com/tlinden/kleingebaeck/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/tlinden/kleingebaeck)](https://goreportcard.com/report/github.com/tlinden/kleingebaeck) 
 
-Mit    diesem   kleinen    aber   feinen    Tool   kann    man   seine
-Anzeigen bei https://kleinanzeigen.de sichern. Das
-Problem ist  ja bekanntlich,  dass Kleinanzeigen  nach einer  Weile (2
-Monate?) automatisch  gelöscht werden.  Wenn man  keine Sicherung hat,
-wird es schwierig,  die erneut einzustellen. Mit dem  Tool braucht man
-sich  keine  Texte  zu  merken.   Man  kann  auch  einfach  Änderungen
-(z.B. Preis  runter) durchführen oder  den Text anpassen und  dann ein
-neues Backup anfertigen.
+This tool can be used to backup ads on the german ad page https://kleinanzeigen.de
 
-Es  wird  pro   Anzeige  ein  Verzeichnis  erstellt.    In  der  Datei
-`Anzeige.txt`  wird  der  Titel,  die  Beschreibung  sowie  der  Preis
-eingetragen. Ausserdem werden alle Bilder heruntergeladen.
+It downloads all (or  only the specified ones) ads of  one user into a
+directory, each ad into its own subdirectory. The backup will contain
+a textfile B<Adlisting.txt> which contains the ad contents as the
+title, body, price etc. All images will be downloaded as well.
 
-## Copyright und Lizenz
+The   tool  doesn't   need   authentication  and   doesn't  have   any
+dependencies.  Just  download the  binary for  your platform  from the
+releases page and you're good to go.
 
-Lizensiert unter der GNU GENERAL PUBLIC LICENSE version 3.
+The releases also include a handy tarball which you can use to install
+the tool  system-wide including the  manual page. Just extract  it and
+type: `make install`.
+
+## Commandline options:
+
+```
+Usage: kleingebaeck [-dvVhmoc] [<ad-listing-url>,...]
+Options:
+--user,-u <uid>        Backup ads from user with uid <uid>.
+--debug, -d            Enable debug output.
+--verbose,-v           Enable verbose output.
+--output-dir,-o <dir>  Set output dir (default: current directory)
+--manual,-m            Show manual.
+--config,-c <file>     Use config file <file> (default: ~/.kleingebaeck).
+
+If one  or more <ad-listing-url>'s  are specified, only  backup those,
+otherwise backup all ads of the given user.
+```
+
+## Configfile
+
+You can create a config file to save typing. By default
+C<~/.kleingebaeck.hcl> is being used but you can specify one with
+C<-c> as well.
+
+Format is simple:
+
+```
+user = 1010101
+verbose = true
+outdir = "test"
+```
+
+## Usage
+
+To setup the tool, you need to lookup your userid on
+kleinanzeigen.de. Go to your ad overview page while NOT being logged
+in:
+
+https://www.kleinanzeigen.de/s-bestandsliste.html?userId=XXXXXX
+
+The B<XXXXX> part is your userid.
+
+Put it into the configfile as outlined above. Also specify an output
+directory. Then just execute `kleingebaeck`.
+
+
+## Kleingebäck?
+
+The name is derived from "kleinanzeigen backup": "klein" (german for
+small) and "back". In german "bäck" is spelled the same as the english
+"back" so "kleinbäck" was short enough, but it's not a valid german
+word. "Kleingebäck" however is: it means "Cookies" in english :)
+
+## Getting help
+
+Although I'm happy  to hear from kleingebaeck users  in private email,
+that's the best way for me to forget to do something.
+
+In order to report a bug,  unexpected behavior, feature requests or to
+submit    a    patch,    please    open   an    issue    on    github:
+https://github.com/TLINDEN/kleingebaeck/issues.
+
+Please repeat the failing command with debugging enabled C<-d> and
+include the output in the issue.
+
+## Copyright und License
+
+Licensed under the GNU GENERAL PUBLIC LICENSE version 3.
 
 ## Author
 
