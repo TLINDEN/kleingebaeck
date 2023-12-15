@@ -9,7 +9,7 @@ This tool can be used to backup ads on the german ad page https://kleinanzeigen.
 
 It downloads all (or  only the specified ones) ads of  one user into a
 directory, each ad into its own subdirectory. The backup will contain
-a textfile B<Adlisting.txt> which contains the ad contents as the
+a textfile `Adlisting.txt` which contains the ad contents as the
 title, body, price etc. All images will be downloaded as well.
 
 The   tool  doesn't   need   authentication  and   doesn't  have   any
@@ -39,8 +39,8 @@ otherwise backup all ads of the given user.
 ## Configfile
 
 You can create a config file to save typing. By default
-C<~/.kleingebaeck.hcl> is being used but you can specify one with
-C<-c> as well.
+`~/.kleingebaeck.hcl` is being used but you can specify one with
+`-c` as well.
 
 Format is simple:
 
@@ -58,7 +58,7 @@ in:
 
 https://www.kleinanzeigen.de/s-bestandsliste.html?userId=XXXXXX
 
-The B<XXXXX> part is your userid.
+The `XXXXX` part is your userid.
 
 Put it into the configfile as outlined above. Also specify an output
 directory. Then just execute `kleingebaeck`.
@@ -80,7 +80,7 @@ In order to report a bug,  unexpected behavior, feature requests or to
 submit    a    patch,    please    open   an    issue    on    github:
 https://github.com/TLINDEN/kleingebaeck/issues.
 
-Please repeat the failing command with debugging enabled C<-d> and
+Please repeat the failing command with debugging enabled `-d` and
 include the output in the issue.
 
 ## Copyright und License
