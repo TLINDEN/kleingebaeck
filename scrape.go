@@ -22,16 +22,39 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net/http"
 	"os"
 	"strings"
-
-	"net/http"
+	"sync"
 
 	"astuart.co/goq"
 )
 
 type Index struct {
 	Links []string `goquery:".text-module-begin a,[href]"`
+}
+
+type Ad struct {
+	Title     string `goquery:"h1"`
+	Slug      string
+	Id        string
+	Condition string
+	Category  string
+	Price     string   `goquery:"h2#viewad-price"`
+	Created   string   `goquery:"#viewad-extra-info,text"`
+	Text      string   `goquery:"p#viewad-description-text,html"`
+	Images    []string `goquery:".galleryimage-element img,[src]"`
+	Meta      []string `goquery:".addetailslist--detail--value,text"`
+}
+
+func (ad *Ad) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("title", ad.Title),
+		slog.String("price", ad.Price),
+		slog.String("id", ad.Id),
+		slog.Int("imagecount", len(ad.Images)),
+		slog.Int("bodysize", len(ad.Text)),
+	)
 }
 
 // fetch some web page content
@@ -56,7 +79,7 @@ func Get(uri string, client *http.Client) (io.ReadCloser, error) {
 
 // extract links from  all ad listing pages (that  is: use pagination)
 // and scrape every page
-func Start(uid string, dir string) error {
+func Start(uid string, dir string, template string) error {
 	client := &http.Client{}
 	adlinks := []string{}
 
@@ -96,7 +119,7 @@ func Start(uid string, dir string) error {
 	}
 
 	for _, adlink := range adlinks {
-		err := Scrape(Baseuri+adlink, dir)
+		err := Scrape(Baseuri+adlink, dir, template)
 		if err != nil {
 			return err
 		}
@@ -105,27 +128,8 @@ func Start(uid string, dir string) error {
 	return nil
 }
 
-type Ad struct {
-	Title  string `goquery:"h1"`
-	Slug   string
-	Id     string
-	Text   string   `goquery:"p#viewad-description-text,html"`
-	Images []string `goquery:".galleryimage-element img,[src]"`
-	Price  string   `goquery:"h2#viewad-price"`
-}
-
-func (ad *Ad) LogValue() slog.Value {
-	return slog.GroupValue(
-		slog.String("title", ad.Title),
-		slog.String("price", ad.Price),
-		slog.String("id", ad.Id),
-		slog.Int("imagecount", len(ad.Images)),
-		slog.Int("bodysize", len(ad.Text)),
-	)
-}
-
 // scrape an ad. uri is the full uri of the ad, dir is the basedir
-func Scrape(uri string, dir string) error {
+func Scrape(uri string, dir string, template string) error {
 	client := &http.Client{}
 	ad := &Ad{}
 
@@ -150,6 +154,10 @@ func Scrape(uri string, dir string) error {
 	if err != nil {
 		return err
 	}
+	if len(ad.Meta) == 2 {
+		ad.Category = ad.Meta[0]
+		ad.Condition = ad.Meta[1]
+	}
 	slog.Debug("extracted ad listing", "ad", ad)
 
 	// prepare output dir
@@ -167,24 +175,43 @@ func Scrape(uri string, dir string) error {
 	}
 
 	ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\n")
-	_, err = fmt.Fprintf(f, "Title: %s\nPrice: %s\nId: %s\nBody:\n\n%s\n",
-		ad.Title, ad.Price, ad.Id, ad.Text)
+	_, err = fmt.Fprintf(f, template,
+		ad.Title, ad.Price, ad.Id, ad.Category, ad.Condition, ad.Created, ad.Text)
 	if err != nil {
 		return err
 	}
 	slog.Info("wrote ad listing", "listingfile", listingfile)
 
+	return ScrapeImages(dir, ad)
+}
+
+func ScrapeImages(dir string, ad *Ad) error {
 	// fetch images
 	img := 1
+	var wg sync.WaitGroup
+	wg.Add(len(ad.Images))
+	failure := make(chan string)
+
 	for _, imguri := range ad.Images {
 		file := fmt.Sprintf("%s/%d.jpg", dir, img)
-		err := Getimage(imguri, file)
-		if err != nil {
-			return err
-		}
-		slog.Info("wrote ad image", "image", file)
-
+		go func() {
+			defer wg.Done()
+			err := Getimage(imguri, file)
+			if err != nil {
+				failure <- err.Error()
+				return
+			}
+			slog.Info("wrote ad image", "image", file)
+		}()
 		img++
+	}
+
+	close(failure)
+	wg.Wait()
+	goterr := <-failure
+
+	if goterr != "" {
+		return errors.New(goterr)
 	}
 
 	return nil

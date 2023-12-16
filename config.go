@@ -17,14 +17,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
-	"github.com/hashicorp/hcl/v2/hclsimple"
 	"os"
+
+	"github.com/hashicorp/hcl/v2/hclsimple"
 )
 
 type Config struct {
-	Verbose bool   `hcl:"verbose"`
-	User    int    `hcl:"user"`
-	Outdir  string `hcl:"outdir"`
+	Verbose  bool   `hcl:"verbose"`
+	User     int    `hcl:"user"`
+	Outdir   string `hcl:"outdir"`
+	Template string `hcl:"template"`
 }
 
 func ParseConfigfile(file string) (*Config, error) {

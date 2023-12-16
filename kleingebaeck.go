@@ -34,6 +34,14 @@ CONFIGURATION
         user = 1010101
         verbose = true
         outdir = "test"
+        template = ""
+
+    Be carefull if you want to change the template. The default one looks
+    like this:
+
+       Title: %s\nPrice: %s\nId: %s\nCategory: %s\nCondition: %s\nCreated: %s\nBody:\n\n%s\n
+
+    If you change it, include 7 times the '%s' format tag.
 
 SETUP
     To setup the tool, you need to lookup your userid on kleinanzeigen.de.

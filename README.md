@@ -4,6 +4,9 @@
 
 [![License](https://img.shields.io/badge/license-GPL-blue.svg)](https://github.com/tlinden/kleingebaeck/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/tlinden/kleingebaeck)](https://goreportcard.com/report/github.com/tlinden/kleingebaeck) 
+![GitHub License](https://img.shields.io/github/license/tlinden/kleingebaeck)
+[![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://github.com/TLINDEN/kleingebaeck/releases/latest)
+
 
 This tool can be used to backup ads on the german ad page https://kleinanzeigen.de
 
@@ -48,6 +51,7 @@ Format is simple:
 user = 1010101
 verbose = true
 outdir = "test"
+template = ""
 ```
 
 ## Usage
