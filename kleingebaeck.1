@@ -133,7 +133,7 @@
 .\" ========================================================================
 .\"
 .IX Title "KLEINGEBAECK 1"
-.TH KLEINGEBAECK 1 "2023-12-15" "1" "User Commands"
+.TH KLEINGEBAECK 1 "2023-12-16" "1" "User Commands"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -169,11 +169,20 @@ You can create a config file to save typing. By default
 .PP
 Format is simple:
 .PP
-.Vb 3
+.Vb 4
 \&    user = 1010101
 \&    verbose = true
 \&    outdir = "test"
+\&    template = ""
 .Ve
+.PP
+Be carefull if you want to change the template. The default one looks like this:
+.PP
+.Vb 1
+\&   Title: %s\enPrice: %s\enId: %s\enCategory: %s\enCondition: %s\enCreated: %s\enBody:\en\en%s\en
+.Ve
+.PP
+If you change it, include 7 times the '%s' format tag.
 .SH "SETUP"
 .IX Header "SETUP"
 To setup the tool, you need to lookup your userid on

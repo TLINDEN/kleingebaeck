@@ -20,19 +20,21 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/lmittmann/tint"
-	flag "github.com/spf13/pflag"
 	"log/slog"
 	"os"
 	"runtime/debug"
+
+	"github.com/lmittmann/tint"
+	flag "github.com/spf13/pflag"
 )
 
-const VERSION string = "0.0.2"
+const VERSION string = "0.0.3"
 const Useragent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
 	"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 const Baseuri string = "https://www.kleinanzeigen.de"
 const Listuri string = "/s-bestandsliste.html"
 const Defaultdir string = "."
+const DefaultTemplate string = "Title: %s\nPrice: %s\nId: %s\nCategory: %s\nCondition: %s\nCreated: %s\nBody:\n\n%s\n"
 
 const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
 Usage: kleingebaeck [-dvVhmoc] [<ad-listing-url>,...]
@@ -102,6 +104,14 @@ func Main() int {
 		return 0
 	}
 
+	if showmanual {
+		err := man()
+		if err != nil {
+			return Die(err)
+		}
+		return 0
+	}
+
 	conf, err := ParseConfigfile(configfile)
 	if err != nil {
 		return Die(err)
@@ -132,14 +142,6 @@ func Main() int {
 
 	slog.Debug("config", "conf", conf)
 
-	if showmanual {
-		err := man()
-		if err != nil {
-			return Die(err)
-		}
-		return 0
-	}
-
 	if len(dir) == 0 {
 		if len(conf.Outdir) > 0 {
 			dir = conf.Outdir
@@ -154,10 +156,16 @@ func Main() int {
 		return Die(err)
 	}
 
+	// which template to use
+	template := DefaultTemplate
+	if len(conf.Template) > 0 {
+		template = conf.Template
+	}
+
 	// directly backup ad listing[s]
 	if len(flag.Args()) >= 1 {
 		for _, uri := range flag.Args() {
-			err := Scrape(uri, dir)
+			err := Scrape(uri, dir, template)
 			if err != nil {
 				return Die(err)
 			}
@@ -172,7 +180,7 @@ func Main() int {
 	}
 
 	if uid > 0 {
-		err := Start(fmt.Sprintf("%d", uid), dir)
+		err := Start(fmt.Sprintf("%d", uid), dir, template)
 		if err != nil {
 			return Die(err)
 		}

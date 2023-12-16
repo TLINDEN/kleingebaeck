@@ -2,8 +2,6 @@ module kleingebaeck
 
 go 1.21
 
-toolchain go1.21.1
-
 require (
 	astuart.co/goq v1.0.0 // indirect
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
