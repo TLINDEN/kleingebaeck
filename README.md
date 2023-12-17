@@ -67,6 +67,27 @@ The `XXXXX` part is your userid.
 Put it into the configfile as outlined above. Also specify an output
 directory. Then just execute `kleingebaeck`.
 
+Inside the output directory you'll find a new subdirectory for each
+ad. Every directory contains a file `Adlisting.txt`, which will look
+somewhat like this:
+
+```default
+Title: A book I sell
+Price: 99 € VB
+Id: 1919191919
+Category: Sachbücher
+Condition: Sehr Gut
+Created: 10.12.2023
+
+This is the description text.
+
+Pay with paypal.
+```
+
+You can change the formatting using the `template` config
+variable. The supplied sample config contains the default template.
+
+All images will be stored in the same directory.
 
 ## Kleingebäck?
 

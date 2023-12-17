@@ -28,14 +28,6 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
-const VERSION string = "0.0.3"
-const Useragent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-	"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-const Baseuri string = "https://www.kleinanzeigen.de"
-const Listuri string = "/s-bestandsliste.html"
-const Defaultdir string = "."
-const DefaultTemplate string = "Title: %s\nPrice: %s\nId: %s\nCategory: %s\nCondition: %s\nCreated: %s\nBody:\n\n%s\n"
-
 const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
 Usage: kleingebaeck [-dvVhmoc] [<ad-listing-url>,...]
 Options:
