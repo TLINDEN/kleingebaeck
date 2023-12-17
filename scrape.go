@@ -23,7 +23,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 	"strings"
 	"sync"
 
@@ -160,27 +159,11 @@ func Scrape(uri string, dir string, template string) error {
 	}
 	slog.Debug("extracted ad listing", "ad", ad)
 
-	// prepare output dir
-	dir = dir + "/" + ad.Slug
-	err = Mkdir(dir)
+	// write listing
+	err = WriteAd(dir, ad, template)
 	if err != nil {
 		return err
 	}
-
-	// write ad file
-	listingfile := strings.Join([]string{dir, "Adlisting.txt"}, "/")
-	f, err := os.Create(listingfile)
-	if err != nil {
-		return err
-	}
-
-	ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\n")
-	_, err = fmt.Fprintf(f, template,
-		ad.Title, ad.Price, ad.Id, ad.Category, ad.Condition, ad.Created, ad.Text)
-	if err != nil {
-		return err
-	}
-	slog.Info("wrote ad listing", "listingfile", listingfile)
 
 	return ScrapeImages(dir, ad)
 }
@@ -230,13 +213,7 @@ func Getimage(uri, fileName string) error {
 		return errors.New("received non 200 response code")
 	}
 
-	file, err := os.Create(fileName)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = io.Copy(file, response.Body)
+	err = WriteImage(fileName, response.Body)
 	if err != nil {
 		return err
 	}

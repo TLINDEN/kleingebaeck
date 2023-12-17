@@ -39,9 +39,11 @@ CONFIGURATION
     Be carefull if you want to change the template. The default one looks
     like this:
 
-       Title: %s\nPrice: %s\nId: %s\nCategory: %s\nCondition: %s\nCreated: %s\nBody:\n\n%s\n
+       Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.Id}}\nCategory: {{.Category}}\nCondition: {{.Condition}}\nCreated: {{.Created}}\n\n{{.Text}}\n
 
-    If you change it, include 7 times the '%s' format tag.
+    You can left out certain fields and use any formatting you like. Refer
+    to <https://pkg.go.dev/text/template> for details how to write a
+    template.
 
 SETUP
     To setup the tool, you need to lookup your userid on kleinanzeigen.de.
