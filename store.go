@@ -21,20 +21,21 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strings"
 	tpl "text/template"
 )
 
 func WriteAd(dir string, ad *Ad, template string) error {
 	// prepare output dir
-	dir = dir + "/" + ad.Slug
+	dir = filepath.Join(dir, ad.Slug)
 	err := Mkdir(dir)
 	if err != nil {
 		return err
 	}
 
 	// write ad file
-	listingfile := strings.Join([]string{dir, "Adlisting.txt"}, "/")
+	listingfile := filepath.Join(dir, "Adlisting.txt")
 	f, err := os.Create(listingfile)
 	if err != nil {
 		return err
