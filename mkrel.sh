@@ -40,6 +40,11 @@ for D in $DIST; do
     os=${D/\/*/}
     arch=${D/*\//}
     binfile="releases/${tool}-${os}-${arch}-${version}"
+
+    if test "$os" = "windows"; then
+        binfile="${binfile}.exe"
+    fi
+    
     tardir="${tool}-${os}-${arch}-${version}"
     tarfile="releases/${tool}-${os}-${arch}-${version}.tar.gz"
     set -x
