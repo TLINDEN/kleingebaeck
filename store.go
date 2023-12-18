@@ -22,6 +22,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	tpl "text/template"
 )
@@ -41,7 +42,11 @@ func WriteAd(dir string, ad *Ad, template string) error {
 		return err
 	}
 
-	ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\n")
+	if runtime.GOOS == "windows" {
+		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\r\n")
+	} else {
+		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\n")
+	}
 
 	tmpl, err := tpl.New("adlisting").Parse(template)
 	if err != nil {
