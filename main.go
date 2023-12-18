@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"runtime"
 	"runtime/debug"
 
 	"github.com/lmittmann/tint"
@@ -150,6 +151,9 @@ func Main() int {
 
 	// which template to use
 	template := DefaultTemplate
+	if runtime.GOOS == "windows" {
+		template = DefaultTemplateWin
+	}
 	if len(*conf.Template) > 0 {
 		template = *conf.Template
 	}
