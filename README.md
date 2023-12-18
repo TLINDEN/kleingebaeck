@@ -15,13 +15,51 @@ directory, each ad into its own subdirectory. The backup will contain
 a textfile `Adlisting.txt` which contains the ad contents as the
 title, body, price etc. All images will be downloaded as well.
 
+## Installation
+
 The   tool  doesn't   need   authentication  and   doesn't  have   any
 dependencies.  Just  download the  binary for  your platform  from the
 releases page and you're good to go.
 
-The releases also include a handy tarball which you can use to install
-the tool  system-wide including the  manual page. Just extract  it and
-type: `make install`.
+### Installation using a pre-compiled binary
+
+Go            to             the            [latest            release
+page](https://github.com/TLINDEN/kleingebaeck/releases/latest)     and
+look for your OS and platform. There are two options to install the binary:
+
+1.    Directly   download    the    binary    for   your    platoform,
+   e.g. `kleingebaeck-linux-amd64-0.0.5`, rename  it to `kleingebaeck`
+   (or  whatever  you  like  more!)  and put  it  into  your  bin  dir
+   (e.g. `$HOME/bin` or as root to `/usr/local/bin`).
+
+Be sure to verify the signature of the binary file. For this also download the matching `kleingebaeck-linux-amd64-0.0.5.sha256` file and:
+
+```shell
+cat kleingebaeck-linux-amd64-0.0.5.sha25 && sha256sum kleingebaeck-linux-amd64-0.0.5
+```
+You should see the same SHA256 hash.
+
+2.  You  may  also  download  a  binary  tarball  for  your  platform,
+   e.g.  `kleingebaeck-linux-amd64-0.0.5.tar.gz`,  unpack and  install
+   it. GNU Make is required for this:
+   
+```shell
+tar xvfz kleingebaeck-linux-amd64-0.0.5.tar.gz
+cd kleingebaeck-linux-amd64-0.0.5
+sudo make install
+```
+
+### Installation from source
+
+You will need the Golang toolchain  in order to build from source. GNU
+Make will also help but is not strictly neccessary.
+
+If you want to compile the tool yourself, use `git clone` to clone the
+repository.   Then   execute   `go    mod   tidy`   to   install   all
+dependencies. Then  just enter `go  build` or -  if you have  GNU Make
+installed - `make`.
+
+To install after building either copy the binary or execute `sudo make install`.
 
 ## Commandline options:
 
