@@ -109,7 +109,7 @@ func Main() int {
 		return Die(err)
 	}
 
-	if enableverbose || conf.Verbose {
+	if enableverbose || *conf.Verbose {
 		logLevel.Set(slog.LevelInfo)
 	}
 
@@ -135,8 +135,8 @@ func Main() int {
 	slog.Debug("config", "conf", conf)
 
 	if len(dir) == 0 {
-		if len(conf.Outdir) > 0 {
-			dir = conf.Outdir
+		if len(*conf.Outdir) > 0 {
+			dir = *conf.Outdir
 		} else {
 			dir = Defaultdir
 		}
@@ -150,8 +150,8 @@ func Main() int {
 
 	// which template to use
 	template := DefaultTemplate
-	if len(conf.Template) > 0 {
-		template = conf.Template
+	if len(*conf.Template) > 0 {
+		template = *conf.Template
 	}
 
 	// directly backup ad listing[s]
@@ -167,8 +167,8 @@ func Main() int {
 	}
 
 	// backup all ads of the given user (via config or cmdline)
-	if uid == 0 && conf.User > 0 {
-		uid = conf.User
+	if uid == 0 && *conf.User > 0 {
+		uid = *conf.User
 	}
 
 	if uid > 0 {

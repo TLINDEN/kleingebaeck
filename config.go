@@ -34,10 +34,10 @@ const (
 )
 
 type Config struct {
-	Verbose  bool   `hcl:"verbose"`
-	User     int    `hcl:"user"`
-	Outdir   string `hcl:"outdir"`
-	Template string `hcl:"template"`
+	Verbose  *bool   `hcl:"verbose"`
+	User     *int    `hcl:"user"`
+	Outdir   *string `hcl:"outdir"`
+	Template *string `hcl:"template"`
 }
 
 func ParseConfigfile(file string) (*Config, error) {
