@@ -23,6 +23,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -176,7 +177,7 @@ func ScrapeImages(dir string, ad *Ad) error {
 	failure := make(chan string)
 
 	for _, imguri := range ad.Images {
-		file := fmt.Sprintf("%s/%d.jpg", dir, img)
+		file := filepath.Join(dir, ad.Slug, fmt.Sprintf("%d.jpg", img))
 		go func() {
 			defer wg.Done()
 			err := Getimage(imguri, file)
