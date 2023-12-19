@@ -22,6 +22,9 @@ import (
 	"errors"
 	"os"
 	"os/exec"
+	"runtime"
+
+	"github.com/mattn/go-isatty"
 )
 
 func Mkdir(dir string) error {
@@ -52,4 +55,14 @@ func man() error {
 	}
 
 	return nil
+}
+
+// returns TRUE if stdout is NOT a tty or windows
+func IsNoTty() bool {
+	if runtime.GOOS == "windows" || !isatty.IsTerminal(os.Stdout.Fd()) {
+		return true
+	}
+
+	// it is a tty
+	return false
 }
