@@ -79,15 +79,15 @@ func Get(uri string, client *http.Client) (io.ReadCloser, error) {
 
 // extract links from  all ad listing pages (that  is: use pagination)
 // and scrape every page
-func Start(uid string, dir string, template string) error {
+func Start(conf *Config) error {
 	client := &http.Client{}
 	adlinks := []string{}
 
-	baseuri := Baseuri + Listuri + "?userId=" + uid
+	baseuri := fmt.Sprintf("%s%s?userId=%d", Baseuri, Listuri, conf.User)
 	page := 1
 	uri := baseuri
 
-	slog.Info("fetching ad pages", "user", uid)
+	slog.Info("fetching ad pages", "user", conf.User)
 
 	for {
 		var index Index
@@ -118,10 +118,14 @@ func Start(uid string, dir string, template string) error {
 		uri = baseuri + "&pageNum=" + fmt.Sprintf("%d", page)
 	}
 
-	for _, adlink := range adlinks {
-		err := Scrape(Baseuri+adlink, dir, template)
+	for i, adlink := range adlinks {
+		err := Scrape(Baseuri+adlink, conf.Outdir, conf.Template)
 		if err != nil {
 			return err
+		}
+
+		if conf.Limit > 0 && i == conf.Limit-1 {
+			break
 		}
 	}
 
@@ -177,6 +181,7 @@ func ScrapeImages(dir string, ad *Ad) error {
 	failure := make(chan string)
 
 	for _, imguri := range ad.Images {
+		imguri := imguri
 		file := filepath.Join(dir, ad.Slug, fmt.Sprintf("%d.jpg", img))
 		go func() {
 			defer wg.Done()
