@@ -26,21 +26,7 @@ import (
 	"runtime/debug"
 
 	"github.com/lmittmann/tint"
-	flag "github.com/spf13/pflag"
 )
-
-const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
-Usage: kleingebaeck [-dvVhmoc] [<ad-listing-url>,...]
-Options:
---user,-u <uid>        Backup ads from user with uid <uid>.
---debug, -d            Enable debug output.
---verbose,-v           Enable verbose output.
---output-dir,-o <dir>  Set output dir (default: current directory)
---manual,-m            Show manual.
---config,-c <file>     Use config file <file> (default: ~/.kleingebaeck).
-
-If one  or more <ad-listing-url>'s  are specified, only  backup those,
-otherwise backup all ads of the given user.`
 
 const LevelNotice = slog.Level(2)
 
@@ -60,6 +46,7 @@ func Main() int {
 			}
 			return a
 		},
+		NoColor: IsNoTty(),
 	}
 
 	logLevel.Set(LevelNotice)
@@ -67,37 +54,22 @@ func Main() int {
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	showversion := false
-	showhelp := false
-	showmanual := false
-	enabledebug := false
-	enableverbose := false
-	uid := 0
-	configfile := os.Getenv("HOME") + "/.kleingebaeck.hcl"
-	dir := ""
+	conf, err := InitConfig()
+	if err != nil {
+		return Die(err)
+	}
 
-	flag.BoolVarP(&enabledebug, "debug", "d", false, "debug mode")
-	flag.BoolVarP(&enableverbose, "verbose", "v", false, "be verbose")
-	flag.BoolVarP(&showversion, "version", "V", false, "show version")
-	flag.BoolVarP(&showhelp, "help", "h", false, "show usage")
-	flag.BoolVarP(&showmanual, "manual", "m", false, "show manual")
-	flag.IntVarP(&uid, "user", "u", uid, "user id")
-	flag.StringVarP(&dir, "output-dir", "o", dir, "where to store ads")
-	flag.StringVarP(&configfile, "config", "c", configfile, "config file")
-
-	flag.Parse()
-
-	if showversion {
+	if conf.Showversion {
 		fmt.Printf("This is kleingebaeck version %s\n", VERSION)
 		return 0
 	}
 
-	if showhelp {
+	if conf.Showhelp {
 		fmt.Println(Usage)
 		return 0
 	}
 
-	if showmanual {
+	if conf.Showmanual {
 		err := man()
 		if err != nil {
 			return Die(err)
@@ -105,21 +77,17 @@ func Main() int {
 		return 0
 	}
 
-	conf, err := ParseConfigfile(configfile)
-	if err != nil {
-		return Die(err)
-	}
-
-	if enableverbose || *conf.Verbose {
+	if conf.Verbose {
 		logLevel.Set(slog.LevelInfo)
 	}
 
-	if enabledebug {
+	if conf.Debug {
 		// we're using a more verbose logger in debug mode
 		buildInfo, _ := debug.ReadBuildInfo()
 		opts := &tint.Options{
 			Level:     logLevel,
 			AddSource: true,
+			NoColor:   IsNoTty(),
 		}
 
 		logLevel.Set(slog.LevelDebug)
@@ -135,53 +103,39 @@ func Main() int {
 
 	slog.Debug("config", "conf", conf)
 
-	if len(dir) == 0 {
-		if len(*conf.Outdir) > 0 {
-			dir = *conf.Outdir
-		} else {
-			dir = Defaultdir
-		}
-	}
-
 	// prepare output dir
-	err = Mkdir(dir)
+	err = Mkdir(conf.Outdir)
 	if err != nil {
 		return Die(err)
 	}
 
-	// which template to use
-	template := DefaultTemplate
-	if runtime.GOOS == "windows" {
-		template = DefaultTemplateWin
-	}
-	if len(*conf.Template) > 0 {
-		template = *conf.Template
-	}
-
-	// directly backup ad listing[s]
-	if len(flag.Args()) >= 1 {
-		for _, uri := range flag.Args() {
-			err := Scrape(uri, dir, template)
+	if len(conf.Adlinks) >= 1 {
+		// directly backup ad listing[s]
+		for _, uri := range conf.Adlinks {
+			err := Scrape(conf, uri)
 			if err != nil {
 				return Die(err)
 			}
 		}
-
-		return 0
-	}
-
-	// backup all ads of the given user (via config or cmdline)
-	if uid == 0 && *conf.User > 0 {
-		uid = *conf.User
-	}
-
-	if uid > 0 {
-		err := Start(fmt.Sprintf("%d", uid), dir, template)
+	} else if conf.User > 0 {
+		// backup all ads of the given user (via config or cmdline)
+		err := Start(conf)
 		if err != nil {
 			return Die(err)
 		}
 	} else {
-		return Die(errors.New("invalid or no user id specified"))
+		return Die(errors.New("invalid or no user id or no ad link specified"))
+	}
+
+	if conf.StatsCountAds > 0 {
+		adstr := "ads"
+		if conf.StatsCountAds == 1 {
+			adstr = "ad"
+		}
+		fmt.Printf("Successfully downloaded %d %s with %d images to %s.\n",
+			conf.StatsCountAds, adstr, conf.StatsCountImages, conf.Outdir)
+	} else {
+		fmt.Printf("No ads found.")
 	}
 
 	return 0
