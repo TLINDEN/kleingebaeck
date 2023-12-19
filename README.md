@@ -128,6 +128,10 @@ variable. The supplied sample config contains the default template.
 
 All images will be stored in the same directory.
 
+## Documentation
+
+You can read the documentation [online](https://github.com/TLINDEN/kleingebaeck/blob/main/kleingebaeck.pod) or locally once you have installed kleingebaeck with: `kleingebaeck --manual`.
+
 ## Kleingebäck?
 
 The name is derived from "kleinanzeigen backup": "klein" (german for
