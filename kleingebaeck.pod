@@ -26,7 +26,7 @@ title, body, price etc. All images will be downloaded as well.
 =head1 CONFIGURATION
 
 You can create a config file to save typing. By default
-C<~/.kleingebaeck.hcl> is being used but you can specify one with
+C<~/.kleingebaeck> is being used but you can specify one with
 C<-c> as well.
 
 Format is simple:

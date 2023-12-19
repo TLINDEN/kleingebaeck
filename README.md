@@ -80,7 +80,7 @@ otherwise backup all ads of the given user.
 ## Configfile
 
 You can create a config file to save typing. By default
-`~/.kleingebaeck.hcl` is being used but you can specify one with
+`~/.kleingebaeck` is being used but you can specify one with
 `-c` as well.
 
 Format is simple:

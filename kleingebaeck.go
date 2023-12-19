@@ -26,7 +26,7 @@ DESCRIPTION
 
 CONFIGURATION
     You can create a config file to save typing. By default
-    "~/.kleingebaeck.hcl" is being used but you can specify one with "-c" as
+    "~/.kleingebaeck" is being used but you can specify one with "-c" as
     well.
 
     Format is simple:
