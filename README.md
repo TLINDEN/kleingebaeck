@@ -66,12 +66,14 @@ To install after building either copy the binary or execute `sudo make install`.
 ```
 Usage: kleingebaeck [-dvVhmoc] [<ad-listing-url>,...]
 Options:
---user,-u <uid>        Backup ads from user with uid <uid>.
---debug, -d            Enable debug output.
---verbose,-v           Enable verbose output.
---output-dir,-o <dir>  Set output dir (default: current directory)
---manual,-m            Show manual.
---config,-c <file>     Use config file <file> (default: ~/.kleingebaeck).
+--user    -u <uid>      Backup ads from user with uid <uid>.
+--debug   -d            Enable debug output.
+--verbose -v            Enable verbose output.
+--outdir  -o <dir>      Set output dir (default: current directory)
+--limit   -l <num>      Limit the ads to download to <num>, default: load all.
+--config  -c <file>     Use config file <file> (default: ~/.kleingebaeck).
+--manual  -m            Show manual.
+--help    -h            Show usage.
 
 If one  or more <ad-listing-url>'s  are specified, only  backup those,
 otherwise backup all ads of the given user.
@@ -87,9 +89,8 @@ Format is simple:
 
 ```
 user = 1010101
-verbose = true
+loglevel = verbose
 outdir = "test"
-template = ""
 ```
 
 ## Usage

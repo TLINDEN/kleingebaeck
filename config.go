@@ -45,31 +45,45 @@ const (
 )
 
 const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
-Usage: kleingebaeck [-dvVhmoc] [<ad-listing-url>,...]
-Options:
---user,-u <uid>        Backup ads from user with uid <uid>.
---debug, -d            Enable debug output.
---verbose,-v           Enable verbose output.
---outdir,-o <dir>      Set output dir (default: current directory)
---config,-c <file>     Use config file <file> (default: ~/.kleingebaeck).
---manual,-m            Show manual.
---help,-h              Show usage.
 
-If one  or more <ad-listing-url>'s  are specified, only  backup those,
+Usage: kleingebaeck [-dvVhmoclu] [<ad-listing-url>,...]
+
+Options:
+--user    -u <uid>      Backup ads from user with uid <uid>.
+--debug   -d            Enable debug output.
+--verbose -v            Enable verbose output.
+--outdir  -o <dir>      Set output dir (default: current directory)
+--limit   -l <num>      Limit the ads to download to <num>, default: load all.
+--config  -c <file>     Use config file <file> (default: ~/.kleingebaeck).
+--manual  -m            Show manual.
+--help    -h            Show usage.
+--version -V            Show program version.
+
+If one  or more ad listing url's  are specified, only  backup those,
 otherwise backup all ads of the given user.`
 
 type Config struct {
-	Verbose     bool   `koanf:"verbose"` // loglevel=info
-	Debug       bool   `koanf:"debug"`   // loglevel=debug
-	Showversion bool   `koanf:"version"` // -v
-	Showhelp    bool   `koanf:"help"`    // -h
-	Showmanual  bool   `koanf:"manual"`  // -m
-	User        int    `koanf:"user"`
-	Outdir      string `koanf:"outdir"`
-	Template    string `koanf:"template"`
-	Loglevel    string `koanf:"loglevel"`
-	Limit       int    `koanf:"limit"`
-	Adlinks     []string
+	Verbose          bool   `koanf:"verbose"` // loglevel=info
+	Debug            bool   `koanf:"debug"`   // loglevel=debug
+	Showversion      bool   `koanf:"version"` // -v
+	Showhelp         bool   `koanf:"help"`    // -h
+	Showmanual       bool   `koanf:"manual"`  // -m
+	User             int    `koanf:"user"`
+	Outdir           string `koanf:"outdir"`
+	Template         string `koanf:"template"`
+	Loglevel         string `koanf:"loglevel"`
+	Limit            int    `koanf:"limit"`
+	Adlinks          []string
+	StatsCountAds    int
+	StatsCountImages int
+}
+
+func (c *Config) IncrAds() {
+	c.StatsCountAds++
+}
+
+func (c *Config) IncrImgs(num int) {
+	c.StatsCountImages += num
 }
 
 // load commandline flags and config file

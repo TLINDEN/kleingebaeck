@@ -24,6 +24,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	golang.org/x/net v0.0.0-20190606173856-1492cefac77f // indirect
+	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 
 )

@@ -5,15 +5,16 @@ NAME
     kleingebaeck - kleinanzeigen.de backup tool
 
 SYNOPSYS
-        This is kleingebaeck, the kleinanzeigen.de backup tool.
         Usage: kleingebaeck [-dvVhmoc] [<ad-listing-url>,...]
         Options:
-        --user,-u <uid>        Backup ads from user with uid <uid>.
-        --debug, -d            Enable debug output.
-        --verbose,-v           Enable verbose output.
-        --output-dir,-o <dir>  Set output dir (default: current directory)
-        --manual,-m            Show manual.
-        --config,-c <file>     Use config file <file> (default: ~/.kleingebaeck).
+        --user    -u <uid>      Backup ads from user with uid <uid>.
+        --debug   -d            Enable debug output.
+        --verbose -v            Enable verbose output.
+        --outdir  -o <dir>      Set output dir (default: current directory)
+        --limit   -l <num>      Limit the ads to download to <num>, default: load all.
+        --config  -c <file>     Use config file <file> (default: ~/.kleingebaeck).
+        --manual  -m            Show manual.
+        --help    -h            Show usage.
 
 DESCRIPTION
     This tool can be used to backup ads on the german ad page
@@ -27,23 +28,35 @@ DESCRIPTION
 CONFIGURATION
     You can create a config file to save typing. By default
     "~/.kleingebaeck" is being used but you can specify one with "-c" as
-    well.
+    well. We use TOML as our configuration language. See
+    <https://toml.io/en/>.
 
-    Format is simple:
+    Format is pretty simple:
 
         user = 1010101
-        verbose = true
+        loglevel = verbose
         outdir = "test"
-        template = ""
+        template = """
+        Title: {{.Title}}
+        Price: {{.Price}}
+        Id: {{.Id}}
+        Category: {{.Category}}
+        Condition: {{.Condition}}
+        Created: {{.Created}}
 
-    Be carefull if you want to change the template. The default one looks
+        {{.Text}}
+        """
+
+    Be carefull if you want to change the template. The variable is a
+    multiline string surrounded by three double quotes. You can left out
+    certain fields and use any formatting you like. Refer to
+    <https://pkg.go.dev/text/template> for details how to write a template.
+
+    If you're on windows and want to customize the output directory, put it
+    into single quotes to avoid the backslashes interpreted as escape chars
     like this:
 
-       Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.Id}}\nCategory: {{.Category}}\nCondition: {{.Condition}}\nCreated: {{.Created}}\n\n{{.Text}}\n
-
-    You can left out certain fields and use any formatting you like. Refer
-    to <https://pkg.go.dev/text/template> for details how to write a
-    template.
+        outdir = 'C:\Data\Ads'
 
 SETUP
     To setup the tool, you need to lookup your userid on kleinanzeigen.de.

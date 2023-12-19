@@ -142,16 +142,17 @@
 kleingebaeck \- kleinanzeigen.de backup tool
 .SH "SYNOPSYS"
 .IX Header "SYNOPSYS"
-.Vb 9
-\&    This is kleingebaeck, the kleinanzeigen.de backup tool.
+.Vb 10
 \&    Usage: kleingebaeck [\-dvVhmoc] [<ad\-listing\-url>,...]
 \&    Options:
-\&    \-\-user,\-u <uid>        Backup ads from user with uid <uid>.
-\&    \-\-debug, \-d            Enable debug output.
-\&    \-\-verbose,\-v           Enable verbose output.
-\&    \-\-output\-dir,\-o <dir>  Set output dir (default: current directory)
-\&    \-\-manual,\-m            Show manual.
-\&    \-\-config,\-c <file>     Use config file <file> (default: ~/.kleingebaeck).
+\&    \-\-user    \-u <uid>      Backup ads from user with uid <uid>.
+\&    \-\-debug   \-d            Enable debug output.
+\&    \-\-verbose \-v            Enable verbose output.
+\&    \-\-outdir  \-o <dir>      Set output dir (default: current directory)
+\&    \-\-limit   \-l <num>      Limit the ads to download to <num>, default: load all.
+\&    \-\-config  \-c <file>     Use config file <file> (default: ~/.kleingebaeck).
+\&    \-\-manual  \-m            Show manual.
+\&    \-\-help    \-h            Show usage.
 .Ve
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
@@ -163,27 +164,42 @@ a textfile \fBAdlisting.txt\fR which contains the ad contents such as
 title, body, price etc. All images will be downloaded as well.
 .SH "CONFIGURATION"
 .IX Header "CONFIGURATION"
-You can create a config file to save typing. By default
-\&\f(CW\*(C`~/.kleingebaeck\*(C'\fR is being used but you can specify one with
-\&\f(CW\*(C`\-c\*(C'\fR as well.
+You   can  create   a  config   file  to   save  typing.   By  default
+\&\f(CW\*(C`~/.kleingebaeck\*(C'\fR is being used but you can specify one with \f(CW\*(C`\-c\*(C'\fR as
+well.   We    use   \s-1TOML\s0   as   our    configuration   language.   See
+<https://toml.io/en/>.
 .PP
-Format is simple:
+Format is pretty simple:
 .PP
-.Vb 4
+.Vb 10
 \&    user = 1010101
-\&    verbose = true
+\&    loglevel = verbose
 \&    outdir = "test"
-\&    template = ""
+\&    template = """
+\&    Title: {{.Title}}
+\&    Price: {{.Price}}
+\&    Id: {{.Id}}
+\&    Category: {{.Category}}
+\&    Condition: {{.Condition}}
+\&    Created: {{.Created}}
+\&
+\&    {{.Text}}
+\&    """
 .Ve
 .PP
-Be carefull if you want to change the template. The default one looks like this:
+Be carefull  if you want  to change the  template.  The variable  is a
+multiline string surrounded  by three double quotes. You  can left out
+certain   fields  and   use  any   formatting  you   like.  Refer   to
+<https://pkg.go.dev/text/template>  for   details  how  to   write  a
+template.
+.PP
+If you're on  windows and want to customize the  output directory, put
+it into single  quotes to avoid the backslashes  interpreted as escape
+chars like this:
 .PP
 .Vb 1
-\&   Title: {{.Title}}\enPrice: {{.Price}}\enId: {{.Id}}\enCategory: {{.Category}}\enCondition: {{.Condition}}\enCreated: {{.Created}}\en\en{{.Text}}\en
+\&    outdir = \*(AqC:\eData\eAds\*(Aq
 .Ve
-.PP
-You can left out certain fields and use any formatting you like. Refer
-to <https://pkg.go.dev/text/template> for details how to write a template.
 .SH "SETUP"
 .IX Header "SETUP"
 To setup the tool, you need to lookup your userid on

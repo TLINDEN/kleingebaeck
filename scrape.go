@@ -25,9 +25,9 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
-	"sync"
 
 	"astuart.co/goq"
+	"golang.org/x/sync/errgroup"
 )
 
 type Index struct {
@@ -119,7 +119,7 @@ func Start(conf *Config) error {
 	}
 
 	for i, adlink := range adlinks {
-		err := Scrape(Baseuri+adlink, conf.Outdir, conf.Template)
+		err := Scrape(conf, Baseuri+adlink)
 		if err != nil {
 			return err
 		}
@@ -133,7 +133,7 @@ func Start(conf *Config) error {
 }
 
 // scrape an ad. uri is the full uri of the ad, dir is the basedir
-func Scrape(uri string, dir string, template string) error {
+func Scrape(c *Config, uri string) error {
 	client := &http.Client{}
 	ad := &Ad{}
 
@@ -165,43 +165,41 @@ func Scrape(uri string, dir string, template string) error {
 	slog.Debug("extracted ad listing", "ad", ad)
 
 	// write listing
-	err = WriteAd(dir, ad, template)
+	err = WriteAd(c.Outdir, ad, c.Template)
 	if err != nil {
 		return err
 	}
 
-	return ScrapeImages(dir, ad)
+	c.IncrAds()
+
+	return ScrapeImages(c, ad)
 }
 
-func ScrapeImages(dir string, ad *Ad) error {
+func ScrapeImages(c *Config, ad *Ad) error {
 	// fetch images
 	img := 1
-	var wg sync.WaitGroup
-	wg.Add(len(ad.Images))
-	failure := make(chan string)
+	g := new(errgroup.Group)
 
 	for _, imguri := range ad.Images {
 		imguri := imguri
-		file := filepath.Join(dir, ad.Slug, fmt.Sprintf("%d.jpg", img))
-		go func() {
-			defer wg.Done()
+		file := filepath.Join(c.Outdir, ad.Slug, fmt.Sprintf("%d.jpg", img))
+		g.Go(func() error {
 			err := Getimage(imguri, file)
 			if err != nil {
-				failure <- err.Error()
-				return
+				return err
 			}
 			slog.Info("wrote ad image", "image", file)
-		}()
+
+			return nil
+		})
 		img++
 	}
 
-	close(failure)
-	wg.Wait()
-	goterr := <-failure
-
-	if goterr != "" {
-		return errors.New(goterr)
+	if err := g.Wait(); err != nil {
+		return err
 	}
+
+	c.IncrImgs(len(ad.Images))
 
 	return nil
 }

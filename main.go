@@ -108,26 +108,33 @@ func Main() int {
 		return Die(err)
 	}
 
-	// directly backup ad listing[s]
 	if len(conf.Adlinks) >= 1 {
+		// directly backup ad listing[s]
 		for _, uri := range conf.Adlinks {
-			err := Scrape(uri, conf.Outdir, conf.Template)
+			err := Scrape(conf, uri)
 			if err != nil {
 				return Die(err)
 			}
 		}
-
-		return 0
-	}
-
-	// backup all ads of the given user (via config or cmdline)
-	if conf.User > 0 {
+	} else if conf.User > 0 {
+		// backup all ads of the given user (via config or cmdline)
 		err := Start(conf)
 		if err != nil {
 			return Die(err)
 		}
 	} else {
 		return Die(errors.New("invalid or no user id or no ad link specified"))
+	}
+
+	if conf.StatsCountAds > 0 {
+		adstr := "ads"
+		if conf.StatsCountAds == 1 {
+			adstr = "ad"
+		}
+		fmt.Printf("Successfully downloaded %d %s with %d images to %s.\n",
+			conf.StatsCountAds, adstr, conf.StatsCountImages, conf.Outdir)
+	} else {
+		fmt.Printf("No ads found.")
 	}
 
 	return 0
