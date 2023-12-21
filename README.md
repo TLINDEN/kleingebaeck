@@ -15,6 +15,24 @@ directory, each ad into its own subdirectory. The backup will contain
 a textfile `Adlisting.txt` which contains the ad contents as the
 title, body, price etc. All images will be downloaded as well.
 
+## Screenshots
+
+This is the index of my kleinanzeigen.de Account:
+
+![Index](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-index.png)
+
+Here I download my ads on the commandline:
+
+![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-download.png)
+
+And this is the backup directory after download:
+
+![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-backup.png)
+
+Here's a directory for one ad:
+
+![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-ad.png)
+
 ## Installation
 
 The   tool  doesn't   need   authentication  and   doesn't  have   any
@@ -150,6 +168,32 @@ https://github.com/TLINDEN/kleingebaeck/issues.
 
 Please repeat the failing command with debugging enabled `-d` and
 include the output in the issue.
+
+## Related projects
+
+I could not find any projects specifically designed to backup
+kleinanzeigen.de ads, however there's a bot project which is also able
+to download ads:
+[kleinanzeigen-bot](https://github.com/Second-Hand-Friends/kleinanzeigen-bot/). However,
+be aware that kleinanzeigen.de is actively fighting bots! Look at this
+[issue](https://github.com/Second-Hand-Friends/kleinanzeigen-bot/issues/219). The
+problem with these kind of bots is, that they login into your account
+using your credentials. If the company is able to detect bot activity
+they can associate it easily with your account and **lock you
+out**. So be careful.
+
+**kleingebäck** doesn't need to login, it just accesses public
+available web pages. Kleinanzeigen.de could hardly do anything against
+it, once because it is legal. There's no difference between a browser
+and a commandline client. Both run on the clientside and it is not
+kleinanzeigen.de's decision which software one uses to access their
+pages. And second: because you can use it to download any ads, not
+just yours. So it is not really clear if the activity is associated in
+any way with the ad owner. In addition to that comes the fact that
+kleingebäck is just a backup tool. It is not intendet to be used on a
+daily basis. You cannot use it to view regular ads or maintain your
+own ads. You'll need to use the mobile app or the browser page with a
+login. So, in my point of view, the risk is very minimal.
 
 ## Copyright und License
 
