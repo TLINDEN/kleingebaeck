@@ -131,11 +131,10 @@ func Main() int {
 		if conf.StatsCountAds == 1 {
 			adstr = "ad"
 		}
-		fmt.Printf("Successfully downloaded %d %s with %d images to %s.",
+		fmt.Printf("Successfully downloaded %d %s with %d images to %s.\n",
 			conf.StatsCountAds, adstr, conf.StatsCountImages, conf.Outdir)
-		fmt.Println()
 	} else {
-		fmt.Println("No ads found.")
+		fmt.Printf("No ads found.")
 	}
 
 	return 0
