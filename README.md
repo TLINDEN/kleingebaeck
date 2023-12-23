@@ -33,6 +33,20 @@ Here's a directory for one ad:
 
 ![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-ad.png)
 
+**The same thing under windows:**
+
+Downloading ads:
+
+![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/cmd-windows.jpg)
+
+Backup directory after download:
+
+![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/liste-windows.jpg)
+
+And one ad listing directory:
+
+![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/adlisting-windows.jpg)
+
 ## Installation
 
 The   tool  doesn't   need   authentication  and   doesn't  have   any
