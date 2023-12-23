@@ -97,12 +97,14 @@ func InitConfig() (*Config, error) {
 	}
 
 	// Load default values using the confmap provider.
-	k.Load(confmap.Provider(map[string]interface{}{
+	if err := k.Load(confmap.Provider(map[string]interface{}{
 		"template": template,
 		"outdir":   ".",
 		"loglevel": "notice",
 		"userid":   0,
-	}, "."), nil)
+	}, "."), nil); err != nil {
+                return nil, err
+        }
 
 	// setup custom usage
 	f := flag.NewFlagSet("config", flag.ContinueOnError)
@@ -122,7 +124,9 @@ func InitConfig() (*Config, error) {
 	f.BoolP("help", "h", false, "show usage")
 	f.BoolP("manual", "m", false, "show manual")
 
-	f.Parse(os.Args[1:])
+	if err := f.Parse(os.Args[1:]); err != nil {
+                return nil, err
+        }
 
 	// generate a  list of config files to try  to load, including the
 	// one provided via -c, if any
