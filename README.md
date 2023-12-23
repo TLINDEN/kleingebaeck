@@ -209,7 +209,7 @@ daily basis. You cannot use it to view regular ads or maintain your
 own ads. You'll need to use the mobile app or the browser page with a
 login. So, in my point of view, the risk is very minimal.
 
-There is another Tool available named [kleinanzeigen-enhanded](https://kleinanzeigen-enhanced.de/). It is a complete Ad management system targeting primarily commercial users. You have to pay a monthly fee, perhaps there's also a free version available, but I haven't checked. The tool is implemented as a Chrome browser extension, wjich explains why it was possible to implement it without an API. It seems to be a nice solution for power users by the looks of it. And it includes backups.
+There is another Tool available named [kleinanzeigen-enhanded](https://kleinanzeigen-enhanced.de/). It is a complete Ad management system targeting primarily commercial users. You have to pay a monthly fee, perhaps there's also a free version available, but I haven't checked. The tool is implemented as a Chrome browser extension, which explains why it was possible to implement it without an API. It seems to be a nice solution for power users by the looks of it. And it includes backups.
 
 ## Copyright und License
 
