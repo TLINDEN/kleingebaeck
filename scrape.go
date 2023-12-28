@@ -140,7 +140,7 @@ func Scrape(c *Config, uri string) error {
 	// extract slug and id from uri
 	uriparts := strings.Split(uri, "/")
 	if len(uriparts) < 6 {
-		return errors.New("invalid uri")
+		return errors.New("invalid uri: " + uri)
 	}
 	ad.Slug = uriparts[4]
 	ad.Id = uriparts[5]
