@@ -21,6 +21,9 @@ jobs:
     - name: build
       run: go build
 
+    - name: test
+      run: make test
+
   golangci:
     name: lint
     runs-on: ubuntu-latest
