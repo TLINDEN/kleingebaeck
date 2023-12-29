@@ -41,6 +41,7 @@ func WriteAd(dir string, ad *Ad, template string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
 	if runtime.GOOS == "windows" {
 		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\r\n")
@@ -52,6 +53,7 @@ func WriteAd(dir string, ad *Ad, template string) error {
 	if err != nil {
 		return err
 	}
+
 	err = tmpl.Execute(f, ad)
 	if err != nil {
 		return err

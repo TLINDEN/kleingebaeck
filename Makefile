@@ -50,9 +50,10 @@ install: buildlocal
 	install -o $(UID) -g $(GID) -m 444 $(tool).1 $(PREFIX)/man/man1/
 
 clean:
-	rm -rf $(tool) coverage.out testdata
+	rm -rf $(tool) coverage.out testdata t/out
 
 test: clean
+	mkdir -p t/out
 	go test ./... $(ARGS)
 
 testfuzzy: clean

@@ -18,6 +18,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
 	github.com/andybalholm/cascadia v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
+	github.com/jarcoal/httpmock v1.3.1 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
