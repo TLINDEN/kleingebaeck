@@ -252,13 +252,14 @@ func TestStart(t *testing.T) {
 
 	// verify
 	for _, ad := range InitAds() {
-		content, err := os.ReadFile(fmt.Sprintf("t/out/%s/Adlisting.txt", ad.Slug))
+		file := fmt.Sprintf("t/out/%s/Adlisting.txt", ad.Slug)
+		content, err := os.ReadFile(file)
 		if err != nil {
 			t.Errorf("failed to read adlisting: %s", err.Error())
 		}
 
 		if !strings.Contains(string(content), ad.Category) && !strings.Contains(string(content), ad.Title) {
-			t.Errorf("failed to verify: %s", err.Error())
+			t.Errorf("failed to verify: %s content doesn't contain expected data", file)
 		}
 	}
 
