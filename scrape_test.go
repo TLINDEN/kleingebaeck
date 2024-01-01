@@ -111,6 +111,16 @@ const ADTPL string = `DOCTYPE html>
 </html>
 `
 
+const EMPTYPAGE string = `DOCTYPE html>
+<html lang="de">
+  <head></head>
+  <body></body>
+</html>
+`
+
+const EMPTYURI string = `https://www.kleinanzeigen.de/s-anzeige/empty/1`
+const INVALIDURI string = `https://foo.bar/weird/things`
+
 // An  Adsource  is used  to  construct  a  httpmock responder  for  a
 // particular    url.    So,     the    code    (scrape.go)    scrapes
 // https://kleinanzeigen.de,  but  in  reality httpmock  captures  the
@@ -118,6 +128,7 @@ const ADTPL string = `DOCTYPE html>
 type Adsource struct {
 	uri     string
 	content string
+	status  int
 }
 
 // Render a HTML template for an adlisting or an ad
@@ -207,6 +218,35 @@ func InitValidSources(conf *Config) []Adsource {
 	return ads
 }
 
+func InitInvalidSources(conf *Config) []Adsource {
+	empty := AdConfig{}
+	ads := []Adsource{
+		{
+			// valid ad page but without content
+			uri:     fmt.Sprintf("%s/s-anzeige/empty/1", Baseuri),
+			content: GetTemplate(nil, empty, EMPTYPAGE),
+		},
+		{
+			// some random foreign webpage
+			uri:     INVALIDURI,
+			content: GetTemplate(nil, empty, "<html>foo</html>"),
+		},
+		{
+			// some invalid page path
+			uri:     fmt.Sprintf("%s/anzeige/name/1", Baseuri),
+			content: GetTemplate(nil, empty, "<html></html>"),
+		},
+		{
+			// some none-ad page
+			uri:     fmt.Sprintf("%s/anzeige/name/1/foo/bar", Baseuri),
+			content: GetTemplate(nil, empty, "<html>HTTP 404: /eine-anzeige/ does not exist!</html>"),
+			status:  404,
+		},
+	}
+
+	return ads
+}
+
 // load a test image from disk
 func GetImage(path string) []byte {
 	dat, err := os.ReadFile(path)
@@ -220,10 +260,17 @@ func GetImage(path string) []byte {
 // setup httpmock
 func SetIntercept(conf *Config) {
 	ads := InitValidSources(conf)
+	eads := InitInvalidSources(conf)
+
+	ads = append(ads, eads...)
 
 	for _, ad := range ads {
+		if ad.status == 0 {
+			ad.status = 200
+		}
+
 		httpmock.RegisterResponder("GET", ad.uri,
-			httpmock.NewStringResponder(200, ad.content))
+			httpmock.NewStringResponder(ad.status, ad.content))
 	}
 
 	// we just use 2 images, put this here
@@ -265,4 +312,34 @@ func TestStart(t *testing.T) {
 
 	// uncomment to see slogs
 	//t.Errorf("debug")
+}
+
+func TestSingleFail(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	// fake config
+	conf := &Config{Outdir: "t/out", Template: DefaultTemplate, Adlinks: []string{EMPTYURI}}
+
+	SetIntercept(conf)
+
+	// check empty ad
+	if err := Scrape(conf, EMPTYURI); err == nil {
+		t.Errorf("scrape returned empty ad")
+	}
+
+	// wrong uri
+	if err := Scrape(conf, INVALIDURI); err == nil {
+		t.Errorf("scrape returned ad from invalid web site")
+	}
+
+	// wrong path
+	if err := Scrape(conf, fmt.Sprintf("%s/anzeige/name/1", Baseuri)); err == nil {
+		t.Errorf("scrape returned ad from invalid page")
+	}
+
+	// wrong path
+	if err := Scrape(conf, fmt.Sprintf("%s/anzeige/name/1/foo/bar", Baseuri)); err == nil {
+		t.Errorf("scrape returned ad from 404 page")
+	}
 }
