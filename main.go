@@ -20,6 +20,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"runtime/debug"
@@ -30,10 +31,10 @@ import (
 const LevelNotice = slog.Level(2)
 
 func main() {
-	os.Exit(Main())
+	os.Exit(Main(os.Stdout))
 }
 
-func Main() int {
+func Main(w io.Writer) int {
 	logLevel := &slog.LevelVar{}
 	opts := &tint.Options{
 		Level:     logLevel,
@@ -49,22 +50,22 @@ func Main() int {
 	}
 
 	logLevel.Set(LevelNotice)
-	var handler slog.Handler = tint.NewHandler(os.Stdout, opts)
+	handler := tint.NewHandler(w, opts)
 	logger := slog.New(handler)
 	slog.SetDefault(logger)
 
-	conf, err := InitConfig()
+	conf, err := InitConfig(w)
 	if err != nil {
 		return Die(err)
 	}
 
 	if conf.Showversion {
-		fmt.Printf("This is kleingebaeck version %s\n", VERSION)
+		fmt.Fprintf(w, "This is kleingebaeck version %s\n", VERSION)
 		return 0
 	}
 
 	if conf.Showhelp {
-		fmt.Println(Usage)
+		fmt.Fprintln(w, Usage)
 		return 0
 	}
 
@@ -90,7 +91,7 @@ func Main() int {
 		}
 
 		logLevel.Set(slog.LevelDebug)
-		var handler slog.Handler = tint.NewHandler(os.Stdout, opts)
+		handler := tint.NewHandler(w, opts)
 		debuglogger := slog.New(handler).With(
 			slog.Group("program_info",
 				slog.Int("pid", os.Getpid()),
@@ -100,6 +101,8 @@ func Main() int {
 		slog.SetDefault(debuglogger)
 	}
 
+	// defaultlogger := log.Default()
+	// defaultlogger.SetOutput(w)
 	slog.Debug("config", "conf", conf)
 
 	// prepare output dir
@@ -131,10 +134,10 @@ func Main() int {
 		if conf.StatsCountAds == 1 {
 			adstr = "ad"
 		}
-		fmt.Printf("Successfully downloaded %d %s with %d images to %s.\n",
+		fmt.Fprintf(w, "Successfully downloaded %d %s with %d images to %s.\n",
 			conf.StatsCountAds, adstr, conf.StatsCountImages, conf.Outdir)
 	} else {
-		fmt.Printf("No ads found.")
+		fmt.Fprintf(w, "No ads found.")
 	}
 
 	return 0
