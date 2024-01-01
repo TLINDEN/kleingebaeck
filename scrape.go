@@ -30,33 +30,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type Index struct {
-	Links []string `goquery:".text-module-begin a,[href]"`
-}
-
-type Ad struct {
-	Title     string `goquery:"h1"`
-	Slug      string
-	Id        string
-	Condition string
-	Category  string
-	Price     string   `goquery:"h2#viewad-price"`
-	Created   string   `goquery:"#viewad-extra-info,text"`
-	Text      string   `goquery:"p#viewad-description-text,html"`
-	Images    []string `goquery:".galleryimage-element img,[src]"`
-	Meta      []string `goquery:".addetailslist--detail--value,text"`
-}
-
-func (ad *Ad) LogValue() slog.Value {
-	return slog.GroupValue(
-		slog.String("title", ad.Title),
-		slog.String("price", ad.Price),
-		slog.String("id", ad.Id),
-		slog.Int("imagecount", len(ad.Images)),
-		slog.Int("bodysize", len(ad.Text)),
-	)
-}
-
 // fetch some web page content
 func Get(uri string, client *http.Client) (io.ReadCloser, error) {
 	req, err := http.NewRequest("GET", uri, nil)
@@ -73,6 +46,10 @@ func Get(uri string, client *http.Client) (io.ReadCloser, error) {
 
 	slog.Debug("response", "code", res.StatusCode, "status",
 		res.Status, "size", res.ContentLength)
+
+	if res.StatusCode != 200 {
+		return nil, errors.New("could not get page via HTTP")
+	}
 
 	return res.Body, nil
 }
@@ -162,6 +139,11 @@ func Scrape(c *Config, uri string) error {
 		ad.Category = ad.Meta[0]
 		ad.Condition = ad.Meta[1]
 	}
+
+	if ad.Incomplete() {
+		return errors.New("could not extract ad data from page, got empty struct")
+	}
+
 	slog.Debug("extracted ad listing", "ad", ad)
 
 	// write listing
