@@ -196,7 +196,7 @@ func Getimage(uri, fileName string) error {
 	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
-		return errors.New("received non 200 response code")
+		return errors.New("could not get image via HTTP")
 	}
 
 	err = WriteImage(fileName, response.Body)

@@ -19,6 +19,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -87,7 +88,7 @@ func (c *Config) IncrImgs(num int) {
 }
 
 // load commandline flags and config file
-func InitConfig() (*Config, error) {
+func InitConfig(w io.Writer) (*Config, error) {
 	var k = koanf.New(".")
 
 	// determine template based on os
@@ -103,13 +104,13 @@ func InitConfig() (*Config, error) {
 		"loglevel": "notice",
 		"userid":   0,
 	}, "."), nil); err != nil {
-                return nil, err
-        }
+		return nil, err
+	}
 
 	// setup custom usage
 	f := flag.NewFlagSet("config", flag.ContinueOnError)
 	f.Usage = func() {
-		fmt.Println(Usage)
+		fmt.Fprintln(w, Usage)
 		os.Exit(0)
 	}
 
@@ -125,8 +126,8 @@ func InitConfig() (*Config, error) {
 	f.BoolP("manual", "m", false, "show manual")
 
 	if err := f.Parse(os.Args[1:]); err != nil {
-                return nil, err
-        }
+		return nil, err
+	}
 
 	// generate a  list of config files to try  to load, including the
 	// one provided via -c, if any
