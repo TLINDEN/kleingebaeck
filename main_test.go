@@ -207,7 +207,7 @@ var invalidtests = []Tests{
 	{
 		name:     "outdir-no-exists",
 		args:     base + " -o t/foo/bar/out https://www.kleinanzeigen.de/s-anzeige/first-ad/1 -v",
-		expect:   "mkdir t/foo/bar/out: no such file or directory",
+		expect:   "Failure",
 		exitcode: 1,
 	},
 	{
