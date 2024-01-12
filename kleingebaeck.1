@@ -133,7 +133,7 @@
 .\" ========================================================================
 .\"
 .IX Title "KLEINGEBAECK 1"
-.TH KLEINGEBAECK 1 "2023-12-19" "1" "User Commands"
+.TH KLEINGEBAECK 1 "2024-01-12" "1" "User Commands"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -142,7 +142,7 @@
 kleingebaeck \- kleinanzeigen.de backup tool
 .SH "SYNOPSYS"
 .IX Header "SYNOPSYS"
-.Vb 10
+.Vb 11
 \&    Usage: kleingebaeck [\-dvVhmoc] [<ad\-listing\-url>,...]
 \&    Options:
 \&    \-\-user    \-u <uid>      Backup ads from user with uid <uid>.
@@ -153,6 +153,7 @@ kleingebaeck \- kleinanzeigen.de backup tool
 \&    \-\-config  \-c <file>     Use config file <file> (default: ~/.kleingebaeck).
 \&    \-\-manual  \-m            Show manual.
 \&    \-\-help    \-h            Show usage.
+\&    \-\-version \-V            Show program version.
 .Ve
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
@@ -235,7 +236,20 @@ Also there's currently no parallelization implemented. This will
 change in the future.
 .SH "LICENSE"
 .IX Header "LICENSE"
-Licensed under the \s-1GNU GENERAL PUBLIC LICENSE\s0 version 3.
+Copyright 2023\-2024 Thomas von Dein
+.PP
+This program is free software: you can redistribute it and/or modify
+it under the terms of the \s-1GNU\s0 General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+.PP
+This program is distributed in the hope that it will be useful,
+but \s-1WITHOUT ANY WARRANTY\s0; without even the implied warranty of
+\&\s-1MERCHANTABILITY\s0 or \s-1FITNESS FOR A PARTICULAR PURPOSE.\s0  See the
+\&\s-1GNU\s0 General Public License for more details.
+.PP
+You should have received a copy of the \s-1GNU\s0 General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 .SH "Author"
 .IX Header "Author"
 T.v.Dein <tom \s-1AT\s0 vondein \s-1DOT\s0 org>
