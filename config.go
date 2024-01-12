@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Thomas von Dein
+Copyright © 2023-2024 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	VERSION         string = "0.1.0"
+	VERSION         string = "0.1.1"
 	Baseuri         string = "https://www.kleinanzeigen.de"
 	Listuri         string = "/s-bestandsliste.html"
 	Defaultdir      string = "."
@@ -43,6 +43,7 @@ const (
 		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\nCreated: {{.Created}}\r\n\r\n{{.Text}}\r\n"
 	Useragent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
 		"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+	DefaultAdNameTemplate string = "{{.Slug}}-{{.Id}}"
 )
 
 const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
@@ -72,6 +73,7 @@ type Config struct {
 	User             int    `koanf:"user"`
 	Outdir           string `koanf:"outdir"`
 	Template         string `koanf:"template"`
+	Adnametemplate   string `koanf:"adnametemplate"`
 	Loglevel         string `koanf:"loglevel"`
 	Limit            int    `koanf:"limit"`
 	Adlinks          []string
@@ -99,10 +101,11 @@ func InitConfig(w io.Writer) (*Config, error) {
 
 	// Load default values using the confmap provider.
 	if err := k.Load(confmap.Provider(map[string]interface{}{
-		"template": template,
-		"outdir":   ".",
-		"loglevel": "notice",
-		"userid":   0,
+		"template":       template,
+		"outdir":         ".",
+		"loglevel":       "notice",
+		"userid":         0,
+		"adnametemplate": DefaultAdNameTemplate,
 	}, "."), nil); err != nil {
 		return nil, err
 	}

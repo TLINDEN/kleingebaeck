@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Thomas von Dein
+Copyright © 2023-2024 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,6 +60,16 @@ const ADTPL string = `DOCTYPE html>
   </head>
   <body>
 
+    <div class="l-container-row">
+        <div id="vap-brdcrmb" class="breadcrump">
+            <a class="breadcrump-link" itemprop="url" href="/" title="Kleinanzeigen ">
+                <span itemprop="title">Kleinanzeigen </span>
+            </a>
+            <a class="breadcrump-link" itemprop="url" href="/egal">
+               <span itemprop="title">{{ .Category }}</span></a>
+            </div>
+    </div>
+
     {{ range $image := .Images }}
     <div class="galleryimage-element" data-ix="3">
       <img src="{{ $image }}"/>
@@ -79,10 +89,6 @@ const ADTPL string = `DOCTYPE html>
 
     <div class="splitlinebox l-container-row" id="viewad-details">
       <ul class="addetailslist">
-        <li class="addetailslist--detail">
-          Art<span class="addetailslist--detail--value" >
-          {{ .Category }}</span>
-        </li>
         <li class="addetailslist--detail">
           Zustand<span class="addetailslist--detail--value" >
           {{ .Condition }}</span>
@@ -438,9 +444,17 @@ func SetIntercept(ads []Adsource) {
 }
 
 func VerifyAd(ad AdConfig) error {
-	body := ad.Title + ad.Price + ad.Id + ad.Category + ad.Condition + ad.Created
+	body := ad.Title + ad.Price + ad.Id + "Kleinanzeigen => " + ad.Category + ad.Condition + ad.Created
 
-	file := fmt.Sprintf("t/out/%s/Adlisting.txt", ad.Slug)
+	// prepare ad dir name using DefaultAdNameTemplate
+	c := Config{Adnametemplate: DefaultAdNameTemplate}
+	adstruct := Ad{Slug: ad.Slug, Id: ad.Id}
+	addir, err := AdDirName(&c, &adstruct)
+	if err != nil {
+		return err
+	}
+
+	file := fmt.Sprintf("t/out/%s/Adlisting.txt", addir)
 	content, err := os.ReadFile(file)
 	if err != nil {
 		return err
