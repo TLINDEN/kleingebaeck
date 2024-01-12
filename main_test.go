@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Thomas von Dein
+Copyright © 2023-2024 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -440,7 +440,15 @@ func SetIntercept(ads []Adsource) {
 func VerifyAd(ad AdConfig) error {
 	body := ad.Title + ad.Price + ad.Id + ad.Category + ad.Condition + ad.Created
 
-	file := fmt.Sprintf("t/out/%s/Adlisting.txt", ad.Slug)
+	// prepare ad dir name using DefaultAdNameTemplate
+	c := Config{Adnametemplate: DefaultAdNameTemplate}
+	adstruct := Ad{Slug: ad.Slug, Id: ad.Id}
+	addir, err := AdDirName(&c, &adstruct)
+	if err != nil {
+		return err
+	}
+
+	file := fmt.Sprintf("t/out/%s/Adlisting.txt", addir)
 	content, err := os.ReadFile(file)
 	if err != nil {
 		return err

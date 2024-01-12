@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Thomas von Dein
+Copyright © 2023-2024 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
+	"bytes"
 	"io"
 	"log/slog"
 	"os"
@@ -27,19 +28,40 @@ import (
 	tpl "text/template"
 )
 
-func WriteAd(dir string, ad *Ad, template string) error {
-	// prepare output dir
-	dir = filepath.Join(dir, ad.Slug)
-	err := Mkdir(dir)
+func AdDirName(c *Config, ad *Ad) (string, error) {
+	tmpl, err := tpl.New("adname").Parse(c.Adnametemplate)
 	if err != nil {
-		return err
+		return "", err
+	}
+
+	buf := bytes.Buffer{}
+	err = tmpl.Execute(&buf, ad)
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
+
+func WriteAd(c *Config, ad *Ad) (string, error) {
+	// prepare ad dir name
+	addir, err := AdDirName(c, ad)
+	if err != nil {
+		return "", err
+	}
+
+	// prepare output dir
+	dir := filepath.Join(c.Outdir, addir)
+	err = Mkdir(dir)
+	if err != nil {
+		return "", err
 	}
 
 	// write ad file
 	listingfile := filepath.Join(dir, "Adlisting.txt")
 	f, err := os.Create(listingfile)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer f.Close()
 
@@ -49,19 +71,19 @@ func WriteAd(dir string, ad *Ad, template string) error {
 		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\n")
 	}
 
-	tmpl, err := tpl.New("adlisting").Parse(template)
+	tmpl, err := tpl.New("adlisting").Parse(c.Template)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = tmpl.Execute(f, ad)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	slog.Info("wrote ad listing", "listingfile", listingfile)
 
-	return nil
+	return addir, nil
 }
 
 func WriteImage(filename string, reader io.ReadCloser) error {
