@@ -60,6 +60,16 @@ const ADTPL string = `DOCTYPE html>
   </head>
   <body>
 
+    <div class="l-container-row">
+        <div id="vap-brdcrmb" class="breadcrump">
+            <a class="breadcrump-link" itemprop="url" href="/" title="Kleinanzeigen ">
+                <span itemprop="title">Kleinanzeigen </span>
+            </a>
+            <a class="breadcrump-link" itemprop="url" href="/egal">
+               <span itemprop="title">{{ .Category }}</span></a>
+            </div>
+    </div>
+
     {{ range $image := .Images }}
     <div class="galleryimage-element" data-ix="3">
       <img src="{{ $image }}"/>
@@ -79,10 +89,6 @@ const ADTPL string = `DOCTYPE html>
 
     <div class="splitlinebox l-container-row" id="viewad-details">
       <ul class="addetailslist">
-        <li class="addetailslist--detail">
-          Art<span class="addetailslist--detail--value" >
-          {{ .Category }}</span>
-        </li>
         <li class="addetailslist--detail">
           Zustand<span class="addetailslist--detail--value" >
           {{ .Condition }}</span>
@@ -438,7 +444,7 @@ func SetIntercept(ads []Adsource) {
 }
 
 func VerifyAd(ad AdConfig) error {
-	body := ad.Title + ad.Price + ad.Id + ad.Category + ad.Condition + ad.Created
+	body := ad.Title + ad.Price + ad.Id + "Kleinanzeigen => " + ad.Category + ad.Condition + ad.Created
 
 	// prepare ad dir name using DefaultAdNameTemplate
 	c := Config{Adnametemplate: DefaultAdNameTemplate}

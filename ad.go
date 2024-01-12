@@ -19,6 +19,7 @@ package main
 
 import (
 	"log/slog"
+	"strings"
 )
 
 type Index struct {
@@ -26,16 +27,16 @@ type Index struct {
 }
 
 type Ad struct {
-	Title     string `goquery:"h1"`
-	Slug      string
-	Id        string
-	Condition string
-	Category  string
-	Price     string   `goquery:"h2#viewad-price"`
-	Created   string   `goquery:"#viewad-extra-info,text"`
-	Text      string   `goquery:"p#viewad-description-text,html"`
-	Images    []string `goquery:".galleryimage-element img,[src]"`
-	Meta      []string `goquery:".addetailslist--detail--value,text"`
+	Title        string `goquery:"h1"`
+	Slug         string
+	Id           string
+	Condition    string `goquery:".addetailslist--detail--value,text"`
+	Category     string
+	CategoryTree []string `goquery:".breadcrump-link,text"`
+	Price        string   `goquery:"h2#viewad-price"`
+	Created      string   `goquery:"#viewad-extra-info,text"`
+	Text         string   `goquery:"p#viewad-description-text,html"`
+	Images       []string `goquery:".galleryimage-element img,[src]"`
 }
 
 // Used by slog to pretty print an ad
@@ -46,6 +47,8 @@ func (ad *Ad) LogValue() slog.Value {
 		slog.String("id", ad.Id),
 		slog.Int("imagecount", len(ad.Images)),
 		slog.Int("bodysize", len(ad.Text)),
+		slog.String("categorytree", strings.Join(ad.CategoryTree, "+")),
+		slog.String("condition", ad.Condition),
 	)
 }
 
@@ -58,7 +61,7 @@ func (ad *Ad) LogValue() slog.Value {
 //
 // Note: we return true for "ad is incomplete" and false for "ad is complete"!
 func (ad *Ad) Incomplete() bool {
-	if ad.Category == "" || ad.Condition == "" || ad.Created == "" || ad.Text == "" {
+	if ad.Category == "" || ad.Created == "" || ad.Text == "" {
 		return true
 	}
 

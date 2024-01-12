@@ -135,12 +135,13 @@ func Scrape(c *Config, uri string) error {
 	if err != nil {
 		return err
 	}
-	if len(ad.Meta) == 2 {
-		ad.Category = ad.Meta[0]
-		ad.Condition = ad.Meta[1]
+
+	if len(ad.CategoryTree) > 0 {
+		ad.Category = strings.Join(ad.CategoryTree, " => ")
 	}
 
 	if ad.Incomplete() {
+		slog.Debug("got ad", "ad", ad)
 		return errors.New("could not extract ad data from page, got empty struct")
 	}
 
