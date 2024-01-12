@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Thomas von Dein
+Copyright © 2023-2024 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -147,24 +147,24 @@ func Scrape(c *Config, uri string) error {
 	slog.Debug("extracted ad listing", "ad", ad)
 
 	// write listing
-	err = WriteAd(c.Outdir, ad, c.Template)
+	addir, err := WriteAd(c, ad)
 	if err != nil {
 		return err
 	}
 
 	c.IncrAds()
 
-	return ScrapeImages(c, ad)
+	return ScrapeImages(c, ad, addir)
 }
 
-func ScrapeImages(c *Config, ad *Ad) error {
+func ScrapeImages(c *Config, ad *Ad, addir string) error {
 	// fetch images
 	img := 1
 	g := new(errgroup.Group)
 
 	for _, imguri := range ad.Images {
 		imguri := imguri
-		file := filepath.Join(c.Outdir, ad.Slug, fmt.Sprintf("%d.jpg", img))
+		file := filepath.Join(c.Outdir, addir, fmt.Sprintf("%d.jpg", img))
 		g.Go(func() error {
 			err := Getimage(imguri, file)
 			if err != nil {
