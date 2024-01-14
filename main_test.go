@@ -438,16 +438,18 @@ func SetIntercept(ads []Adsource) {
 
 	// we just use 2 images, put this here
 	for _, image := range []string{"t/1.jpg", "t/2.jpg"} {
-		httpmock.RegisterResponder("GET", image, httpmock.NewBytesResponder(200, GetImage(image)))
+		httpmock.RegisterResponder("GET", image,
+			httpmock.NewBytesResponder(200, GetImage(image)))
 	}
 
 }
 
 func VerifyAd(ad AdConfig) error {
-	body := ad.Title + ad.Price + ad.Id + "Kleinanzeigen => " + ad.Category + ad.Condition + ad.Created
+	body := ad.Title + ad.Price + ad.Id + "Kleinanzeigen => " +
+		ad.Category + ad.Condition + ad.Created
 
 	// prepare ad dir name using DefaultAdNameTemplate
-	c := Config{Adnametemplate: DefaultAdNameTemplate}
+	c := Config{Adnametemplate: "{{ .Slug }}"}
 	adstruct := Ad{Slug: ad.Slug, Id: ad.Id}
 	addir, err := AdDirName(&c, &adstruct)
 	if err != nil {
