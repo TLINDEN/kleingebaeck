@@ -27,14 +27,9 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
-	"time"
 )
 
 type loggingTransport struct{}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 var letters = []rune("ABCDEF0123456789")
 
