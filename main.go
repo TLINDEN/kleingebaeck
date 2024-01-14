@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net/http"
 	"os"
 	"runtime/debug"
 
@@ -111,17 +112,20 @@ func Main(w io.Writer) int {
 		return Die(err)
 	}
 
+	// used for all HTTP requests
+	client := &http.Client{Transport: &loggingTransport{}}
+
 	if len(conf.Adlinks) >= 1 {
 		// directly backup ad listing[s]
 		for _, uri := range conf.Adlinks {
-			err := Scrape(conf, uri)
+			err := ScrapeAd(conf, uri, client)
 			if err != nil {
 				return Die(err)
 			}
 		}
 	} else if conf.User > 0 {
 		// backup all ads of the given user (via config or cmdline)
-		err := Start(conf)
+		err := ScrapeUser(conf, client)
 		if err != nil {
 			return Die(err)
 		}

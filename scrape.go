@@ -56,8 +56,7 @@ func Get(uri string, client *http.Client) (io.ReadCloser, error) {
 
 // extract links from  all ad listing pages (that  is: use pagination)
 // and scrape every page
-func Start(conf *Config) error {
-	client := &http.Client{}
+func ScrapeUser(conf *Config, client *http.Client) error {
 	adlinks := []string{}
 
 	baseuri := fmt.Sprintf("%s%s?userId=%d", Baseuri, Listuri, conf.User)
@@ -96,7 +95,7 @@ func Start(conf *Config) error {
 	}
 
 	for i, adlink := range adlinks {
-		err := Scrape(conf, Baseuri+adlink)
+		err := ScrapeAd(conf, Baseuri+adlink, client)
 		if err != nil {
 			return err
 		}
@@ -110,8 +109,7 @@ func Start(conf *Config) error {
 }
 
 // scrape an ad. uri is the full uri of the ad, dir is the basedir
-func Scrape(c *Config, uri string) error {
-	client := &http.Client{}
+func ScrapeAd(c *Config, uri string, client *http.Client) error {
 	ad := &Ad{}
 
 	// extract slug and id from uri
@@ -155,10 +153,10 @@ func Scrape(c *Config, uri string) error {
 
 	c.IncrAds()
 
-	return ScrapeImages(c, ad, addir)
+	return ScrapeImages(c, ad, addir, client)
 }
 
-func ScrapeImages(c *Config, ad *Ad, addir string) error {
+func ScrapeImages(c *Config, ad *Ad, addir string, client *http.Client) error {
 	// fetch images
 	img := 1
 	g := new(errgroup.Group)
@@ -167,7 +165,7 @@ func ScrapeImages(c *Config, ad *Ad, addir string) error {
 		imguri := imguri
 		file := filepath.Join(c.Outdir, addir, fmt.Sprintf("%d.jpg", img))
 		g.Go(func() error {
-			err := Getimage(imguri, file)
+			err := Getimage(imguri, file, client)
 			if err != nil {
 				return err
 			}
@@ -188,9 +186,16 @@ func ScrapeImages(c *Config, ad *Ad, addir string) error {
 }
 
 // fetch an image
-func Getimage(uri, fileName string) error {
+func Getimage(uri, fileName string, client *http.Client) error {
 	slog.Debug("fetching ad image", "uri", uri)
-	response, err := http.Get(uri)
+	req, err := http.NewRequest("GET", uri, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("User-Agent", Useragent)
+
+	response, err := client.Do(req)
 	if err != nil {
 		return err
 	}
