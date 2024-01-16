@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	VERSION         string = "0.1.1"
+	VERSION         string = "0.1.2"
 	Baseuri         string = "https://www.kleinanzeigen.de"
 	Listuri         string = "/s-bestandsliste.html"
 	Defaultdir      string = "."
@@ -51,15 +51,16 @@ const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
 Usage: kleingebaeck [-dvVhmoclu] [<ad-listing-url>,...]
 
 Options:
---user    -u <uid>      Backup ads from user with uid <uid>.
---debug   -d            Enable debug output.
---verbose -v            Enable verbose output.
---outdir  -o <dir>      Set output dir (default: current directory)
---limit   -l <num>      Limit the ads to download to <num>, default: load all.
---config  -c <file>     Use config file <file> (default: ~/.kleingebaeck).
---manual  -m            Show manual.
---help    -h            Show usage.
---version -V            Show program version.
+-u --user    <uid>      Backup ads from user with uid <uid>.
+-d --debug              Enable debug output.
+-v --verbose            Enable verbose output.
+-o --outdir  <dir>      Set output dir (default: current directory)
+-l --limit   <num>      Limit the ads to download to <num>, default: load all.
+-c --config  <file>     Use config file <file> (default: ~/.kleingebaeck).
+   --ignoreerrors       Ignore HTTP errors, may lead to incomplete ad backup.
+-m --manual             Show manual.
+-h --help               Show usage.
+-V --version            Show program version.
 
 If one  or more ad listing url's  are specified, only  backup those,
 otherwise backup all ads of the given user.`
@@ -76,6 +77,7 @@ type Config struct {
 	Adnametemplate   string `koanf:"adnametemplate"`
 	Loglevel         string `koanf:"loglevel"`
 	Limit            int    `koanf:"limit"`
+	IgnoreErrors     bool   `koanf:"ignoreerrors"`
 	Adlinks          []string
 	StatsCountAds    int
 	StatsCountImages int

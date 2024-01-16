@@ -165,11 +165,10 @@ func ScrapeImages(c *Config, ad *Ad, addir string, client *http.Client) error {
 		imguri := imguri
 		file := filepath.Join(c.Outdir, addir, fmt.Sprintf("%d.jpg", img))
 		g.Go(func() error {
-			err := Getimage(imguri, file, client)
+			err := Getimage(c, imguri, file, client)
 			if err != nil {
 				return err
 			}
-			slog.Info("wrote ad image", "image", file)
 
 			return nil
 		})
@@ -186,10 +185,13 @@ func ScrapeImages(c *Config, ad *Ad, addir string, client *http.Client) error {
 }
 
 // fetch an image
-func Getimage(uri, fileName string, client *http.Client) error {
+func Getimage(c *Config, uri, fileName string, client *http.Client) error {
 	slog.Debug("fetching ad image", "uri", uri)
 	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
+		if c.IgnoreErrors {
+			slog.Info("Failed to download image, error ignored", "error", err.Error())
+		}
 		return err
 	}
 
@@ -210,5 +212,6 @@ func Getimage(uri, fileName string, client *http.Client) error {
 		return err
 	}
 
+	slog.Info("wrote ad image", "image", fileName)
 	return nil
 }

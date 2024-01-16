@@ -15,21 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FIXME: we could also incorporate
-// https://github.com/kdkumawat/golang/blob/main/http-retry/http/retry-client.go
-
 package main
 
 import (
-	"fmt"
+	"bytes"
+	"io"
+	"io/ioutil"
 	"log/slog"
+	"math"
 	"math/rand"
 	"net/http"
-	"net/http/httputil"
-	"os"
+	"time"
 )
-
-type loggingTransport struct{}
 
 var letters = []rune("ABCDEF0123456789")
 
@@ -41,25 +38,83 @@ func getid() string {
 	return string(b)
 }
 
-func (s *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	resp, err := http.DefaultTransport.RoundTrip(req)
+const RetryCount = 3
 
+type loggingTransport struct{}
+
+// escalating timeout, $retry^2 seconds
+func backoff(retries int) time.Duration {
+	return time.Duration(math.Pow(2, float64(retries))) * time.Second
+}
+
+// only retry in case of errors or certain non 200 HTTP codes
+func shouldRetry(err error, resp *http.Response) bool {
+	if err != nil {
+		return true
+	}
+
+	if resp.StatusCode == http.StatusBadGateway ||
+		resp.StatusCode == http.StatusServiceUnavailable ||
+		resp.StatusCode == http.StatusGatewayTimeout {
+		return true
+	}
+
+	return false
+}
+
+// Body needs to be drained, otherwise we can't reuse the http.Response
+func drainBody(resp *http.Response) {
+	if resp != nil {
+		if resp.Body != nil {
+			io.Copy(ioutil.Discard, resp.Body)
+			resp.Body.Close()
+		}
+	}
+}
+
+// our logging transport with retries
+func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	// just requred for debugging
 	id := getid()
+
+	// clone the request body, put into request on retry
+	var bodyBytes []byte
+	if req.Body != nil {
+		bodyBytes, _ = ioutil.ReadAll(req.Body)
+		req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+	}
+
 	slog.Debug("REQUEST", "id", id, "uri", req.URL, "host", req.Host)
-	slog.Debug("RESPONSE", "id", id, "status", resp.StatusCode, "contentlength", resp.ContentLength)
 
-	if len(os.Getenv("DEBUGHTTP")) > 0 {
-		fmt.Println("DEBUGHTTP Request ===>")
-		bytes, _ := httputil.DumpRequestOut(req, true)
-		fmt.Printf("%s\n", bytes)
+	// first try
+	resp, err := http.DefaultTransport.RoundTrip(req)
+	if err == nil {
+		slog.Debug("RESPONSE", "id", id, "status", resp.StatusCode,
+			"contentlength", resp.ContentLength)
+	}
 
-		fmt.Println("<=== DEBUGHTTP Response")
-		for header, value := range resp.Header {
-			fmt.Printf("%s: %s\n", header, value)
+	// enter retry check and loop, if first req were successfull, leave loop immediately
+	retries := 0
+	for shouldRetry(err, resp) && retries < RetryCount {
+		time.Sleep(backoff(retries))
+
+		// consume any response to reuse the connection.
+		drainBody(resp)
+
+		// clone the request body again
+		if req.Body != nil {
+			req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 		}
-		fmt.Printf("Status: %s %s\nContent-Length: %d\n\n\n", resp.Proto, resp.Status, resp.ContentLength)
 
+		// actual retry
+		resp, err = http.DefaultTransport.RoundTrip(req)
+
+		if err == nil {
+			slog.Debug("RESPONSE", "id", id, "status", resp.StatusCode,
+				"contentlength", resp.ContentLength, "retry", retries)
+		}
+
+		retries++
 	}
 
 	return resp, err
