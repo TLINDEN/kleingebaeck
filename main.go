@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"net/http"
 	"os"
 	"runtime/debug"
 
@@ -102,8 +101,6 @@ func Main(w io.Writer) int {
 		slog.SetDefault(debuglogger)
 	}
 
-	// defaultlogger := log.Default()
-	// defaultlogger.SetOutput(w)
 	slog.Debug("config", "conf", conf)
 
 	// prepare output dir
@@ -113,19 +110,19 @@ func Main(w io.Writer) int {
 	}
 
 	// used for all HTTP requests
-	client := &http.Client{Transport: &loggingTransport{}}
+	fetch := NewFetcher(conf)
 
 	if len(conf.Adlinks) >= 1 {
 		// directly backup ad listing[s]
 		for _, uri := range conf.Adlinks {
-			err := ScrapeAd(conf, uri, client)
+			err := ScrapeAd(fetch, uri)
 			if err != nil {
 				return Die(err)
 			}
 		}
 	} else if conf.User > 0 {
 		// backup all ads of the given user (via config or cmdline)
-		err := ScrapeUser(conf, client)
+		err := ScrapeUser(fetch)
 		if err != nil {
 			return Die(err)
 		}

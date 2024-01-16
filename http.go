@@ -27,6 +27,9 @@ import (
 	"time"
 )
 
+// I add an artificial "ID" to each HTTP request and the corresponding
+// respose for  debugging purposes  so that  the pair  of them  can be
+// easier associated in debug output
 var letters = []rune("ABCDEF0123456789")
 
 func getid() string {
@@ -37,8 +40,10 @@ func getid() string {
 	return string(b)
 }
 
+// retry after HTTP 50x errors or err!=nil
 const RetryCount = 3
 
+// used to inject debug log and implement retries
 type loggingTransport struct{}
 
 // escalating timeout, $retry^2 seconds
@@ -75,7 +80,7 @@ func drainBody(resp *http.Response) {
 	}
 }
 
-// our logging transport with retries
+// the actual logging transport with retries
 func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	// just requred for debugging
 	id := getid()
