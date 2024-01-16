@@ -20,9 +20,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
-	"net/http"
 	"path/filepath"
 	"strings"
 
@@ -30,42 +28,21 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// fetch some web page content
-func Get(uri string, client *http.Client) (io.ReadCloser, error) {
-	req, err := http.NewRequest("GET", uri, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("User-Agent", Useragent)
-
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, errors.New("could not get page via HTTP")
-	}
-
-	return res.Body, nil
-}
-
 // extract links from  all ad listing pages (that  is: use pagination)
 // and scrape every page
-func ScrapeUser(conf *Config, client *http.Client) error {
+func ScrapeUser(fetch *Fetcher) error {
 	adlinks := []string{}
 
-	baseuri := fmt.Sprintf("%s%s?userId=%d", Baseuri, Listuri, conf.User)
+	baseuri := fmt.Sprintf("%s%s?userId=%d", Baseuri, Listuri, fetch.Config.User)
 	page := 1
 	uri := baseuri
 
-	slog.Info("fetching ad pages", "user", conf.User)
+	slog.Info("fetching ad pages", "user", fetch.Config.User)
 
 	for {
 		var index Index
 		slog.Debug("fetching page", "uri", uri)
-		body, err := Get(uri, client)
+		body, err := fetch.Get(uri)
 		if err != nil {
 			return err
 		}
@@ -92,12 +69,12 @@ func ScrapeUser(conf *Config, client *http.Client) error {
 	}
 
 	for i, adlink := range adlinks {
-		err := ScrapeAd(conf, Baseuri+adlink, client)
+		err := ScrapeAd(fetch, Baseuri+adlink)
 		if err != nil {
 			return err
 		}
 
-		if conf.Limit > 0 && i == conf.Limit-1 {
+		if fetch.Config.Limit > 0 && i == fetch.Config.Limit-1 {
 			break
 		}
 	}
@@ -106,7 +83,7 @@ func ScrapeUser(conf *Config, client *http.Client) error {
 }
 
 // scrape an ad. uri is the full uri of the ad, dir is the basedir
-func ScrapeAd(c *Config, uri string, client *http.Client) error {
+func ScrapeAd(fetch *Fetcher, uri string) error {
 	ad := &Ad{}
 
 	// extract slug and id from uri
@@ -119,7 +96,7 @@ func ScrapeAd(c *Config, uri string, client *http.Client) error {
 
 	// get the ad
 	slog.Debug("fetching ad page", "uri", uri)
-	body, err := Get(uri, client)
+	body, err := fetch.Get(uri)
 	if err != nil {
 		return err
 	}
@@ -143,26 +120,31 @@ func ScrapeAd(c *Config, uri string, client *http.Client) error {
 	slog.Debug("extracted ad listing", "ad", ad)
 
 	// write listing
-	addir, err := WriteAd(c, ad)
+	addir, err := WriteAd(fetch.Config, ad)
 	if err != nil {
 		return err
 	}
 
-	c.IncrAds()
+	fetch.Config.IncrAds()
 
-	return ScrapeImages(c, ad, addir, client)
+	return ScrapeImages(fetch, ad, addir)
 }
 
-func ScrapeImages(c *Config, ad *Ad, addir string, client *http.Client) error {
+func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 	// fetch images
 	img := 1
 	g := new(errgroup.Group)
 
 	for _, imguri := range ad.Images {
 		imguri := imguri
-		file := filepath.Join(c.Outdir, addir, fmt.Sprintf("%d.jpg", img))
+		file := filepath.Join(fetch.Config.Outdir, addir, fmt.Sprintf("%d.jpg", img))
 		g.Go(func() error {
-			err := Getimage(c, imguri, file, client)
+			body, err := fetch.Getimage(imguri)
+			if err != nil {
+				return err
+			}
+
+			err = WriteImage(file, body)
 			if err != nil {
 				return err
 			}
@@ -176,39 +158,7 @@ func ScrapeImages(c *Config, ad *Ad, addir string, client *http.Client) error {
 		return err
 	}
 
-	c.IncrImgs(len(ad.Images))
+	fetch.Config.IncrImgs(len(ad.Images))
 
-	return nil
-}
-
-// fetch an image
-func Getimage(c *Config, uri, fileName string, client *http.Client) error {
-	slog.Debug("fetching ad image", "uri", uri)
-	req, err := http.NewRequest("GET", uri, nil)
-	if err != nil {
-		if c.IgnoreErrors {
-			slog.Info("Failed to download image, error ignored", "error", err.Error())
-		}
-		return err
-	}
-
-	req.Header.Set("User-Agent", Useragent)
-
-	response, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer response.Body.Close()
-
-	if response.StatusCode != 200 {
-		return errors.New("could not get image via HTTP")
-	}
-
-	err = WriteImage(fileName, response.Body)
-	if err != nil {
-		return err
-	}
-
-	slog.Info("wrote ad image", "image", fileName)
 	return nil
 }
