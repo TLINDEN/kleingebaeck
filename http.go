@@ -20,7 +20,6 @@ package main
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"log/slog"
 	"math"
 	"math/rand"
@@ -84,8 +83,8 @@ func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	// clone the request body, put into request on retry
 	var bodyBytes []byte
 	if req.Body != nil {
-		bodyBytes, _ = ioutil.ReadAll(req.Body)
-		req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		bodyBytes, _ = io.ReadAll(req.Body)
+		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 	}
 
 	slog.Debug("REQUEST", "id", id, "uri", req.URL, "host", req.Host)
@@ -107,7 +106,7 @@ func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 
 		// clone the request body again
 		if req.Body != nil {
-			req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+			req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 		}
 
 		// actual retry
