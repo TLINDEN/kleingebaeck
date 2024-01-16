@@ -114,6 +114,7 @@ const EMPTYPAGE string = `DOCTYPE html>
 
 const (
 	EMPTYURI       string = `https://www.kleinanzeigen.de/s-anzeige/empty/1`
+	INVALID503URI  string = `https://www.kleinanzeigen.de/s-anzeige/503/1`
 	INVALIDPATHURI string = `https://www.kleinanzeigen.de/anzeige/name/1`
 	INVALID404URI  string = `https://www.kleinanzeigen.de/anzeige/name/1/foo/bar`
 	INVALIDURI     string = `https://foo.bar/weird/things`
@@ -226,6 +227,12 @@ var invalidtests = []Tests{
 		name:     "no-config",
 		args:     "kleingebaeck -c t/invalid.conf",
 		expect:   "error loading config file",
+		exitcode: 1,
+	},
+	{
+		name:     "503",
+		args:     base + " " + INVALID503URI,
+		expect:   "could not get page via HTTP",
 		exitcode: 1,
 	},
 }
@@ -409,6 +416,12 @@ func InitInvalidSources() []Adsource {
 			uri:     fmt.Sprintf("%s/anzeige/name/1/foo/bar", Baseuri),
 			content: GetTemplate(nil, empty, "<html>HTTP 404: /eine-anzeige/ does not exist!</html>"),
 			status:  404,
+		},
+		{
+			// valid ad page but 503
+			uri:     fmt.Sprintf("%s/s-anzeige/503/1", Baseuri),
+			content: GetTemplate(nil, empty, "<html>HTTP 503: service unavailable</html>"),
+			status:  503,
 		},
 	}
 
