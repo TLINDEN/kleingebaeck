@@ -44,9 +44,6 @@ func Get(uri string, client *http.Client) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	slog.Debug("response", "code", res.StatusCode, "status",
-		res.Status, "size", res.ContentLength)
-
 	if res.StatusCode != 200 {
 		return nil, errors.New("could not get page via HTTP")
 	}

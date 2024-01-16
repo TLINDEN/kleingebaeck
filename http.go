@@ -66,7 +66,11 @@ func shouldRetry(err error, resp *http.Response) bool {
 func drainBody(resp *http.Response) {
 	if resp != nil {
 		if resp.Body != nil {
-			io.Copy(ioutil.Discard, resp.Body)
+			_, err := io.Copy(io.Discard, resp.Body)
+			if err != nil {
+				// unable to copy data? uff!
+				panic(err)
+			}
 			resp.Body.Close()
 		}
 	}
