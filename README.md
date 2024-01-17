@@ -128,6 +128,13 @@ loglevel = verbose
 outdir = "test"
 ```
 
+## Environment Variables
+
+Kleingebaeck can also be configured using environment variables. Just prefix the config variables with `KLEINGEBAECK_` and put them to upper case. Eg:
+```shell
+% KLEINGEBAECK_OUTDIR=/backup kleingebaeck -v
+```
+
 ## Usage
 
 To setup the tool, you need to lookup your userid on
