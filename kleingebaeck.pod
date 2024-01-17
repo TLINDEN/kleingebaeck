@@ -77,6 +77,23 @@ directory. Then just execute C<kleingebaeck>.
 You can use the B<-v> option to  get verbose output or B<-d> to enable
 debugging.
 
+=head1 ENVIRONMENT VARIABLES
+
+The following environment variables  are considered:
+
+    KLEINGEBAECK_USER
+    KLEINGEBAECK_DEBUG
+    KLEINGEBAECK_VERBOSE
+    KLEINGEBAECK_OUTDIR
+    KLEINGEBAECK_LIMIT
+    KLEINGEBAECK_CONFIG
+    KLEINGEBAECK_IGNOREERRORS
+
+Please  note,  that  they  take   precedence  over  config  file,  but
+commandline flags take precedence over env!
+
+
+
 =head1 BUGS
 
 In order to report a bug, unexpected behavior, feature requests
