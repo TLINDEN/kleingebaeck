@@ -106,9 +106,16 @@ USER_ID=$(id -u) GROUP_ID=$(id -g) OUTDIR=./kleinanzeigen-backup docker-compose 
 ```
 
 `USER_ID` and  `GROUP_ID` needs to  be specified  so that you  are the
-owner of the created backups. The backup directory must exist prior to
-the  execution,  otherwise  docker  will   create  it  as  root,  then
-kleingebaeck will fail.
+owner of the created backups. The backup directory `OUTDIR` must exist
+prior to the execution, otherwise docker  will create it as root, then
+kleingebaeck will  fail. You may  also use a  `.env` file in  the same
+directory containing the variables, such as:
+
+```
+USER_ID=1000
+GROUP_ID=1000
+OUTDIR=./kleinanzeigen-backup
+```
 
 You may of course also modify the `docker-compose.yaml` to suit your needs.
 

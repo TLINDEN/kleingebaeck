@@ -16,8 +16,6 @@ RUN make
 FROM alpine:latest
 LABEL maintainer="Thomas von Dein <git@daemon.de>"
 
-#RUN install -o 1001 -g 1001 -d /data
-
 WORKDIR /app
 COPY --from=builder /work/kleingebaeck /app/kleingebaeck
 
