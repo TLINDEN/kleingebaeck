@@ -74,6 +74,20 @@ SETUP
     You can use the -v option to get verbose output or -d to enable
     debugging.
 
+ENVIRONMENT VARIABLES
+    The following environment variables are considered:
+
+        KLEINGEBAECK_USER
+        KLEINGEBAECK_DEBUG
+        KLEINGEBAECK_VERBOSE
+        KLEINGEBAECK_OUTDIR
+        KLEINGEBAECK_LIMIT
+        KLEINGEBAECK_CONFIG
+        KLEINGEBAECK_IGNOREERRORS
+
+    Please note, that they take precedence over config file, but commandline
+    flags take precedence over env!
+
 BUGS
     In order to report a bug, unexpected behavior, feature requests or to
     submit a patch, please open an issue on github:

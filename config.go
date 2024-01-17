@@ -23,9 +23,11 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/knadh/koanf/parsers/toml"
 	"github.com/knadh/koanf/providers/confmap"
+	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
@@ -162,7 +164,15 @@ func InitConfig(w io.Writer) (*Config, error) {
 		// else: we ignore the file if it doesn't exists
 	}
 
-	// command line overrides config file
+	// env overrides config file
+	if err := k.Load(env.Provider("KLEINGEBAECK_", ".", func(s string) string {
+		return strings.Replace(strings.ToLower(
+			strings.TrimPrefix(s, "KLEINGEBAECK_")), "_", ".", -1)
+	}), nil); err != nil {
+		return nil, errors.New("error loading environment: " + err.Error())
+	}
+
+	// command line overrides env
 	if err := k.Load(posflag.Provider(f, ".", k), nil); err != nil {
 		return nil, errors.New("error loading flags: " + err.Error())
 	}
