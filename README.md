@@ -94,6 +94,26 @@ installed - `make`.
 
 To install after building either copy the binary or execute `sudo make install`.
 
+### Using the docker image
+
+A pre-built docker  image is available, which you can  use to test the
+app without  installing it. You  need `docker-compose`. Copy  the file
+`docker-compose.yaml` to somewhere, cd to that directory and execute:
+
+```shell
+mkdir kleinanzeigen-backup
+USER_ID=$(id -u) GROUP_ID=$(id -g) OUTDIR=./kleinanzeigen-backup docker-compose run kleingebaeck -u XXX -v
+```
+
+`USER_ID` and  `GROUP_ID` needs to  be specified  so that you  are the
+owner of the created backups. The backup directory must exist prior to
+the  execution,  otherwise  docker  will   create  it  as  root,  then
+kleingebaeck will fail.
+
+You may of course also modify the `docker-compose.yaml` to suit your needs.
+
+If you want to build the image yourself, use the supplied Dockerfile.
+
 ## Commandline options:
 
 ```

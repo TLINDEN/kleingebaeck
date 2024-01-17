@@ -6,14 +6,14 @@ services:
     group_add:
       - '${GROUP_ID}'
     volumes:
-      - ./test/out:/backup
+      - ${OUTDIR}:/backup
     command: chown -R ${USER_ID}:${USER_ID} /backup
 
   kleingebaeck:
     container_name: kleingebaeck
     user: "${USER_ID}:${USER_ID}"
     volumes:
-      - ./test/out:/backup
+      - ${OUTDIR}:/backup
     working_dir: /backup
     build: .
     image: kleingebaeck:latest
