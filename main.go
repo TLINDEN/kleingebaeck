@@ -26,6 +26,7 @@ import (
 	"runtime/debug"
 
 	"github.com/lmittmann/tint"
+	"github.com/tlinden/yadu"
 )
 
 const LevelNotice = slog.Level(2)
@@ -84,14 +85,14 @@ func Main(w io.Writer) int {
 	if conf.Debug {
 		// we're using a more verbose logger in debug mode
 		buildInfo, _ := debug.ReadBuildInfo()
-		opts := &tint.Options{
+		opts := &yadu.Options{
 			Level:     logLevel,
 			AddSource: true,
-			NoColor:   IsNoTty(),
+			//NoColor:   IsNoTty(),
 		}
 
 		logLevel.Set(slog.LevelDebug)
-		handler := tint.NewHandler(w, opts)
+		handler := yadu.NewHandler(w, opts)
 		debuglogger := slog.New(handler).With(
 			slog.Group("program_info",
 				slog.Int("pid", os.Getpid()),
