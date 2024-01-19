@@ -145,7 +145,13 @@ var tests = []Tests{
 	{
 		name:     "debug",
 		args:     base + " -d",
-		expect:   "program_info",
+		expect:   "error: invalid or no user id or no ad link specified",
+		exitcode: 1,
+	},
+	{
+		name:     "debug-check-programinfo",
+		args:     base + " -d",
+		expect:   "pid:",
 		exitcode: 1,
 	},
 	{
@@ -169,7 +175,7 @@ var tests = []Tests{
 	{
 		name:     "download-single-ad-debug",
 		args:     base + " -o t/out https://www.kleinanzeigen.de/s-anzeige/first-ad/1 -d",
-		expect:   "extracted ad listing program_info.pid=",
+		expect:   "DEBUG: extracted ad listing",
 		exitcode: 0,
 	},
 	{
