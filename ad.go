@@ -20,6 +20,7 @@ package main
 import (
 	"log/slog"
 	"strings"
+	"time"
 )
 
 type Index struct {
@@ -37,6 +38,7 @@ type Ad struct {
 	Created      string   `goquery:"#viewad-extra-info,text"`
 	Text         string   `goquery:"p#viewad-description-text,html"`
 	Images       []string `goquery:".galleryimage-element img,[src]"`
+	Expire       string
 }
 
 // Used by slog to pretty print an ad
@@ -49,6 +51,8 @@ func (ad *Ad) LogValue() slog.Value {
 		slog.Int("bodysize", len(ad.Text)),
 		slog.String("categorytree", strings.Join(ad.CategoryTree, "+")),
 		slog.String("condition", ad.Condition),
+		slog.String("created", ad.Created),
+		slog.String("expire", ad.Expire),
 	)
 }
 
@@ -66,4 +70,13 @@ func (ad *Ad) Incomplete() bool {
 	}
 
 	return false
+}
+
+func (ad *Ad) CalculateExpire() {
+	if len(ad.Created) > 0 {
+		ts, err := time.Parse("02.01.2006", ad.Created)
+		if err == nil {
+			ad.Expire = ts.AddDate(0, 2, 1).Format("02.01.2006")
+		}
+	}
 }
