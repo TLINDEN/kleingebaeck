@@ -35,14 +35,16 @@ import (
 )
 
 const (
-	VERSION         string = "0.1.2"
+	VERSION         string = "0.2.0"
 	Baseuri         string = "https://www.kleinanzeigen.de"
 	Listuri         string = "/s-bestandsliste.html"
 	Defaultdir      string = "."
 	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.Id}}\n" +
-		"Category: {{.Category}}\nCondition: {{.Condition}}\nCreated: {{.Created}}\n\n{{.Text}}\n"
+		"Category: {{.Category}}\nCondition: {{.Condition}}\n" +
+		"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.Id}}\r\n" +
-		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\nCreated: {{.Created}}\r\n\r\n{{.Text}}\r\n"
+		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\n" +
+		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
 	Useragent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
 		"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 	DefaultAdNameTemplate string = "{{.Slug}}"

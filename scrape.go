@@ -117,6 +117,8 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 		return errors.New("could not extract ad data from page, got empty struct")
 	}
 
+	ad.CalculateExpire()
+
 	slog.Debug("extracted ad listing", "ad", ad)
 
 	// write listing
