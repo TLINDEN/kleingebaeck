@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -119,13 +120,13 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 
 	ad.CalculateExpire()
 
-	slog.Debug("extracted ad listing", "ad", ad)
-
 	// write listing
 	addir, err := WriteAd(fetch.Config, ad)
 	if err != nil {
 		return err
 	}
+
+	slog.Debug("extracted ad listing", "ad", ad)
 
 	fetch.Config.IncrAds()
 
@@ -135,22 +136,48 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 	// fetch images
 	img := 1
+
+	adpath := filepath.Join(fetch.Config.Outdir, addir)
+
+	// scan existing images, if any
+	images, err := ReadImages(adpath)
+	if err != nil {
+		return err
+	}
+
 	g := new(errgroup.Group)
 
 	for _, imguri := range ad.Images {
 		imguri := imguri
-		file := filepath.Join(fetch.Config.Outdir, addir, fmt.Sprintf("%d.jpg", img))
+		file := filepath.Join(adpath, fmt.Sprintf("%d.jpg", img))
 		g.Go(func() error {
 			body, err := fetch.Getimage(imguri)
 			if err != nil {
 				return err
 			}
 
-			err = WriteImage(file, body)
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(body)
+
+			buf2 := buf.Bytes() // needed for image writing
+
+			image := NewImage(buf, "", imguri)
+			err = image.CalcHash()
 			if err != nil {
 				return err
 			}
 
+			if image.SimilarExists(images) {
+				slog.Debug("similar image exists, not written", "image", image)
+				return nil
+			}
+
+			err = WriteImage(file, buf2)
+			if err != nil {
+				return err
+			}
+
+			slog.Debug("wrote image", "image", image, "size", len(buf2))
 			return nil
 		})
 		img++

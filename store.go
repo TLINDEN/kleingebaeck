@@ -19,7 +19,7 @@ package main
 
 import (
 	"bytes"
-	"io"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -86,17 +86,46 @@ func WriteAd(c *Config, ad *Ad) (string, error) {
 	return addir, nil
 }
 
-func WriteImage(filename string, reader io.ReadCloser) error {
+func WriteImage(filename string, buf []byte) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	_, err = io.Copy(file, reader)
+	_, err = file.Write(buf)
+
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func ReadImage(filename string) (*bytes.Buffer, error) {
+	var buf bytes.Buffer
+
+	if !fileExists(filename) {
+		return nil, fmt.Errorf("image %s does not exist", filename)
+	}
+
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = buf.Write(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &buf, nil
+}
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
