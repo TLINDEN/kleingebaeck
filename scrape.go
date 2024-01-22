@@ -156,7 +156,10 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 			}
 
 			buf := new(bytes.Buffer)
-			buf.ReadFrom(body)
+			_, err = buf.ReadFrom(body)
+			if err != nil {
+				return err
+			}
 
 			buf2 := buf.Bytes() // needed for image writing
 
