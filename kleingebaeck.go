@@ -14,6 +14,7 @@ SYNOPSYS
         -l --limit   <num>      Limit the ads to download to <num>, default: load all.
         -c --config  <file>     Use config file <file> (default: ~/.kleingebaeck).
            --ignoreerrors       Ignore HTTP errors, may lead to incomplete ad backup.
+        -f --force              Download images even if they already exist.
         -m --manual             Show manual.
         -h --help               Show usage.
         -V --version            Show program version.
