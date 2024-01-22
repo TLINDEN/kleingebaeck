@@ -3,3 +3,6 @@ kleingebaeck
 releases
 t/out
 .bak
+t/httproot/out
+t/httproot/kleinanzeigen
+t/httproot/favicon.ico
