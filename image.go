@@ -46,7 +46,7 @@ func (img *Image) LogValue() slog.Value {
 }
 
 // holds all images of an ad
-type Images []*Image
+type Cache []*goimagehash.ImageHash
 
 func NewImage(buf *bytes.Buffer, filename string, uri string) *Image {
 	img := &Image{
@@ -76,15 +76,16 @@ func (img *Image) CalcHash() error {
 }
 
 // checks if 2 images are similar enough to be considered the same
-func (img *Image) Similar(otherimg *Image) bool {
-	distance, err := img.Hash.Distance(otherimg.Hash)
+func (img *Image) Similar(hash *goimagehash.ImageHash) bool {
+	distance, err := img.Hash.Distance(hash)
 	if err != nil {
 		slog.Debug("failed to compute diff hash distance", "error", err)
 		return false
 	}
 
 	if distance < MaxDistance {
-		slog.Debug("distance computation", "image-A", img, "image-B", otherimg, "distance", distance)
+		slog.Debug("distance computation", "image-A", img.Hash.ToString(),
+			"image-B", hash.ToString(), "distance", distance)
 		return true
 	} else {
 		return false
@@ -92,8 +93,8 @@ func (img *Image) Similar(otherimg *Image) bool {
 }
 
 // check current image against all known hashes.
-func (img *Image) SimilarExists(images Images) bool {
-	for _, otherimg := range images {
+func (img *Image) SimilarExists(cache Cache) bool {
+	for _, otherimg := range cache {
 		if img.Similar(otherimg) {
 			return true
 		}
@@ -104,13 +105,18 @@ func (img *Image) SimilarExists(images Images) bool {
 
 // read all  JPG images  in a  ad directory,  compute diff  hashes and
 // store the results in the slice Images
-func ReadImages(addir string) (Images, error) {
+func ReadImages(addir string, dont bool) (Cache, error) {
 	files, err := os.ReadDir(addir)
 	if err != nil {
 		return nil, err
 	}
 
-	imgs := Images{}
+	cache := Cache{}
+
+	if dont {
+		// forced download, -f given
+		return cache, nil
+	}
 
 	for _, file := range files {
 		ext := filepath.Ext(file.Name())
@@ -127,10 +133,10 @@ func ReadImages(addir string) (Images, error) {
 			}
 
 			slog.Debug("Caching image from file system", "image", img, "hash", img.Hash.ToString())
-			imgs = append(imgs, img)
+			cache = append(cache, img.Hash)
 		}
 	}
 
 	//return nil, errors.New("ende")
-	return imgs, nil
+	return cache, nil
 }
