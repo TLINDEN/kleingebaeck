@@ -14,7 +14,7 @@ require (
 	github.com/lmittmann/tint v1.0.4
 	github.com/mattn/go-isatty v0.0.20
 	github.com/spf13/pflag v1.0.5
-	github.com/tlinden/yadu v0.1.0
+	github.com/tlinden/yadu v0.1.1
 	golang.org/x/sync v0.5.0
 )
 
