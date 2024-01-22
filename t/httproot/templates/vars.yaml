@@ -1,0 +1,27 @@
+ads:
+  - slug: first-ad
+    id: 111-11-111
+    title: First Ad
+    price: "19 €"
+    condition: "Sehr gut"
+    category: "Weitere Elektronik"
+    created: 21.12.2023
+    images:
+      - id: fcf6d664-5258-42c2-bf58-d1b8e9221574
+      - id: fcf6d664-5258-42c2-bf58-as43as5d43as
+    text: |
+      Zu Verkaufen.
+      Zahlung nur Paypal.
+  - slug: second-ad
+    id: 222-22-222
+    title: Second Ad
+    price: "200 €"
+    condition: "Sehr gut"
+    category: "Elektronik"
+    created: 21.12.2023
+    images:
+      - id: cdas4sd5-5258-42c2-bf58-d1b8e9221574
+      - id: cdas4sd5-5258-42c2-bf58-as43as5d43as
+    text: |
+      Zu Verkaufen.
+      Zahlung nur Überweisung.
