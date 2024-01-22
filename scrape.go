@@ -136,11 +136,10 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 	// fetch images
 	img := 1
-
 	adpath := filepath.Join(fetch.Config.Outdir, addir)
 
 	// scan existing images, if any
-	images, err := ReadImages(adpath)
+	cache, err := ReadImages(adpath, fetch.Config.ForceDownload)
 	if err != nil {
 		return err
 	}
@@ -167,9 +166,11 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 				return err
 			}
 
-			if image.SimilarExists(images) {
-				slog.Debug("similar image exists, not written", "image", image)
-				return nil
+			if !fetch.Config.ForceDownload {
+				if image.SimilarExists(cache) {
+					slog.Debug("similar image exists, not written", "uri", image.Uri)
+					return nil
+				}
 			}
 
 			err = WriteImage(file, buf2)

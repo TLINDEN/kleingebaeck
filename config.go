@@ -62,6 +62,7 @@ Options:
 -l --limit   <num>      Limit the ads to download to <num>, default: load all.
 -c --config  <file>     Use config file <file> (default: ~/.kleingebaeck).
    --ignoreerrors       Ignore HTTP errors, may lead to incomplete ad backup.
+-f --force              Download images even if they already exist.
 -m --manual             Show manual.
 -h --help               Show usage.
 -V --version            Show program version.
@@ -82,6 +83,7 @@ type Config struct {
 	Loglevel         string `koanf:"loglevel"`
 	Limit            int    `koanf:"limit"`
 	IgnoreErrors     bool   `koanf:"ignoreerrors"`
+	ForceDownload    bool   `koanf:"force"`
 	Adlinks          []string
 	StatsCountAds    int
 	StatsCountImages int
@@ -133,6 +135,7 @@ func InitConfig(w io.Writer) (*Config, error) {
 	f.BoolP("version", "V", false, "show program version")
 	f.BoolP("help", "h", false, "show usage")
 	f.BoolP("manual", "m", false, "show manual")
+	f.BoolP("force", "f", false, "force")
 
 	if err := f.Parse(os.Args[1:]); err != nil {
 		return nil, err
