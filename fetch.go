@@ -20,8 +20,11 @@ package main
 import (
 	"errors"
 	"io"
+	"log"
 	"log/slog"
 	"net/http"
+	"net/http/cookiejar"
+	"net/url"
 )
 
 // convenient wrapper to fetch some web content
@@ -29,13 +32,24 @@ type Fetcher struct {
 	Config    *Config
 	Client    *http.Client
 	Useragent string // FIXME: make configurable
+	Cookies   []*http.Cookie
 }
 
 func NewFetcher(c *Config) *Fetcher {
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		// cannot return error here, FIXME
+		log.Fatalf("Got error while creating cookie jar %s", err.Error())
+	}
+
 	return &Fetcher{
-		Client:    &http.Client{Transport: &loggingTransport{}}, // implemented in http.go
-		Useragent: Useragent,                                    // default in config.go
+		Client: &http.Client{
+			Transport: &loggingTransport{}, // implemented in http.go
+			Jar:       jar,
+		},
+		Useragent: Useragent, // default in config.go
 		Config:    c,
+		Cookies:   []*http.Cookie{},
 	}
 }
 
@@ -47,6 +61,15 @@ func (f *Fetcher) Get(uri string) (io.ReadCloser, error) {
 
 	req.Header.Set("User-Agent", f.Useragent)
 
+	if len(f.Cookies) > 0 {
+		uriobj, _ := url.Parse(Baseuri)
+		slog.Debug("have cookies, sending them",
+			"sample-cookie-name", f.Cookies[0].Name,
+			"sample-cookie-expire", f.Cookies[0].Expires,
+		)
+		f.Client.Jar.SetCookies(uriobj, f.Cookies)
+	}
+
 	res, err := f.Client.Do(req)
 	if err != nil {
 		return nil, err
@@ -55,6 +78,8 @@ func (f *Fetcher) Get(uri string) (io.ReadCloser, error) {
 	if res.StatusCode != 200 {
 		return nil, errors.New("could not get page via HTTP")
 	}
+
+	f.Cookies = res.Cookies()
 
 	return res.Body, nil
 }
