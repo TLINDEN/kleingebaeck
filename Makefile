@@ -78,7 +78,7 @@ release: buildall
 
 show-versions: buildlocal
 	@echo "### kleingebaeck version:"
-	@./kleingebaeck -v
+	@./kleingebaeck -V
 
 	@echo
 	@echo "### go module versions:"
