@@ -26,3 +26,9 @@ jobs:
         with:
           push: true
           tags: ghcr.io/tlinden/kleingebaeck:${{ github.ref_name}}
+
+      - name: Build and push latest Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          push: true
+          tags: ghcr.io/tlinden/kleingebaeck:latest
