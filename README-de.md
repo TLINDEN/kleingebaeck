@@ -8,6 +8,7 @@
 ![GitHub License](https://img.shields.io/github/license/tlinden/kleingebaeck)
 [![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://github.com/TLINDEN/kleingebaeck/releases/latest)
 [![English](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/english.png)](https://github.com/tlinden/kleingebaeck/blob/main/README.md)
+
 Mit diesem Tool kann man seine Anzeigen bei https://kleinanzeigen.de sichern.
 
 Es kann alle Anzeigen eines Users (oder nur eine Ausgewählte)
