@@ -7,7 +7,9 @@
 [![Go Coverage](https://github.com/tlinden/kleingebaeck/wiki/coverage.svg)](https://raw.githack.com/wiki/tlinden/kleingebaeck/coverage.html)
 ![GitHub License](https://img.shields.io/github/license/tlinden/kleingebaeck)
 [![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://github.com/TLINDEN/kleingebaeck/releases/latest)
+[![German](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/german.png)](https://github.com/tlinden/kleingebaeck/blob/main/README-de.md)
 
+[Die deutsche Version des READMEs findet Ihr hier](README-de.md).
 
 This tool can be used to backup ads on the german ad page https://kleinanzeigen.de
 
@@ -60,7 +62,7 @@ Go            to             the            [latest            release
 page](https://github.com/TLINDEN/kleingebaeck/releases/latest)     and
 look for your OS and platform. There are two options to install the binary:
 
-1.    Directly   download    the    binary    for   your    platoform,
+1.    Directly   download    the    binary    for   your    platform,
    e.g. `kleingebaeck-linux-amd64-0.0.5`, rename  it to `kleingebaeck`
    (or  whatever  you  like  more!)  and put  it  into  your  bin  dir
    (e.g. `$HOME/bin` or as root to `/usr/local/bin`).
@@ -97,29 +99,37 @@ To install after building either copy the binary or execute `sudo make install`.
 ### Using the docker image
 
 A pre-built docker  image is available, which you can  use to test the
-app without  installing it. You  need `docker-compose`. Copy  the file
-`docker-compose.yaml` to somewhere, cd to that directory and execute:
+app without  installing it. To download:
 
 ```shell
-mkdir kleinanzeigen-backup
-USER_ID=$(id -u) GROUP_ID=$(id -g) OUTDIR=./kleinanzeigen-backup docker-compose run kleingebaeck -u XXX -v
+docker pull ghcr.io/tlinden/kleingebaeck:latest
 ```
 
-`USER_ID` and  `GROUP_ID` needs to  be specified  so that you  are the
-owner of the created backups. The backup directory `OUTDIR` must exist
-prior to the execution, otherwise docker  will create it as root, then
-kleingebaeck will  fail. You may  also use a  `.env` file in  the same
-directory containing the variables, such as:
+To execute kleingebaeck  inside the image and download ads  to a local
+directory, do something like this:
 
+```shell
+mkdir myads
+docker run -u `id -u $USER` -v ./myads:/backup ghcr.io/tlinden/kleingebaeck:latest -u XXX -v
+ls -l myads/ein-buch-mit-leeren-seiten
+total 792
+drwxr-xr-x 2 scip root   4096 Jan 23 12:58 ./
+drwxr-xr-x 3 scip scip   4096 Jan 23 12:58 ../
+-rw-r--r-- 1 scip root 131650 Jan 23 12:58 1.jpg
+-rw-r--r-- 1 scip root  81832 Jan 23 12:58 2.jpg
+-rw-r--r-- 1 scip root 134050 Jan 23 12:58 3.jpg
+-rw-r--r-- 1 scip root   1166 Jan 23 12:58 Adlisting.txt
 ```
-USER_ID=1000
-GROUP_ID=1000
-OUTDIR=./kleinanzeigen-backup
-```
 
-You may of course also modify the `docker-compose.yaml` to suit your needs.
+We map the local user to the one inside the image so the permission
+will match. You'll need to create the directory first before executing
+docker run. And the local directory `myads` will be mapped to
+`/backup` inside the container.
 
-If you want to build the image yourself, use the supplied Dockerfile.
+The options `-u XXX -v` are kleingebaeck options, replace `XXX` with
+your actual kleinanzeigen.de user id.
+
+A list of available images is  [here](https://github.com/tlinden/kleingebaeck/pkgs/container/kleingebaeck/versions?filters%5Bversion_type%5D=tagged)
 
 ## Commandline options:
 
@@ -246,9 +256,9 @@ daily basis. You cannot use it to view regular ads or maintain your
 own ads. You'll need to use the mobile app or the browser page with a
 login. So, in my point of view, the risk is very minimal.
 
-There is another Tool available named [kleinanzeigen-enhanded](https://kleinanzeigen-enhanced.de/). It is a complete Ad management system targeting primarily commercial users. You have to pay a monthly fee, perhaps there's also a free version available, but I haven't checked. The tool is implemented as a Chrome browser extension, which explains why it was possible to implement it without an API. It seems to be a nice solution for power users by the looks of it. And it includes backups.
+There is another Tool available named [kleinanzeigen-enhanced](https://kleinanzeigen-enhanced.de/). It is a complete Ad management system targeting primarily commercial users. You have to pay a monthly fee, perhaps there's also a free version available, but I haven't checked. The tool is implemented as a Chrome browser extension, which explains why it was possible to implement it without an API. It seems to be a nice solution for power users by the looks of it. And it includes backups.
 
-## Copyright und License
+## Copyright and License
 
 Licensed under the GNU GENERAL PUBLIC LICENSE version 3.
 
