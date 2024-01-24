@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -446,19 +447,22 @@ func GetImage(path string) []byte {
 
 // setup httpmock
 func SetIntercept(ads []Adsource) {
+	ch := http.Header{}
+	ch.Add("Set-Cookie", "session=permanent")
+
 	for _, ad := range ads {
 		if ad.status == 0 {
 			ad.status = 200
 		}
 
 		httpmock.RegisterResponder("GET", ad.uri,
-			httpmock.NewStringResponder(ad.status, ad.content))
+			httpmock.NewStringResponder(ad.status, ad.content).HeaderAdd(ch))
 	}
 
 	// we just use 2 images, put this here
 	for _, image := range []string{"t/1.jpg", "t/2.jpg"} {
 		httpmock.RegisterResponder("GET", image,
-			httpmock.NewBytesResponder(200, GetImage(image)))
+			httpmock.NewBytesResponder(200, GetImage(image)).HeaderAdd(ch))
 	}
 
 }

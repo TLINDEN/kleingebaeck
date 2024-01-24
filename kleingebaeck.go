@@ -39,6 +39,7 @@ CONFIGURATION
         user = 1010101
         loglevel = verbose
         outdir = "test"
+        useragent = "Mozilla/5.0"
         template = """
         Title: {{.Title}}
         Price: {{.Price}}
