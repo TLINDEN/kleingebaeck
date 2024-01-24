@@ -20,9 +20,11 @@ package main
 import (
 	"bytes"
 	"errors"
+	"math/rand"
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 
 	"github.com/mattn/go-isatty"
 )
@@ -65,4 +67,8 @@ func IsNoTty() bool {
 
 	// it is a tty
 	return false
+}
+
+func GetThrottleTime() time.Duration {
+	return time.Duration(rand.Intn(MaxThrottle-MinThrottle+1)+MinThrottle) * time.Millisecond
 }
