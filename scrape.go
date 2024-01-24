@@ -24,6 +24,7 @@ import (
 	"log/slog"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"astuart.co/goq"
 	"golang.org/x/sync/errgroup"
@@ -150,6 +151,11 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 		imguri := imguri
 		file := filepath.Join(adpath, fmt.Sprintf("%d.jpg", img))
 		g.Go(func() error {
+			// wait a little
+
+			t := GetThrottleTime()
+			time.Sleep(t)
+
 			body, err := fetch.Getimage(imguri)
 			if err != nil {
 				return err
@@ -163,7 +169,7 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 
 			buf2 := buf.Bytes() // needed for image writing
 
-			image := NewImage(buf, "", imguri)
+			image := NewImage(buf, file, imguri)
 			err = image.CalcHash()
 			if err != nil {
 				return err
@@ -181,7 +187,7 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 				return err
 			}
 
-			slog.Debug("wrote image", "image", image, "size", len(buf2))
+			slog.Debug("wrote image", "image", image, "size", len(buf2), "throttle", t)
 			return nil
 		})
 		img++
