@@ -22,8 +22,10 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"math/rand"
 	"os"
 	"runtime/debug"
+	"time"
 
 	"github.com/lmittmann/tint"
 	"github.com/tlinden/yadu"
@@ -112,6 +114,9 @@ func Main(w io.Writer) int {
 
 	// used for all HTTP requests
 	fetch := NewFetcher(conf)
+
+	// randomization needed here and there
+	rand.Seed(time.Now().UnixNano())
 
 	if len(conf.Adlinks) >= 1 {
 		// directly backup ad listing[s]
