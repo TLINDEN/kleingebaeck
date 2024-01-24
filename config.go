@@ -35,18 +35,22 @@ import (
 )
 
 const (
-	VERSION         string = "0.3.0"
-	Baseuri         string = "https://www.kleinanzeigen.de"
-	Listuri         string = "/s-bestandsliste.html"
-	Defaultdir      string = "."
+	VERSION    string = "0.3.1"
+	Baseuri    string = "https://www.kleinanzeigen.de"
+	Listuri    string = "/s-bestandsliste.html"
+	Defaultdir string = "."
+
 	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.Id}}\n" +
 		"Category: {{.Category}}\nCondition: {{.Condition}}\n" +
 		"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
+
 	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.Id}}\r\n" +
 		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\n" +
 		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
-	Useragent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+
+	DefaultUserAgent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
 		"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
 	DefaultAdNameTemplate string = "{{.Slug}}"
 
 	// for image download throttling
@@ -88,6 +92,7 @@ type Config struct {
 	Limit            int    `koanf:"limit"`
 	IgnoreErrors     bool   `koanf:"ignoreerrors"`
 	ForceDownload    bool   `koanf:"force"`
+	UserAgent        string `koanf:"useragent"` // conf only
 	Adlinks          []string
 	StatsCountAds    int
 	StatsCountImages int
@@ -118,6 +123,7 @@ func InitConfig(w io.Writer) (*Config, error) {
 		"loglevel":       "notice",
 		"userid":         0,
 		"adnametemplate": DefaultAdNameTemplate,
+		"useragent":      DefaultUserAgent,
 	}, "."), nil); err != nil {
 		return nil, err
 	}

@@ -113,7 +113,10 @@ func Main(w io.Writer) int {
 	}
 
 	// used for all HTTP requests
-	fetch := NewFetcher(conf)
+	fetch, err := NewFetcher(conf)
+	if err != nil {
+		return Die(err)
+	}
 
 	// randomization needed here and there
 	rand.Seed(time.Now().UnixNano())
