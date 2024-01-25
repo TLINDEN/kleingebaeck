@@ -54,7 +54,7 @@ func ScrapeUser(fetch *Fetcher) error {
 
 		err = goq.NewDecoder(body).Decode(&index)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to goquery decode HTML index body: %w", err)
 		}
 
 		if len(index.Links) == 0 {
@@ -92,12 +92,12 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 
 	// extract slug and id from uri
 	uriparts := strings.Split(uri, "/")
-	if len(uriparts) < SlugUriPartNum {
+	if len(uriparts) < SlugURIPartNum {
 		return fmt.Errorf("invalid uri: %s", uri)
 	}
 
 	advertisement.Slug = uriparts[4]
-	advertisement.Id = uriparts[5]
+	advertisement.ID = uriparts[5]
 
 	// get the ad
 	slog.Debug("fetching ad page", "uri", uri)
@@ -111,7 +111,7 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 	// extract ad contents with goquery/goq
 	err = goq.NewDecoder(body).Decode(&advertisement)
 	if err != nil {
-		return fmt.Errorf("failed to goquery decode HTML body: %w", err)
+		return fmt.Errorf("failed to goquery decode HTML ad body: %w", err)
 	}
 
 	if len(advertisement.CategoryTree) > 0 {
@@ -120,6 +120,7 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 
 	if advertisement.Incomplete() {
 		slog.Debug("got ad", "ad", advertisement)
+
 		return fmt.Errorf("could not extract ad data from page, got empty struct")
 	}
 
@@ -183,6 +184,7 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 			if !fetch.Config.ForceDownload {
 				if image.SimilarExists(cache) {
 					slog.Debug("similar image exists, not written", "uri", image.URI)
+
 					return nil
 				}
 			}
@@ -193,13 +195,14 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 			}
 
 			slog.Debug("wrote image", "image", image, "size", len(buf2), "throttle", throttle)
+
 			return nil
 		})
 		img++
 	}
 
 	if err := egroup.Wait(); err != nil {
-		return err
+		return fmt.Errorf("failed to finalize error waitgroup: %w", err)
 	}
 
 	fetch.Config.IncrImgs(len(advertisement.Images))

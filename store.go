@@ -28,14 +28,15 @@ import (
 	tpl "text/template"
 )
 
-func AdDirName(c *Config, ad *Ad) (string, error) {
-	tmpl, err := tpl.New("adname").Parse(c.Adnametemplate)
+func AdDirName(conf *Config, advertisement *Ad) (string, error) {
+	tmpl, err := tpl.New("adname").Parse(conf.Adnametemplate)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse adname template: %w", err)
 	}
 
 	buf := bytes.Buffer{}
-	err = tmpl.Execute(&buf, ad)
+
+	err = tmpl.Execute(&buf, advertisement)
 	if err != nil {
 		return "", fmt.Errorf("failed to execute adname template: %w", err)
 	}
@@ -43,15 +44,16 @@ func AdDirName(c *Config, ad *Ad) (string, error) {
 	return buf.String(), nil
 }
 
-func WriteAd(c *Config, ad *Ad) (string, error) {
+func WriteAd(conf *Config, advertisement *Ad) (string, error) {
 	// prepare ad dir name
-	addir, err := AdDirName(c, ad)
+	addir, err := AdDirName(conf, advertisement)
 	if err != nil {
 		return "", err
 	}
 
 	// prepare output dir
-	dir := filepath.Join(c.Outdir, addir)
+	dir := filepath.Join(conf.Outdir, addir)
+
 	err = Mkdir(dir)
 	if err != nil {
 		return "", err
@@ -59,24 +61,25 @@ func WriteAd(c *Config, ad *Ad) (string, error) {
 
 	// write ad file
 	listingfile := filepath.Join(dir, "Adlisting.txt")
+
 	listingfd, err := os.Create(listingfile)
 	if err != nil {
 		return "", fmt.Errorf("failed to create Adlisting.txt: %w", err)
 	}
 	defer listingfd.Close()
 
-	if runtime.GOOS == "windows" {
-		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\r\n")
+	if runtime.GOOS == WIN {
+		advertisement.Text = strings.ReplaceAll(advertisement.Text, "<br/>", "\r\n")
 	} else {
-		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\n")
+		advertisement.Text = strings.ReplaceAll(advertisement.Text, "<br/>", "\n")
 	}
 
-	tmpl, err := tpl.New("adlisting").Parse(c.Template)
+	tmpl, err := tpl.New("adlisting").Parse(conf.Template)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse adlisting template: %w", err)
 	}
 
-	err = tmpl.Execute(listingfd, ad)
+	err = tmpl.Execute(listingfd, advertisement)
 	if err != nil {
 		return "", fmt.Errorf("failed to execute adlisting template: %w", err)
 	}
@@ -127,5 +130,6 @@ func fileExists(filename string) bool {
 	if os.IsNotExist(err) {
 		return false
 	}
+
 	return !info.IsDir()
 }

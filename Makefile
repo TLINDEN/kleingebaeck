@@ -62,7 +62,7 @@ lint:
 	golangci-lint run
 
 lint-full:
-	golangci-lint run --enable-all --exclude-use-default --disable exhaustivestruct,exhaustruct,depguard,interfacer,deadcode,golint,structcheck,scopelint,varcheck,ifshort,maligned,nosnakecase,godot,funlen,gofumpt,cyclop
+	golangci-lint run --enable-all --exclude-use-default --disable exhaustivestruct,exhaustruct,depguard,interfacer,deadcode,golint,structcheck,scopelint,varcheck,ifshort,maligned,nosnakecase,godot,funlen,gofumpt,cyclop,noctx,gochecknoglobals,paralleltest
 
 testfuzzy: clean
 	go test -fuzz ./... $(ARGS)

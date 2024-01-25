@@ -35,38 +35,43 @@ func main() {
 	os.Exit(Main(os.Stdout))
 }
 
-func Main(w io.Writer) int {
+func Main(output io.Writer) int {
 	logLevel := &slog.LevelVar{}
 	opts := &tint.Options{
 		Level:     logLevel,
 		AddSource: false,
-		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+		ReplaceAttr: func(groups []string, attr slog.Attr) slog.Attr {
 			// Remove time from the output
-			if a.Key == slog.TimeKey {
+			if attr.Key == slog.TimeKey {
 				return slog.Attr{}
 			}
-			return a
+
+			return attr
 		},
 		NoColor: IsNoTty(),
 	}
 
 	logLevel.Set(LevelNotice)
-	handler := tint.NewHandler(w, opts)
+
+	handler := tint.NewHandler(output, opts)
 	logger := slog.New(handler)
+
 	slog.SetDefault(logger)
 
-	conf, err := InitConfig(w)
+	conf, err := InitConfig(output)
 	if err != nil {
 		return Die(err)
 	}
 
 	if conf.Showversion {
-		fmt.Fprintf(w, "This is kleingebaeck version %s\n", VERSION)
+		fmt.Fprintf(output, "This is kleingebaeck version %s\n", VERSION)
+
 		return 0
 	}
 
 	if conf.Showhelp {
-		fmt.Fprintln(w, Usage)
+		fmt.Fprintln(output, Usage)
+
 		return 0
 	}
 
@@ -75,6 +80,7 @@ func Main(w io.Writer) int {
 		if err != nil {
 			return Die(err)
 		}
+
 		return 0
 	}
 
@@ -92,7 +98,8 @@ func Main(w io.Writer) int {
 		}
 
 		logLevel.Set(slog.LevelDebug)
-		handler := yadu.NewHandler(w, opts)
+
+		handler := yadu.NewHandler(output, opts)
 		debuglogger := slog.New(handler).With(
 			slog.Group("program_info",
 				slog.Int("pid", os.Getpid()),
@@ -116,7 +123,8 @@ func Main(w io.Writer) int {
 		return Die(err)
 	}
 
-	if len(conf.Adlinks) >= 1 {
+	switch {
+	case len(conf.Adlinks) >= 1:
 		// directly backup ad listing[s]
 		for _, uri := range conf.Adlinks {
 			err := ScrapeAd(fetch, uri)
@@ -124,25 +132,27 @@ func Main(w io.Writer) int {
 				return Die(err)
 			}
 		}
-	} else if conf.User > 0 {
+	case conf.User > 0:
 		// backup all ads of the given user (via config or cmdline)
 		err := ScrapeUser(fetch)
 		if err != nil {
 			return Die(err)
 		}
-	} else {
+	default:
 		return Die(errors.New("invalid or no user id or no ad link specified"))
 	}
 
 	if conf.StatsCountAds > 0 {
 		adstr := "ads"
+
 		if conf.StatsCountAds == 1 {
 			adstr = "ad"
 		}
-		fmt.Fprintf(w, "Successfully downloaded %d %s with %d images to %s.\n",
+
+		fmt.Fprintf(output, "Successfully downloaded %d %s with %d images to %s.\n",
 			conf.StatsCountAds, adstr, conf.StatsCountImages, conf.Outdir)
 	} else {
-		fmt.Fprintf(w, "No ads found.")
+		fmt.Fprintf(output, "No ads found.")
 	}
 
 	return 0
@@ -150,5 +160,6 @@ func Main(w io.Writer) int {
 
 func Die(err error) int {
 	slog.Error("Failure", "error", err.Error())
+
 	return 1
 }

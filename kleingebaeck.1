@@ -133,7 +133,7 @@
 .\" ========================================================================
 .\"
 .IX Title "KLEINGEBAECK 1"
-.TH KLEINGEBAECK 1 "2024-01-24" "1" "User Commands"
+.TH KLEINGEBAECK 1 "2024-01-25" "1" "User Commands"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -182,7 +182,7 @@ Format is pretty simple:
 \&    template = """
 \&    Title: {{.Title}}
 \&    Price: {{.Price}}
-\&    Id: {{.Id}}
+\&    Id: {{.ID}}
 \&    Category: {{.Category}}
 \&    Condition: {{.Condition}}
 \&    Created: {{.Created}}
@@ -191,7 +191,7 @@ Format is pretty simple:
 \&    """
 .Ve
 .PP
-Be carefull  if you want  to change the  template.  The variable  is a
+Be careful  if you want  to change the  template.  The variable  is a
 multiline string surrounded  by three double quotes. You  can left out
 certain   fields  and   use  any   formatting  you   like.  Refer   to
 <https://pkg.go.dev/text/template>  for   details  how  to   write  a

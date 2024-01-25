@@ -34,16 +34,16 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.1"
+	VERSION    string = "0.3.2"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
 
-	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.Id}}\n" +
+	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.ID}}\n" +
 		"Category: {{.Category}}\nCondition: {{.Condition}}\n" +
 		"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 
-	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.Id}}\r\n" +
+	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.ID}}\r\n" +
 		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\n" +
 		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
 
@@ -57,7 +57,12 @@ const (
 	MaxThrottle int = 20
 
 	// we extract the slug from the uri
-	SlugUriPartNum int = 6
+	SlugURIPartNum int = 6
+
+	ExpireMonths int = 2
+	ExpireDays   int = 1
+
+	WIN string = "windows"
 )
 
 const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
@@ -114,7 +119,7 @@ func InitConfig(output io.Writer) (*Config, error) {
 
 	// determine template based on os
 	template := DefaultTemplate
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == WIN {
 		template = DefaultTemplateWin
 	}
 

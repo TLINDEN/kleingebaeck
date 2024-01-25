@@ -45,7 +45,8 @@ func man() error {
 	man := exec.Command("less", "-")
 
 	var b bytes.Buffer
-	b.Write([]byte(manpage))
+
+	b.WriteString(manpage)
 
 	man.Stdout = os.Stdout
 	man.Stdin = &b
@@ -62,7 +63,7 @@ func man() error {
 
 // returns TRUE if stdout is NOT a tty or windows
 func IsNoTty() bool {
-	if runtime.GOOS == "windows" || !isatty.IsTerminal(os.Stdout.Fd()) {
+	if runtime.GOOS == WIN || !isatty.IsTerminal(os.Stdout.Fd()) {
 		return true
 	}
 

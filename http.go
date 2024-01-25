@@ -33,16 +33,19 @@ import (
 // easier associated in debug output
 var letters = []rune("ABCDEF0123456789")
 
-func getid() string {
-	b := make([]rune, 8)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-}
+const IDLEN int = 8
 
 // retry after HTTP 50x errors or err!=nil
 const RetryCount = 3
+
+func getid() string {
+	b := make([]rune, IDLEN)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+
+	return string(b)
+}
 
 // used to inject debug log and implement retries
 type loggingTransport struct{}
@@ -76,6 +79,7 @@ func drainBody(resp *http.Response) {
 				// unable to copy data? uff!
 				panic(err)
 			}
+
 			resp.Body.Close()
 		}
 	}
@@ -83,8 +87,8 @@ func drainBody(resp *http.Response) {
 
 // the actual logging transport with retries
 func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	// just requred for debugging
-	id := getid()
+	// just required for debugging
+	requestid := getid()
 
 	// clone the request body, put into request on retry
 	var bodyBytes []byte
@@ -93,16 +97,16 @@ func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 	}
 
-	slog.Debug("REQUEST", "id", id, "uri", req.URL, "host", req.Host)
+	slog.Debug("REQUEST", "id", requestid, "uri", req.URL, "host", req.Host)
 
 	// first try
 	resp, err := http.DefaultTransport.RoundTrip(req)
 	if err == nil {
-		slog.Debug("RESPONSE", "id", id, "status", resp.StatusCode,
+		slog.Debug("RESPONSE", "id", requestid, "status", resp.StatusCode,
 			"contentlength", resp.ContentLength)
 	}
 
-	// enter retry check and loop, if first req were successfull, leave loop immediately
+	// enter retry check and loop, if first req were successful, leave loop immediately
 	retries := 0
 	for shouldRetry(err, resp) && retries < RetryCount {
 		time.Sleep(backoff(retries))
@@ -119,7 +123,7 @@ func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 		resp, err = http.DefaultTransport.RoundTrip(req)
 
 		if err == nil {
-			slog.Debug("RESPONSE", "id", id, "status", resp.StatusCode,
+			slog.Debug("RESPONSE", "id", requestid, "status", resp.StatusCode,
 				"contentlength", resp.ContentLength, "retry", retries)
 		}
 
