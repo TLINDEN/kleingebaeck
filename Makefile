@@ -56,6 +56,14 @@ test: clean
 	mkdir -p t/out
 	go test ./... $(ARGS)
 
+testlint: test lint
+
+lint:
+	golangci-lint run
+
+lint-full:
+	golangci-lint run --enable-all --exclude-use-default --disable exhaustivestruct,exhaustruct,depguard,interfacer,deadcode,golint,structcheck,scopelint,varcheck,ifshort,maligned,nosnakecase,godot,funlen,gofumpt,cyclop
+
 testfuzzy: clean
 	go test -fuzz ./... $(ARGS)
 
@@ -88,5 +96,5 @@ show-versions: buildlocal
 	@echo "### go version used for building:"
 	@grep -m 1 go go.mod
 
-lint:
-	golangci-lint run -p bugs -p unused
+# lint:
+# 	golangci-lint run -p bugs -p unused
