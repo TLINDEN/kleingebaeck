@@ -19,10 +19,10 @@ package main
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"log/slog"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -43,7 +43,9 @@ func ScrapeUser(fetch *Fetcher) error {
 
 	for {
 		var index Index
+
 		slog.Debug("fetching page", "uri", uri)
+
 		body, err := fetch.Get(uri)
 		if err != nil {
 			return err
@@ -67,16 +69,16 @@ func ScrapeUser(fetch *Fetcher) error {
 		}
 
 		page++
-		uri = baseuri + "&pageNum=" + fmt.Sprintf("%d", page)
+		uri = baseuri + "&pageNum=" + strconv.Itoa(page)
 	}
 
-	for i, adlink := range adlinks {
+	for index, adlink := range adlinks {
 		err := ScrapeAd(fetch, Baseuri+adlink)
 		if err != nil {
 			return err
 		}
 
-		if fetch.Config.Limit > 0 && i == fetch.Config.Limit-1 {
+		if fetch.Config.Limit > 0 && index == fetch.Config.Limit-1 {
 			break
 		}
 	}
@@ -86,18 +88,20 @@ func ScrapeUser(fetch *Fetcher) error {
 
 // scrape an ad. uri is the full uri of the ad, dir is the basedir
 func ScrapeAd(fetch *Fetcher, uri string) error {
-	ad := &Ad{}
+	advertisement := &Ad{}
 
 	// extract slug and id from uri
 	uriparts := strings.Split(uri, "/")
-	if len(uriparts) < 6 {
-		return errors.New("invalid uri: " + uri)
+	if len(uriparts) < SlugUriPartNum {
+		return fmt.Errorf("invalid uri: %s", uri)
 	}
-	ad.Slug = uriparts[4]
-	ad.Id = uriparts[5]
+
+	advertisement.Slug = uriparts[4]
+	advertisement.Id = uriparts[5]
 
 	// get the ad
 	slog.Debug("fetching ad page", "uri", uri)
+
 	body, err := fetch.Get(uri)
 	if err != nil {
 		return err
@@ -105,36 +109,36 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 	defer body.Close()
 
 	// extract ad contents with goquery/goq
-	err = goq.NewDecoder(body).Decode(&ad)
+	err = goq.NewDecoder(body).Decode(&advertisement)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to goquery decode HTML body: %w", err)
 	}
 
-	if len(ad.CategoryTree) > 0 {
-		ad.Category = strings.Join(ad.CategoryTree, " => ")
+	if len(advertisement.CategoryTree) > 0 {
+		advertisement.Category = strings.Join(advertisement.CategoryTree, " => ")
 	}
 
-	if ad.Incomplete() {
-		slog.Debug("got ad", "ad", ad)
-		return errors.New("could not extract ad data from page, got empty struct")
+	if advertisement.Incomplete() {
+		slog.Debug("got ad", "ad", advertisement)
+		return fmt.Errorf("could not extract ad data from page, got empty struct")
 	}
 
-	ad.CalculateExpire()
+	advertisement.CalculateExpire()
 
 	// write listing
-	addir, err := WriteAd(fetch.Config, ad)
+	addir, err := WriteAd(fetch.Config, advertisement)
 	if err != nil {
 		return err
 	}
 
-	slog.Debug("extracted ad listing", "ad", ad)
+	slog.Debug("extracted ad listing", "ad", advertisement)
 
 	fetch.Config.IncrAds()
 
-	return ScrapeImages(fetch, ad, addir)
+	return ScrapeImages(fetch, advertisement, addir)
 }
 
-func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
+func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 	// fetch images
 	img := 1
 	adpath := filepath.Join(fetch.Config.Outdir, addir)
@@ -145,16 +149,17 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 		return err
 	}
 
-	g := new(errgroup.Group)
+	egroup := new(errgroup.Group)
 
-	for _, imguri := range ad.Images {
+	for _, imguri := range advertisement.Images {
 		imguri := imguri
 		file := filepath.Join(adpath, fmt.Sprintf("%d.jpg", img))
-		g.Go(func() error {
+
+		egroup.Go(func() error {
 			// wait a little
 
-			t := GetThrottleTime()
-			time.Sleep(t)
+			throttle := GetThrottleTime()
+			time.Sleep(throttle)
 
 			body, err := fetch.Getimage(imguri)
 			if err != nil {
@@ -164,7 +169,7 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 			buf := new(bytes.Buffer)
 			_, err = buf.ReadFrom(body)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to read from image buffer: %w", err)
 			}
 
 			buf2 := buf.Bytes() // needed for image writing
@@ -177,7 +182,7 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 
 			if !fetch.Config.ForceDownload {
 				if image.SimilarExists(cache) {
-					slog.Debug("similar image exists, not written", "uri", image.Uri)
+					slog.Debug("similar image exists, not written", "uri", image.URI)
 					return nil
 				}
 			}
@@ -187,17 +192,17 @@ func ScrapeImages(fetch *Fetcher, ad *Ad, addir string) error {
 				return err
 			}
 
-			slog.Debug("wrote image", "image", image, "size", len(buf2), "throttle", t)
+			slog.Debug("wrote image", "image", image, "size", len(buf2), "throttle", throttle)
 			return nil
 		})
 		img++
 	}
 
-	if err := g.Wait(); err != nil {
+	if err := egroup.Wait(); err != nil {
 		return err
 	}
 
-	fetch.Config.IncrImgs(len(ad.Images))
+	fetch.Config.IncrImgs(len(advertisement.Images))
 
 	return nil
 }

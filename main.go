@@ -22,10 +22,8 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"math/rand"
 	"os"
 	"runtime/debug"
-	"time"
 
 	"github.com/lmittmann/tint"
 	"github.com/tlinden/yadu"
@@ -117,9 +115,6 @@ func Main(w io.Writer) int {
 	if err != nil {
 		return Die(err)
 	}
-
-	// randomization needed here and there
-	rand.Seed(time.Now().UnixNano())
 
 	if len(conf.Adlinks) >= 1 {
 		// directly backup ad listing[s]

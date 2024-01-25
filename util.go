@@ -20,6 +20,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -33,7 +34,7 @@ func Mkdir(dir string) error {
 	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
 		err := os.Mkdir(dir, os.ModePerm)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create directory %s: %w", dir, err)
 		}
 	}
 
@@ -53,7 +54,7 @@ func man() error {
 	err := man.Run()
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to execute 'less': %w", err)
 	}
 
 	return nil

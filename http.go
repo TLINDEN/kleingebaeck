@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"log/slog"
 	"math"
@@ -125,5 +126,9 @@ func (t *loggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 		retries++
 	}
 
-	return resp, err
+	if err != nil {
+		return resp, fmt.Errorf("failed to get HTTP response for %s: %w", req.URL, err)
+	}
+
+	return resp, nil
 }

@@ -31,13 +31,13 @@ import (
 func AdDirName(c *Config, ad *Ad) (string, error) {
 	tmpl, err := tpl.New("adname").Parse(c.Adnametemplate)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to parse adname template: %w", err)
 	}
 
 	buf := bytes.Buffer{}
 	err = tmpl.Execute(&buf, ad)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to execute adname template: %w", err)
 	}
 
 	return buf.String(), nil
@@ -59,11 +59,11 @@ func WriteAd(c *Config, ad *Ad) (string, error) {
 
 	// write ad file
 	listingfile := filepath.Join(dir, "Adlisting.txt")
-	f, err := os.Create(listingfile)
+	listingfd, err := os.Create(listingfile)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create Adlisting.txt: %w", err)
 	}
-	defer f.Close()
+	defer listingfd.Close()
 
 	if runtime.GOOS == "windows" {
 		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\r\n")
@@ -73,12 +73,12 @@ func WriteAd(c *Config, ad *Ad) (string, error) {
 
 	tmpl, err := tpl.New("adlisting").Parse(c.Template)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to parse adlisting template: %w", err)
 	}
 
-	err = tmpl.Execute(f, ad)
+	err = tmpl.Execute(listingfd, ad)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to execute adlisting template: %w", err)
 	}
 
 	slog.Info("wrote ad listing", "listingfile", listingfile)
@@ -89,14 +89,14 @@ func WriteAd(c *Config, ad *Ad) (string, error) {
 func WriteImage(filename string, buf []byte) error {
 	file, err := os.Create(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open image file: %w", err)
 	}
 	defer file.Close()
 
 	_, err = file.Write(buf)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write to image file: %w", err)
 	}
 
 	return nil
@@ -111,12 +111,12 @@ func ReadImage(filename string) (*bytes.Buffer, error) {
 
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read image file: %w", err)
 	}
 
 	_, err = buf.Write(data)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to write image into buffer: %w", err)
 	}
 
 	return &buf, nil

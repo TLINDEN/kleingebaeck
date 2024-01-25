@@ -19,6 +19,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -33,10 +34,10 @@ type Fetcher struct {
 	Cookies []*http.Cookie
 }
 
-func NewFetcher(c *Config) (*Fetcher, error) {
+func NewFetcher(conf *Config) (*Fetcher, error) {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create a cookie jar obj: %w", err)
 	}
 
 	return &Fetcher{
@@ -44,7 +45,7 @@ func NewFetcher(c *Config) (*Fetcher, error) {
 				Transport: &loggingTransport{}, // implemented in http.go
 				Jar:       jar,
 			},
-			Config:  c,
+			Config:  conf,
 			Cookies: []*http.Cookie{},
 		},
 		nil
@@ -53,7 +54,7 @@ func NewFetcher(c *Config) (*Fetcher, error) {
 func (f *Fetcher) Get(uri string) (io.ReadCloser, error) {
 	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create a new HTTP request obj: %w", err)
 	}
 
 	req.Header.Set("User-Agent", f.Config.UserAgent)
@@ -69,7 +70,7 @@ func (f *Fetcher) Get(uri string) (io.ReadCloser, error) {
 
 	res, err := f.Client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to initiate HTTP request to %s: %w", uri, err)
 	}
 
 	if res.StatusCode != 200 {

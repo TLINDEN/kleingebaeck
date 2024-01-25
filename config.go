@@ -17,7 +17,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -56,6 +55,9 @@ const (
 	// for image download throttling
 	MinThrottle int = 2
 	MaxThrottle int = 20
+
+	// we extract the slug from the uri
+	SlugUriPartNum int = 6
 )
 
 const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
@@ -107,8 +109,8 @@ func (c *Config) IncrImgs(num int) {
 }
 
 // load commandline flags and config file
-func InitConfig(w io.Writer) (*Config, error) {
-	var k = koanf.New(".")
+func InitConfig(output io.Writer) (*Config, error) {
+	var kloader = koanf.New(".")
 
 	// determine template based on os
 	template := DefaultTemplate
@@ -117,7 +119,7 @@ func InitConfig(w io.Writer) (*Config, error) {
 	}
 
 	// Load default values using the confmap provider.
-	if err := k.Load(confmap.Provider(map[string]interface{}{
+	if err := kloader.Load(confmap.Provider(map[string]interface{}{
 		"template":       template,
 		"outdir":         ".",
 		"loglevel":       "notice",
@@ -125,37 +127,39 @@ func InitConfig(w io.Writer) (*Config, error) {
 		"adnametemplate": DefaultAdNameTemplate,
 		"useragent":      DefaultUserAgent,
 	}, "."), nil); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load default values into koanf: %w", err)
 	}
 
 	// setup custom usage
-	f := flag.NewFlagSet("config", flag.ContinueOnError)
-	f.Usage = func() {
-		fmt.Fprintln(w, Usage)
+	flagset := flag.NewFlagSet("config", flag.ContinueOnError)
+	flagset.Usage = func() {
+		fmt.Fprintln(output, Usage)
 		os.Exit(0)
 	}
 
 	// parse commandline flags
-	f.StringP("config", "c", "", "config file")
-	f.StringP("outdir", "o", "", "directory where to store ads")
-	f.IntP("user", "u", 0, "user id")
-	f.IntP("limit", "l", 0, "limit ads to be downloaded (default 0, unlimited)")
-	f.BoolP("verbose", "v", false, "be verbose")
-	f.BoolP("debug", "d", false, "enable debug log")
-	f.BoolP("version", "V", false, "show program version")
-	f.BoolP("help", "h", false, "show usage")
-	f.BoolP("manual", "m", false, "show manual")
-	f.BoolP("force", "f", false, "force")
+	flagset.StringP("config", "c", "", "config file")
+	flagset.StringP("outdir", "o", "", "directory where to store ads")
+	flagset.IntP("user", "u", 0, "user id")
+	flagset.IntP("limit", "l", 0, "limit ads to be downloaded (default 0, unlimited)")
+	flagset.BoolP("verbose", "v", false, "be verbose")
+	flagset.BoolP("debug", "d", false, "enable debug log")
+	flagset.BoolP("version", "V", false, "show program version")
+	flagset.BoolP("help", "h", false, "show usage")
+	flagset.BoolP("manual", "m", false, "show manual")
+	flagset.BoolP("force", "f", false, "force")
 
-	if err := f.Parse(os.Args[1:]); err != nil {
-		return nil, err
+	if err := flagset.Parse(os.Args[1:]); err != nil {
+		return nil, fmt.Errorf("failed to parse program arguments: %w", err)
 	}
 
 	// generate a  list of config files to try  to load, including the
 	// one provided via -c, if any
 	var configfiles []string
-	configfile, _ := f.GetString("config")
+
+	configfile, _ := flagset.GetString("config")
 	home, _ := os.UserHomeDir()
+
 	if configfile != "" {
 		configfiles = []string{configfile}
 	} else {
@@ -171,31 +175,30 @@ func InitConfig(w io.Writer) (*Config, error) {
 	for _, cfgfile := range configfiles {
 		if path, err := os.Stat(cfgfile); !os.IsNotExist(err) {
 			if !path.IsDir() {
-				if err := k.Load(file.Provider(cfgfile), toml.Parser()); err != nil {
-					return nil, errors.New("error loading config file: " + err.Error())
+				if err := kloader.Load(file.Provider(cfgfile), toml.Parser()); err != nil {
+					return nil, fmt.Errorf("error loading config file: %w", err)
 				}
 			}
-		}
-		// else: we ignore the file if it doesn't exists
+		} // else: we ignore the file if it doesn't exists
 	}
 
 	// env overrides config file
-	if err := k.Load(env.Provider("KLEINGEBAECK_", ".", func(s string) string {
-		return strings.Replace(strings.ToLower(
-			strings.TrimPrefix(s, "KLEINGEBAECK_")), "_", ".", -1)
+	if err := kloader.Load(env.Provider("KLEINGEBAECK_", ".", func(s string) string {
+		return strings.ReplaceAll(strings.ToLower(
+			strings.TrimPrefix(s, "KLEINGEBAECK_")), "_", ".")
 	}), nil); err != nil {
-		return nil, errors.New("error loading environment: " + err.Error())
+		return nil, fmt.Errorf("error loading environment: %w", err)
 	}
 
 	// command line overrides env
-	if err := k.Load(posflag.Provider(f, ".", k), nil); err != nil {
-		return nil, errors.New("error loading flags: " + err.Error())
+	if err := kloader.Load(posflag.Provider(flagset, ".", kloader), nil); err != nil {
+		return nil, fmt.Errorf("error loading flags: %w", err)
 	}
 
 	// fetch values
 	conf := &Config{}
-	if err := k.Unmarshal("", &conf); err != nil {
-		return nil, errors.New("error unmarshalling: " + err.Error())
+	if err := kloader.Unmarshal("", &conf); err != nil {
+		return nil, fmt.Errorf("error unmarshalling: %w", err)
 	}
 
 	// adjust loglevel
@@ -207,7 +210,7 @@ func InitConfig(w io.Writer) (*Config, error) {
 	}
 
 	// are there any args left on commandline? if so threat them as adlinks
-	conf.Adlinks = f.Args()
+	conf.Adlinks = flagset.Args()
 
 	return conf, nil
 }

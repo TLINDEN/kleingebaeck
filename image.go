@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"image/jpeg"
 	"log/slog"
 	"os"
@@ -33,14 +34,14 @@ type Image struct {
 	Filename string
 	Hash     *goimagehash.ImageHash
 	Data     *bytes.Buffer
-	Uri      string
+	URI      string
 }
 
 // used for logging to avoid printing Data
 func (img *Image) LogValue() slog.Value {
 	return slog.GroupValue(
 		slog.String("filename", img.Filename),
-		slog.String("uri", img.Uri),
+		slog.String("uri", img.URI),
 		slog.String("hash", img.Hash.ToString()),
 	)
 }
@@ -51,7 +52,7 @@ type Cache []*goimagehash.ImageHash
 func NewImage(buf *bytes.Buffer, filename string, uri string) *Image {
 	img := &Image{
 		Filename: filename,
-		Uri:      uri,
+		URI:      uri,
 		Data:     buf,
 	}
 
@@ -62,12 +63,12 @@ func NewImage(buf *bytes.Buffer, filename string, uri string) *Image {
 func (img *Image) CalcHash() error {
 	jpgdata, err := jpeg.Decode(img.Data)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to decode JPEG image: %w", err)
 	}
 
 	hash1, err := goimagehash.DifferenceHash(jpgdata)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to calculate diff hash of image: %w", err)
 	}
 
 	img.Hash = hash1
@@ -80,16 +81,18 @@ func (img *Image) Similar(hash *goimagehash.ImageHash) bool {
 	distance, err := img.Hash.Distance(hash)
 	if err != nil {
 		slog.Debug("failed to compute diff hash distance", "error", err)
+
 		return false
 	}
 
 	if distance < MaxDistance {
 		slog.Debug("distance computation", "image-A", img.Hash.ToString(),
 			"image-B", hash.ToString(), "distance", distance)
+
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
 // check current image against all known hashes.
@@ -108,7 +111,7 @@ func (img *Image) SimilarExists(cache Cache) bool {
 func ReadImages(addir string, dont bool) (Cache, error) {
 	files, err := os.ReadDir(addir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read ad directory contents: %w", err)
 	}
 
 	cache := Cache{}
@@ -122,6 +125,7 @@ func ReadImages(addir string, dont bool) (Cache, error) {
 		ext := filepath.Ext(file.Name())
 		if !file.IsDir() && (ext == ".jpg" || ext == ".jpeg" || ext == ".JPG" || ext == ".JPEG") {
 			filename := filepath.Join(addir, file.Name())
+
 			data, err := ReadImage(filename)
 			if err != nil {
 				return nil, err
@@ -137,6 +141,5 @@ func ReadImages(addir string, dont bool) (Cache, error) {
 		}
 	}
 
-	//return nil, errors.New("ende")
 	return cache, nil
 }
