@@ -26,6 +26,8 @@ import (
 // doesn't  show up  in the  coverage report  for unknown  reasons, so
 // here's a single test for it
 func TestWriteImage(t *testing.T) {
+	t.Parallel()
+
 	buf := []byte{1, 2, 3, 4, 5, 6, 7, 8}
 	file := "t/out/t.jpg"
 
@@ -33,5 +35,4 @@ func TestWriteImage(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not write mock image to %s: %s", file, err.Error())
 	}
-
 }

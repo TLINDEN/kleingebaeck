@@ -19,6 +19,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -33,10 +34,10 @@ type Fetcher struct {
 	Cookies []*http.Cookie
 }
 
-func NewFetcher(c *Config) (*Fetcher, error) {
+func NewFetcher(conf *Config) (*Fetcher, error) {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create a cookie jar obj: %w", err)
 	}
 
 	return &Fetcher{
@@ -44,35 +45,37 @@ func NewFetcher(c *Config) (*Fetcher, error) {
 				Transport: &loggingTransport{}, // implemented in http.go
 				Jar:       jar,
 			},
-			Config:  c,
+			Config:  conf,
 			Cookies: []*http.Cookie{},
 		},
 		nil
 }
 
 func (f *Fetcher) Get(uri string) (io.ReadCloser, error) {
-	req, err := http.NewRequest("GET", uri, nil)
+	req, err := http.NewRequest(http.MethodGet, uri, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create a new HTTP request obj: %w", err)
 	}
 
 	req.Header.Set("User-Agent", f.Config.UserAgent)
 
 	if len(f.Cookies) > 0 {
 		uriobj, _ := url.Parse(Baseuri)
+
 		slog.Debug("have cookies, sending them",
 			"sample-cookie-name", f.Cookies[0].Name,
 			"sample-cookie-expire", f.Cookies[0].Expires,
 		)
+
 		f.Client.Jar.SetCookies(uriobj, f.Cookies)
 	}
 
 	res, err := f.Client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to initiate HTTP request to %s: %w", uri, err)
 	}
 
-	if res.StatusCode != 200 {
+	if res.StatusCode != http.StatusOK {
 		return nil, errors.New("could not get page via HTTP")
 	}
 
@@ -85,12 +88,15 @@ func (f *Fetcher) Get(uri string) (io.ReadCloser, error) {
 // fetch an image
 func (f *Fetcher) Getimage(uri string) (io.ReadCloser, error) {
 	slog.Debug("fetching ad image", "uri", uri)
+
 	body, err := f.Get(uri)
 	if err != nil {
 		if f.Config.IgnoreErrors {
 			slog.Info("Failed to download image, error ignored", "error", err.Error())
+
 			return nil, nil
 		}
+
 		return nil, err
 	}
 

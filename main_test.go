@@ -43,7 +43,7 @@ const LISTTPL string = `<!DOCTYPE html>
 {{ range . }}
      <h2 class="text-module-begin">
         <a class="ellipsis"
-           href="/s-anzeige/{{ .Slug }}/{{ .Id }}">{{ .Title }}</a>
+           href="/s-anzeige/{{ .Slug }}/{{ .ID }}">{{ .Title }}</a>
      </h2>
 {{ end }}
   </body>
@@ -247,7 +247,7 @@ var invalidtests = []Tests{
 type AdConfig struct {
 	Title     string
 	Slug      string
-	Id        string
+	ID        string
 	Price     string
 	Category  string
 	Condition string
@@ -259,7 +259,7 @@ type AdConfig struct {
 var adsrc = []AdConfig{
 	{
 		Title: "First Ad",
-		Id:    "1", Price: "5€",
+		ID:    "1", Price: "5€",
 		Category:  "Klimbim",
 		Text:      "Thing to sale",
 		Slug:      "first-ad",
@@ -269,7 +269,7 @@ var adsrc = []AdConfig{
 	},
 	{
 		Title: "Secnd Ad",
-		Id:    "2", Price: "5€",
+		ID:    "2", Price: "5€",
 		Category:  "Kram",
 		Text:      "Thing to sale",
 		Slug:      "second-ad",
@@ -279,7 +279,7 @@ var adsrc = []AdConfig{
 	},
 	{
 		Title:     "Third Ad",
-		Id:        "3",
+		ID:        "3",
 		Price:     "5€",
 		Category:  "Kuddelmuddel",
 		Text:      "Thing to sale",
@@ -290,7 +290,7 @@ var adsrc = []AdConfig{
 	},
 	{
 		Title:     "Forth Ad",
-		Id:        "4",
+		ID:        "4",
 		Price:     "5€",
 		Category:  "Krempel",
 		Text:      "Thing to sale",
@@ -301,7 +301,7 @@ var adsrc = []AdConfig{
 	},
 	{
 		Title:     "Fifth Ad",
-		Id:        "5",
+		ID:        "5",
 		Price:     "5€",
 		Category:  "Kladderadatsch",
 		Text:      "Thing to sale",
@@ -312,7 +312,7 @@ var adsrc = []AdConfig{
 	},
 	{
 		Title:     "Sixth Ad",
-		Id:        "6",
+		ID:        "6",
 		Price:     "5€",
 		Category:  "Klunker",
 		Text:      "Thing to sale",
@@ -334,17 +334,17 @@ type Adsource struct {
 }
 
 // Render a HTML template for an adlisting or an ad
-func GetTemplate(l []AdConfig, a AdConfig, htmltemplate string) string {
+func GetTemplate(adconfigs []AdConfig, adconfig AdConfig, htmltemplate string) string {
 	tmpl, err := tpl.New("template").Parse(htmltemplate)
 	if err != nil {
 		panic(err)
 	}
 
 	var out bytes.Buffer
-	if len(a.Id) == 0 {
-		err = tmpl.Execute(&out, l)
+	if len(adconfig.ID) == 0 {
+		err = tmpl.Execute(&out, adconfigs)
 	} else {
-		err = tmpl.Execute(&out, a)
+		err = tmpl.Execute(&out, adconfig)
 	}
 
 	if err != nil {
@@ -391,10 +391,9 @@ func InitValidSources() []Adsource {
 	// prepare urls for the ads
 	for _, ad := range adsrc {
 		ads = append(ads, Adsource{
-			uri:     fmt.Sprintf("%s/s-anzeige/%s/%s", Baseuri, ad.Slug, ad.Id),
+			uri:     fmt.Sprintf("%s/s-anzeige/%s/%s", Baseuri, ad.Slug, ad.ID),
 			content: GetTemplate(nil, ad, ADTPL),
 		})
-		//panic(GetTemplate(nil, ad, ADTPL))
 	}
 
 	return ads
@@ -447,46 +446,48 @@ func GetImage(path string) []byte {
 
 // setup httpmock
 func SetIntercept(ads []Adsource) {
-	ch := http.Header{}
-	ch.Add("Set-Cookie", "session=permanent")
+	headers := http.Header{}
+	headers.Add("Set-Cookie", "session=permanent")
 
-	for _, ad := range ads {
-		if ad.status == 0 {
-			ad.status = 200
+	for _, advertisement := range ads {
+		if advertisement.status == 0 {
+			advertisement.status = 200
 		}
 
-		httpmock.RegisterResponder("GET", ad.uri,
-			httpmock.NewStringResponder(ad.status, ad.content).HeaderAdd(ch))
+		httpmock.RegisterResponder("GET", advertisement.uri,
+			httpmock.NewStringResponder(advertisement.status, advertisement.content).HeaderAdd(headers))
 	}
 
 	// we just use 2 images, put this here
 	for _, image := range []string{"t/1.jpg", "t/2.jpg"} {
 		httpmock.RegisterResponder("GET", image,
-			httpmock.NewBytesResponder(200, GetImage(image)).HeaderAdd(ch))
+			httpmock.NewBytesResponder(200, GetImage(image)).HeaderAdd(headers))
 	}
-
 }
 
-func VerifyAd(ad AdConfig) error {
-	body := ad.Title + ad.Price + ad.Id + "Kleinanzeigen => " +
-		ad.Category + ad.Condition + ad.Created
+func VerifyAd(advertisement AdConfig) error {
+	body := advertisement.Title + advertisement.Price + advertisement.ID + "Kleinanzeigen => " +
+		advertisement.Category + advertisement.Condition + advertisement.Created
 
 	// prepare ad dir name using DefaultAdNameTemplate
 	c := Config{Adnametemplate: "{{ .Slug }}"}
-	adstruct := Ad{Slug: ad.Slug, Id: ad.Id}
+	adstruct := Ad{Slug: advertisement.Slug, ID: advertisement.ID}
+
 	addir, err := AdDirName(&c, &adstruct)
 	if err != nil {
 		return err
 	}
 
 	file := fmt.Sprintf("t/out/%s/Adlisting.txt", addir)
+
 	content, err := os.ReadFile(file)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to read adlisting file: %w", err)
 	}
 
 	if body != strings.TrimSpace(string(content)) {
 		msg := fmt.Sprintf("ad content doesn't match.\nExpect: %s\n   Got: %s\n", body, content)
+
 		return errors.New(msg)
 	}
 
@@ -504,20 +505,21 @@ func TestMain(t *testing.T) {
 	SetIntercept(InitValidSources())
 
 	// run commandline tests
-	for _, tt := range tests {
+	for _, test := range tests {
 		var buf bytes.Buffer
-		os.Args = strings.Split(tt.args, " ")
+
+		os.Args = strings.Split(test.args, " ")
 
 		ret := Main(&buf)
 
-		if ret != tt.exitcode {
+		if ret != test.exitcode {
 			t.Errorf("%s with cmd <%s> did not exit with %d but %d",
-				tt.name, tt.args, tt.exitcode, ret)
+				test.name, test.args, test.exitcode, ret)
 		}
 
-		if !strings.Contains(buf.String(), tt.expect) {
+		if !strings.Contains(buf.String(), test.expect) {
 			t.Errorf("%s with cmd <%s> output did not match.\nExpect: %s\n   Got: %s\n",
-				tt.name, tt.args, tt.expect, buf.String())
+				test.name, test.args, test.expect, buf.String())
 		}
 	}
 
@@ -540,20 +542,21 @@ func TestMainInvalids(t *testing.T) {
 	SetIntercept(InitInvalidSources())
 
 	// run commandline tests
-	for _, tt := range invalidtests {
+	for _, test := range invalidtests {
 		var buf bytes.Buffer
-		os.Args = strings.Split(tt.args, " ")
+
+		os.Args = strings.Split(test.args, " ")
 
 		ret := Main(&buf)
 
-		if ret != tt.exitcode {
+		if ret != test.exitcode {
 			t.Errorf("%s with cmd <%s> did not exit with %d but %d",
-				tt.name, tt.args, tt.exitcode, ret)
+				test.name, test.args, test.exitcode, ret)
 		}
 
-		if !strings.Contains(buf.String(), tt.expect) {
+		if !strings.Contains(buf.String(), test.expect) {
 			t.Errorf("%s with cmd <%s> output did not match.\nExpect: %s\n   Got: %s\n",
-				tt.name, tt.args, tt.expect, buf.String())
+				test.name, test.args, test.expect, buf.String())
 		}
 	}
 }

@@ -30,7 +30,7 @@ type Index struct {
 type Ad struct {
 	Title        string `goquery:"h1"`
 	Slug         string
-	Id           string
+	ID           string
 	Condition    string `goquery:".addetailslist--detail--value,text"`
 	Category     string
 	CategoryTree []string `goquery:".breadcrump-link,text"`
@@ -46,7 +46,7 @@ func (ad *Ad) LogValue() slog.Value {
 	return slog.GroupValue(
 		slog.String("title", ad.Title),
 		slog.String("price", ad.Price),
-		slog.String("id", ad.Id),
+		slog.String("id", ad.ID),
 		slog.Int("imagecount", len(ad.Images)),
 		slog.Int("bodysize", len(ad.Text)),
 		slog.String("categorytree", strings.Join(ad.CategoryTree, "+")),
@@ -76,7 +76,7 @@ func (ad *Ad) CalculateExpire() {
 	if len(ad.Created) > 0 {
 		ts, err := time.Parse("02.01.2006", ad.Created)
 		if err == nil {
-			ad.Expire = ts.AddDate(0, 2, 1).Format("02.01.2006")
+			ad.Expire = ts.AddDate(0, ExpireMonths, ExpireDays).Format("02.01.2006")
 		}
 	}
 }
