@@ -43,7 +43,7 @@ CONFIGURATION
         template = """
         Title: {{.Title}}
         Price: {{.Price}}
-        Id: {{.Id}}
+        Id: {{.ID}}
         Category: {{.Category}}
         Condition: {{.Condition}}
         Created: {{.Created}}
@@ -51,7 +51,7 @@ CONFIGURATION
         {{.Text}}
         """
 
-    Be carefull if you want to change the template. The variable is a
+    Be careful if you want to change the template. The variable is a
     multiline string surrounded by three double quotes. You can left out
     certain fields and use any formatting you like. Refer to
     <https://pkg.go.dev/text/template> for details how to write a template.

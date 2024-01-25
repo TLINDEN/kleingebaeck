@@ -20,6 +20,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -33,7 +34,7 @@ func Mkdir(dir string) error {
 	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
 		err := os.Mkdir(dir, os.ModePerm)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create directory %s: %w", dir, err)
 		}
 	}
 
@@ -44,7 +45,8 @@ func man() error {
 	man := exec.Command("less", "-")
 
 	var b bytes.Buffer
-	b.Write([]byte(manpage))
+
+	b.WriteString(manpage)
 
 	man.Stdout = os.Stdout
 	man.Stdin = &b
@@ -53,7 +55,7 @@ func man() error {
 	err := man.Run()
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to execute 'less': %w", err)
 	}
 
 	return nil
@@ -61,7 +63,7 @@ func man() error {
 
 // returns TRUE if stdout is NOT a tty or windows
 func IsNoTty() bool {
-	if runtime.GOOS == "windows" || !isatty.IsTerminal(os.Stdout.Fd()) {
+	if runtime.GOOS == WIN || !isatty.IsTerminal(os.Stdout.Fd()) {
 		return true
 	}
 

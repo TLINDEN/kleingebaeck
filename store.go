@@ -28,30 +28,32 @@ import (
 	tpl "text/template"
 )
 
-func AdDirName(c *Config, ad *Ad) (string, error) {
-	tmpl, err := tpl.New("adname").Parse(c.Adnametemplate)
+func AdDirName(conf *Config, advertisement *Ad) (string, error) {
+	tmpl, err := tpl.New("adname").Parse(conf.Adnametemplate)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to parse adname template: %w", err)
 	}
 
 	buf := bytes.Buffer{}
-	err = tmpl.Execute(&buf, ad)
+
+	err = tmpl.Execute(&buf, advertisement)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to execute adname template: %w", err)
 	}
 
 	return buf.String(), nil
 }
 
-func WriteAd(c *Config, ad *Ad) (string, error) {
+func WriteAd(conf *Config, advertisement *Ad) (string, error) {
 	// prepare ad dir name
-	addir, err := AdDirName(c, ad)
+	addir, err := AdDirName(conf, advertisement)
 	if err != nil {
 		return "", err
 	}
 
 	// prepare output dir
-	dir := filepath.Join(c.Outdir, addir)
+	dir := filepath.Join(conf.Outdir, addir)
+
 	err = Mkdir(dir)
 	if err != nil {
 		return "", err
@@ -59,26 +61,27 @@ func WriteAd(c *Config, ad *Ad) (string, error) {
 
 	// write ad file
 	listingfile := filepath.Join(dir, "Adlisting.txt")
-	f, err := os.Create(listingfile)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
 
-	if runtime.GOOS == "windows" {
-		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\r\n")
+	listingfd, err := os.Create(listingfile)
+	if err != nil {
+		return "", fmt.Errorf("failed to create Adlisting.txt: %w", err)
+	}
+	defer listingfd.Close()
+
+	if runtime.GOOS == WIN {
+		advertisement.Text = strings.ReplaceAll(advertisement.Text, "<br/>", "\r\n")
 	} else {
-		ad.Text = strings.ReplaceAll(ad.Text, "<br/>", "\n")
+		advertisement.Text = strings.ReplaceAll(advertisement.Text, "<br/>", "\n")
 	}
 
-	tmpl, err := tpl.New("adlisting").Parse(c.Template)
+	tmpl, err := tpl.New("adlisting").Parse(conf.Template)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to parse adlisting template: %w", err)
 	}
 
-	err = tmpl.Execute(f, ad)
+	err = tmpl.Execute(listingfd, advertisement)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to execute adlisting template: %w", err)
 	}
 
 	slog.Info("wrote ad listing", "listingfile", listingfile)
@@ -89,14 +92,14 @@ func WriteAd(c *Config, ad *Ad) (string, error) {
 func WriteImage(filename string, buf []byte) error {
 	file, err := os.Create(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open image file: %w", err)
 	}
 	defer file.Close()
 
 	_, err = file.Write(buf)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to write to image file: %w", err)
 	}
 
 	return nil
@@ -111,12 +114,12 @@ func ReadImage(filename string) (*bytes.Buffer, error) {
 
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read image file: %w", err)
 	}
 
 	_, err = buf.Write(data)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to write image into buffer: %w", err)
 	}
 
 	return &buf, nil
@@ -127,5 +130,6 @@ func fileExists(filename string) bool {
 	if os.IsNotExist(err) {
 		return false
 	}
+
 	return !info.IsDir()
 }
