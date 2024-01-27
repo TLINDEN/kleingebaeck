@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
+	"bytes"
 	"testing"
 )
 
@@ -28,10 +29,10 @@ import (
 func TestWriteImage(t *testing.T) {
 	t.Parallel()
 
-	buf := []byte{1, 2, 3, 4, 5, 6, 7, 8}
+	reader := bytes.NewReader([]byte{1, 2, 3, 4, 5, 6, 7, 8})
 	file := "t/out/t.jpg"
 
-	err := WriteImage(file, buf)
+	err := WriteImage(file, reader)
 	if err != nil {
 		t.Errorf("Could not write mock image to %s: %s", file, err.Error())
 	}

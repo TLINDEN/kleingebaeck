@@ -89,14 +89,14 @@ func WriteAd(conf *Config, advertisement *Ad) (string, error) {
 	return addir, nil
 }
 
-func WriteImage(filename string, buf []byte) error {
+func WriteImage(filename string, reader *bytes.Reader) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return fmt.Errorf("failed to open image file: %w", err)
 	}
 	defer file.Close()
 
-	_, err = file.Write(buf)
+	_, err = reader.WriteTo(file)
 
 	if err != nil {
 		return fmt.Errorf("failed to write to image file: %w", err)

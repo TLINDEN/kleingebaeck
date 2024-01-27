@@ -168,14 +168,15 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 			}
 
 			buf := new(bytes.Buffer)
+
 			_, err = buf.ReadFrom(body)
 			if err != nil {
 				return fmt.Errorf("failed to read from image buffer: %w", err)
 			}
 
-			buf2 := buf.Bytes() // needed for image writing
+			reader := bytes.NewReader(buf.Bytes())
 
-			image := NewImage(buf, file, imguri)
+			image := NewImage(reader, file, imguri)
 			err = image.CalcHash()
 			if err != nil {
 				return err
@@ -189,12 +190,13 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 				}
 			}
 
-			err = WriteImage(file, buf2)
+			reader.Seek(0, 0)
+			err = WriteImage(file, reader)
 			if err != nil {
 				return err
 			}
 
-			slog.Debug("wrote image", "image", image, "size", len(buf2), "throttle", throttle)
+			slog.Debug("wrote image", "image", image, "size", buf.Len(), "throttle", throttle)
 
 			return nil
 		})

@@ -33,7 +33,7 @@ const MaxDistance = 3
 type Image struct {
 	Filename string
 	Hash     *goimagehash.ImageHash
-	Data     *bytes.Buffer
+	Data     *bytes.Reader
 	URI      string
 }
 
@@ -49,7 +49,7 @@ func (img *Image) LogValue() slog.Value {
 // holds all images of an ad
 type Cache []*goimagehash.ImageHash
 
-func NewImage(buf *bytes.Buffer, filename string, uri string) *Image {
+func NewImage(buf *bytes.Reader, filename string, uri string) *Image {
 	img := &Image{
 		Filename: filename,
 		URI:      uri,
@@ -131,7 +131,9 @@ func ReadImages(addir string, dont bool) (Cache, error) {
 				return nil, err
 			}
 
-			img := NewImage(data, filename, "")
+			reader := bytes.NewReader(data.Bytes())
+
+			img := NewImage(reader, filename, "")
 			if err = img.CalcHash(); err != nil {
 				return nil, err
 			}
