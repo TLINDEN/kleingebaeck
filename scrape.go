@@ -190,7 +190,11 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 				}
 			}
 
-			reader.Seek(0, 0)
+			_, err = reader.Seek(0, 0)
+			if err != nil {
+				return fmt.Errorf("failed to seek(0) on image reader: %w", err)
+			}
+
 			err = WriteImage(file, reader)
 			if err != nil {
 				return err
