@@ -153,6 +153,7 @@ func InitConfig(output io.Writer) (*Config, error) {
 	flagset.BoolP("help", "h", false, "show usage")
 	flagset.BoolP("manual", "m", false, "show manual")
 	flagset.BoolP("force", "f", false, "force")
+	flagset.BoolP("ignoreerrors", "", false, "ignore image download HTTP errors")
 
 	if err := flagset.Parse(os.Args[1:]); err != nil {
 		return nil, fmt.Errorf("failed to parse program arguments: %w", err)
