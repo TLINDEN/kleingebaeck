@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.3"
+	VERSION    string = "0.3.4"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
@@ -65,6 +65,8 @@ const (
 	WIN string = "windows"
 )
 
+var DirsVisited map[string]int
+
 const Usage string = `This is kleingebaeck, the kleinanzeigen.de backup tool.
 
 Usage: kleingebaeck [-dvVhmoclu] [<ad-listing-url>,...]
@@ -77,7 +79,7 @@ Options:
 -l --limit   <num>      Limit the ads to download to <num>, default: load all.
 -c --config  <file>     Use config file <file> (default: ~/.kleingebaeck).
    --ignoreerrors       Ignore HTTP errors, may lead to incomplete ad backup.
--f --force              Download images even if they already exist.
+-f --force              Overwrite images and ads even if the already exist.
 -m --manual             Show manual.
 -h --help               Show usage.
 -V --version            Show program version.

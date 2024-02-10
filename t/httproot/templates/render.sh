@@ -1,5 +1,7 @@
 #!/bin/sh -x
 base="../kleinanzeigen"
+
+rm -rf $base
 mkdir -p $base
 
 echo "Generating /s-bestandsliste.html"
