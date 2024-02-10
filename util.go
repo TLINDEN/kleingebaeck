@@ -74,3 +74,12 @@ func IsNoTty() bool {
 func GetThrottleTime() time.Duration {
 	return time.Duration(rand.Intn(MaxThrottle-MinThrottle+1)+MinThrottle) * time.Millisecond
 }
+
+// look if a key in a map exists, generic variant
+func Exists[K comparable, V any](m map[K]V, v K) bool {
+	if _, ok := m[v]; ok {
+		return true
+	}
+
+	return false
+}

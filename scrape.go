@@ -126,6 +126,11 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 
 	advertisement.CalculateExpire()
 
+	proceed := CheckAdVisited(fetch.Config, advertisement.Slug)
+	if !proceed {
+		return nil
+	}
+
 	// write listing
 	addir, err := WriteAd(fetch.Config, advertisement)
 	if err != nil {
