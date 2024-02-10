@@ -55,13 +55,98 @@ Be careful  if you want  to change the  template.  The variable  is a
 multiline string surrounded  by three double quotes. You  can left out
 certain   fields  and   use  any   formatting  you   like.  Refer   to
 L<https://pkg.go.dev/text/template>  for   details  how  to   write  a
-template.
+template. Also read the TEMPLATES section below.
 
 If you're on  windows and want to customize the  output directory, put
 it into single  quotes to avoid the backslashes  interpreted as escape
 chars like this:
 
     outdir = 'C:\Data\Ads'
+
+=head1 TEMPLATES
+
+Various parts  of the configuration  can be modified  using templates:
+the output directory, the ad directory and the ad listing itself.
+
+=head2 OUTPUT DIR TEMPLATE
+
+The config varialbe C<outdir> or the command line parameter C<-o> take a
+template which may contain:
+
+=over
+
+=item C<{{.Year}}>
+
+=item C<{{.Month}}>
+
+=item C<{{.Day}}>
+
+=back
+
+That way you can create a new output directory for every backup
+run. For example:
+
+    outdir = "/home/backups/ads-{{.Year}}-{{.Month}}-{{.Day}}"
+
+Or using the command line flag:
+
+    -o "/home/backups/ads-{{.Year}}-{{.Month}}-{{.Day}}"
+
+The default value is C<.> - the current directory.
+
+=head2 AD DIRECTORY TEMPLATE
+
+The ad directory name can be modified using the following ad values:
+
+=over
+
+=item {{.Price}}
+
+=item {{.ID}}
+
+=item {{.Category}}
+
+=item {{.Condition}}
+
+=item {{.Created}}
+
+=item {{.Slug}}
+
+=item {{.Text}}
+
+=back
+
+It can only be configured in the config file. By default only
+C<{{.Slug}}> is being used, this is the title of the ad in url format.
+
+=head2 AD TEMPLATE
+
+The ad listing itself can be modified as well, using the same
+variables as the ad name template above.
+
+This is the default template:
+
+    Title: {{.Title}}
+    Price: {{.Price}}
+    Id: {{.ID}}
+    Category: {{.Category}}
+    Condition: {{.Condition}}
+    Created: {{.Created}}
+    Expire: {{.Expire}}
+    
+    {{.Text}}
+
+The config parameter to modify is C<template>. See example.conf in the
+source repository. Please take care, since this is a multiline
+string. This is how it shall look if you modify it:
+
+    template="""
+    Title: {{.Title}}
+    
+    {{.Text}}
+    """
+
+That is, the content between the two C<"""> chars is the template.
 
 =head1 SETUP
 

@@ -195,7 +195,7 @@ Be careful  if you want  to change the  template.  The variable  is a
 multiline string surrounded  by three double quotes. You  can left out
 certain   fields  and   use  any   formatting  you   like.  Refer   to
 <https://pkg.go.dev/text/template>  for   details  how  to   write  a
-template.
+template. Also read the \s-1TEMPLATES\s0 section below.
 .PP
 If you're on  windows and want to customize the  output directory, put
 it into single  quotes to avoid the backslashes  interpreted as escape
@@ -204,6 +204,94 @@ chars like this:
 .Vb 1
 \&    outdir = \*(AqC:\eData\eAds\*(Aq
 .Ve
+.SH "TEMPLATES"
+.IX Header "TEMPLATES"
+Various parts  of the configuration  can be modified  using templates:
+the output directory, the ad directory and the ad listing itself.
+.SS "\s-1OUTPUT DIR TEMPLATE\s0"
+.IX Subsection "OUTPUT DIR TEMPLATE"
+The config varialbe \f(CW\*(C`outdir\*(C'\fR or the command line parameter \f(CW\*(C`\-o\*(C'\fR take a
+template which may contain:
+.ie n .IP """{{.Year}}""" 4
+.el .IP "\f(CW{{.Year}}\fR" 4
+.IX Item "{{.Year}}"
+.PD 0
+.ie n .IP """{{.Month}}""" 4
+.el .IP "\f(CW{{.Month}}\fR" 4
+.IX Item "{{.Month}}"
+.ie n .IP """{{.Day}}""" 4
+.el .IP "\f(CW{{.Day}}\fR" 4
+.IX Item "{{.Day}}"
+.PD
+.PP
+That way you can create a new output directory for every backup
+run. For example:
+.PP
+.Vb 1
+\&    outdir = "/home/backups/ads\-{{.Year}}\-{{.Month}}\-{{.Day}}"
+.Ve
+.PP
+Or using the command line flag:
+.PP
+.Vb 1
+\&    \-o "/home/backups/ads\-{{.Year}}\-{{.Month}}\-{{.Day}}"
+.Ve
+.PP
+The default value is \f(CW\*(C`.\*(C'\fR \- the current directory.
+.SS "\s-1AD DIRECTORY TEMPLATE\s0"
+.IX Subsection "AD DIRECTORY TEMPLATE"
+The ad directory name can be modified using the following ad values:
+.IP "{{.Price}}" 4
+.IX Item "{{.Price}}"
+.PD 0
+.IP "{{.ID}}" 4
+.IX Item "{{.ID}}"
+.IP "{{.Category}}" 4
+.IX Item "{{.Category}}"
+.IP "{{.Condition}}" 4
+.IX Item "{{.Condition}}"
+.IP "{{.Created}}" 4
+.IX Item "{{.Created}}"
+.IP "{{.Slug}}" 4
+.IX Item "{{.Slug}}"
+.IP "{{.Text}}" 4
+.IX Item "{{.Text}}"
+.PD
+.PP
+It can only be configured in the config file. By default only
+\&\f(CW\*(C`{{.Slug}}\*(C'\fR is being used, this is the title of the ad in url format.
+.SS "\s-1AD TEMPLATE\s0"
+.IX Subsection "AD TEMPLATE"
+The ad listing itself can be modified as well, using the same
+variables as the ad name template above.
+.PP
+This is the default template:
+.PP
+.Vb 7
+\&    Title: {{.Title}}
+\&    Price: {{.Price}}
+\&    Id: {{.ID}}
+\&    Category: {{.Category}}
+\&    Condition: {{.Condition}}
+\&    Created: {{.Created}}
+\&    Expire: {{.Expire}}
+\&    
+\&    {{.Text}}
+.Ve
+.PP
+The config parameter to modify is \f(CW\*(C`template\*(C'\fR. See example.conf in the
+source repository. Please take care, since this is a multiline
+string. This is how it shall look if you modify it:
+.PP
+.Vb 2
+\&    template="""
+\&    Title: {{.Title}}
+\&    
+\&    {{.Text}}
+\&    """
+.Ve
+.PP
+That is, the content between the two \f(CW"""\fR chars is the template.
 .SH "SETUP"
 .IX Header "SETUP"
 To setup the tool, you need to lookup your userid on

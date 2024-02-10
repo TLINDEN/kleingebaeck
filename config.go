@@ -52,6 +52,8 @@ const (
 
 	DefaultAdNameTemplate string = "{{.Slug}}"
 
+	DefaultOutdirTemplate string = "."
+
 	// for image download throttling
 	MinThrottle int = 2
 	MaxThrottle int = 20
@@ -128,7 +130,7 @@ func InitConfig(output io.Writer) (*Config, error) {
 	// Load default values using the confmap provider.
 	if err := kloader.Load(confmap.Provider(map[string]interface{}{
 		"template":       template,
-		"outdir":         ".",
+		"outdir":         DefaultOutdirTemplate,
 		"loglevel":       "notice",
 		"userid":         0,
 		"adnametemplate": DefaultAdNameTemplate,
