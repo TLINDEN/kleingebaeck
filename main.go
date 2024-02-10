@@ -112,10 +112,16 @@ func Main(output io.Writer) int {
 	slog.Debug("config", "conf", conf)
 
 	// prepare output dir
-	err = Mkdir(conf.Outdir)
+	outdir, err := OutDirName(conf)
 	if err != nil {
 		return Die(err)
 	}
+
+	err = Mkdir(outdir)
+	if err != nil {
+		return Die(err)
+	}
+	conf.Outdir = outdir
 
 	// used for all HTTP requests
 	fetch, err := NewFetcher(conf)
