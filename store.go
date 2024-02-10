@@ -26,7 +26,35 @@ import (
 	"runtime"
 	"strings"
 	tpl "text/template"
+	"time"
 )
+
+type OutdirData struct {
+	Year, Day, Month string
+}
+
+func OutDirName(conf *Config) (string, error) {
+	tmpl, err := tpl.New("outdir").Parse(conf.Outdir)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse outdir template: %w", err)
+	}
+
+	buf := bytes.Buffer{}
+
+	now := time.Now()
+	data := OutdirData{
+		Year:  now.Format("2006"),
+		Month: now.Format("02"),
+		Day:   now.Format("01"),
+	}
+
+	err = tmpl.Execute(&buf, data)
+	if err != nil {
+		return "", fmt.Errorf("failed to execute outdir template: %w", err)
+	}
+
+	return buf.String(), nil
+}
 
 func AdDirName(conf *Config, advertisement *Ad) (string, error) {
 	tmpl, err := tpl.New("adname").Parse(conf.Adnametemplate)

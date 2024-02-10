@@ -55,12 +55,78 @@ CONFIGURATION
     multiline string surrounded by three double quotes. You can left out
     certain fields and use any formatting you like. Refer to
     <https://pkg.go.dev/text/template> for details how to write a template.
+    Also read the TEMPLATES section below.
 
     If you're on windows and want to customize the output directory, put it
     into single quotes to avoid the backslashes interpreted as escape chars
     like this:
 
         outdir = 'C:\Data\Ads'
+
+TEMPLATES
+    Various parts of the configuration can be modified using templates: the
+    output directory, the ad directory and the ad listing itself.
+
+  OUTPUT DIR TEMPLATE
+    The config varialbe "outdir" or the command line parameter "-o" take a
+    template which may contain:
+
+    "{{.Year}}"
+    "{{.Month}}"
+    "{{.Day}}"
+
+    That way you can create a new output directory for every backup run. For
+    example:
+
+        outdir = "/home/backups/ads-{{.Year}}-{{.Month}}-{{.Day}}"
+
+    Or using the command line flag:
+
+        -o "/home/backups/ads-{{.Year}}-{{.Month}}-{{.Day}}"
+
+    The default value is "." - the current directory.
+
+  AD DIRECTORY TEMPLATE
+    The ad directory name can be modified using the following ad values:
+
+    {{.Price}}
+    {{.ID}}
+    {{.Category}}
+    {{.Condition}}
+    {{.Created}}
+    {{.Slug}}
+    {{.Text}}
+
+    It can only be configured in the config file. By default only
+    "{{.Slug}}" is being used, this is the title of the ad in url format.
+
+  AD TEMPLATE
+    The ad listing itself can be modified as well, using the same variables
+    as the ad name template above.
+
+    This is the default template:
+
+        Title: {{.Title}}
+        Price: {{.Price}}
+        Id: {{.ID}}
+        Category: {{.Category}}
+        Condition: {{.Condition}}
+        Created: {{.Created}}
+        Expire: {{.Expire}}
+    
+        {{.Text}}
+
+    The config parameter to modify is "template". See example.conf in the
+    source repository. Please take care, since this is a multiline string.
+    This is how it shall look if you modify it:
+
+        template="""
+        Title: {{.Title}}
+    
+        {{.Text}}
+        """
+
+    That is, the content between the two """ chars is the template.
 
 SETUP
     To setup the tool, you need to lookup your userid on kleinanzeigen.de.
