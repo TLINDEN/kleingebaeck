@@ -123,6 +123,9 @@ func Main(output io.Writer) int {
 		return Die(err)
 	}
 
+	// setup ad dir registry, needed to check for duplicates
+	DirsVisited = make(map[string]int)
+
 	switch {
 	case len(conf.Adlinks) >= 1:
 		// directly backup ad listing[s]

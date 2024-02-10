@@ -133,3 +133,24 @@ func fileExists(filename string) bool {
 
 	return !info.IsDir()
 }
+
+// check if  an addir has  already been  processed by current  run and
+// decide what to do
+func CheckAdVisited(conf *Config, adname string) bool {
+	if Exists(DirsVisited, adname) {
+		if conf.ForceDownload {
+			slog.Warn("an ad with the same name has already been downloaded, overwriting", "addir", adname)
+			return true
+		}
+
+		// don't overwrite
+		slog.Warn("an ad with the same name has already been downloaded, skipping (use -f to overwrite)", "addir", adname)
+		return false
+	}
+
+	// register
+	DirsVisited[adname] = 1
+
+	// overwrite
+	return true
+}
