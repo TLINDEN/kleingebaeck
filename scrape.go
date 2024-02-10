@@ -126,20 +126,31 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 
 	advertisement.CalculateExpire()
 
-	proceed := CheckAdVisited(fetch.Config, advertisement.Slug)
+	// prepare ad dir name
+	addir, err := AdDirName(fetch.Config, advertisement)
+	if err != nil {
+		return err
+	}
+
+	proceed := CheckAdVisited(fetch.Config, addir)
 	if !proceed {
 		return nil
 	}
 
 	// write listing
-	addir, err := WriteAd(fetch.Config, advertisement)
+	err = WriteAd(fetch.Config, advertisement, addir)
 	if err != nil {
 		return err
 	}
 
+	// tell the user
 	slog.Debug("extracted ad listing", "ad", advertisement)
 
+	// stats
 	fetch.Config.IncrAds()
+
+	// register for later checks
+	DirsVisited[addir] = 1
 
 	return ScrapeImages(fetch, advertisement, addir)
 }

@@ -72,19 +72,13 @@ func AdDirName(conf *Config, advertisement *Ad) (string, error) {
 	return buf.String(), nil
 }
 
-func WriteAd(conf *Config, advertisement *Ad) (string, error) {
-	// prepare ad dir name
-	addir, err := AdDirName(conf, advertisement)
-	if err != nil {
-		return "", err
-	}
-
+func WriteAd(conf *Config, advertisement *Ad, addir string) error {
 	// prepare output dir
 	dir := filepath.Join(conf.Outdir, addir)
 
-	err = Mkdir(dir)
+	err := Mkdir(dir)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	// write ad file
@@ -92,7 +86,7 @@ func WriteAd(conf *Config, advertisement *Ad) (string, error) {
 
 	listingfd, err := os.Create(listingfile)
 	if err != nil {
-		return "", fmt.Errorf("failed to create Adlisting.txt: %w", err)
+		return fmt.Errorf("failed to create Adlisting.txt: %w", err)
 	}
 	defer listingfd.Close()
 
@@ -104,17 +98,17 @@ func WriteAd(conf *Config, advertisement *Ad) (string, error) {
 
 	tmpl, err := tpl.New("adlisting").Parse(conf.Template)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse adlisting template: %w", err)
+		return fmt.Errorf("failed to parse adlisting template: %w", err)
 	}
 
 	err = tmpl.Execute(listingfd, advertisement)
 	if err != nil {
-		return "", fmt.Errorf("failed to execute adlisting template: %w", err)
+		return fmt.Errorf("failed to execute adlisting template: %w", err)
 	}
 
 	slog.Info("wrote ad listing", "listingfile", listingfile)
 
-	return addir, nil
+	return nil
 }
 
 func WriteImage(filename string, reader *bytes.Reader) error {
@@ -175,9 +169,6 @@ func CheckAdVisited(conf *Config, adname string) bool {
 		slog.Warn("an ad with the same name has already been downloaded, skipping (use -f to overwrite)", "addir", adname)
 		return false
 	}
-
-	// register
-	DirsVisited[adname] = 1
 
 	// overwrite
 	return true
