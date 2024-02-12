@@ -22,7 +22,12 @@ freebsd/amd64
 linux/amd64
 netbsd/amd64
 openbsd/amd64
-windows/amd64"
+windows/amd64
+freebsd/arm64
+linux/arm64
+netbsd/arm64
+openbsd/arm64
+windows/arm64"
 
 tool="$1"
 version="$2"
