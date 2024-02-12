@@ -32,7 +32,7 @@ import (
 
 func Mkdir(dir string) error {
 	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
-		err := os.Mkdir(dir, os.ModePerm)
+		err := os.MkdirAll(dir, os.ModePerm)
 		if err != nil {
 			return fmt.Errorf("failed to create directory %s: %w", dir, err)
 		}
