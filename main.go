@@ -116,11 +116,6 @@ func Main(output io.Writer) int {
 	if err != nil {
 		return Die(err)
 	}
-
-	err = Mkdir(outdir)
-	if err != nil {
-		return Die(err)
-	}
 	conf.Outdir = outdir
 
 	// used for all HTTP requests
