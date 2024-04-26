@@ -222,6 +222,49 @@ Sowie alle Bilder.
 Das Format kann man mit der Variable `template` in der Konfiguration
 ändern. Die `example.conf` enthält ein Beispiel für das Standard Template.
 
+## Verhalten des Tools
+
+Es gibt einige Dinge über das Verhalten von kleingebäck, über die Du
+Bescheid wissen solltest:
+
+- alle HTML Seiten und Bilder werden immer heruntergeladen
+- es wird ein (konfigurierbarer) Useragent verwendet
+- HTTP Cookies werden beachtet
+- bei Fehlern wird dreimal mit unterschiedlichem Abstand erneut
+  versucht
+- Bilder Downloads laufen parallelisiert mit leicht unterschiedlichen
+  zeitlichen Abständen ab
+- Gleich aussehende Bilder werden nicht überschrieben
+
+Der letzte Punkt muss genauer erläutert werden:
+
+Wenn man bei Kleinanzeigen.de eine Anzeige einstellt und Bilder
+postet, werden diese dort in ihrer Grösse reduziert (durch Kompression
+und Verkleinerung der Bilder usw.). Diese reduzierten Bilder werden
+dann von kleingebäck heruntergeladen. Falls Du Deine original Bilder
+behalten hast, kannst Du diese danach in das Backupverzeichnis
+kopieren. Bei einem erneuten kleingebäck-Lauf werden diese Bilder dann
+nicht überschrieben.
+
+Wir verwenden dafür einen Algorythmus namens [distance
+hashing](https://github.com/corona10/goimagehash). Dieser Algorithmus
+prüft die Ähnlichkeit von Bildern. Diese können in ihrer Auflösung,
+Kompression, Farbtiefe und vielem mehr manipuliert worden sein und
+trotzdem als das "gleiche Bild" erkannt werden (wohlgemerkt nicht "das
+selbe": die Dateien sind durchaus unterschiedlich!). Bis zu einer
+Distance von 5 überschreiben wir keine Bilder, weil wir dann davon
+ausgehen, dass das lokal Vorhandene das Original ist.
+
+Bitte beachte aber, dass dies KEIN Cachingmechanismus ist: die Bilder
+werden trotzdem immer alle heruntergeladen. Das muss so sein, da wir
+uns nicht die Dateinamen anschauen können, da kleinanzeigen.de diese
+nämlich zu Zahlen umbenennt. Und die Dateinamen können sich auch
+ändern, wenn der User in der Anzeige die Bilder umarrangiert hat.
+
+Du kannst dieses Verhalten mit der Option **--force** ausschalten. Du
+kannst ausserdem mit der Option **--ignoreerrors** auch alle Fehler
+ignorieren, die beim Bilderdownload auftreten könnten.
+
 ## Documentation
 
 Die Dokumentation kann man
