@@ -52,7 +52,7 @@ func NewFetcher(conf *Config) (*Fetcher, error) {
 }
 
 func (f *Fetcher) Get(uri string) (io.ReadCloser, error) {
-	req, err := http.NewRequest(http.MethodGet, uri, nil)
+	req, err := http.NewRequest(http.MethodGet, uri, http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a new HTTP request obj: %w", err)
 	}

@@ -73,7 +73,7 @@ func (ad *Ad) Incomplete() bool {
 }
 
 func (ad *Ad) CalculateExpire() {
-	if len(ad.Created) > 0 {
+	if ad.Created != "" {
 		ts, err := time.Parse("02.01.2006", ad.Created)
 		if err == nil {
 			ad.Expire = ts.AddDate(0, ExpireMonths, ExpireDays).Format("02.01.2006")
