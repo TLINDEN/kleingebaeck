@@ -49,7 +49,7 @@ func (img *Image) LogValue() slog.Value {
 // holds all images of an ad
 type Cache []*goimagehash.ImageHash
 
-func NewImage(buf *bytes.Reader, filename string, uri string) *Image {
+func NewImage(buf *bytes.Reader, filename, uri string) *Image {
 	img := &Image{
 		Filename: filename,
 		URI:      uri,
@@ -134,7 +134,7 @@ func ReadImages(addir string, dont bool) (Cache, error) {
 			reader := bytes.NewReader(data.Bytes())
 
 			img := NewImage(reader, filename, "")
-			if err = img.CalcHash(); err != nil {
+			if err := img.CalcHash(); err != nil {
 				return nil, err
 			}
 
