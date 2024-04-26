@@ -207,6 +207,48 @@ variable. The supplied sample config contains the default template.
 
 All images will be stored in the same directory.
 
+## Tool Behavior
+
+There are a bunch of things you might want to know about the behavior
+of the kleingebäck tool:
+
+- all HTML pages and IMAGEs are always being downloaded
+- we use a (customizable) user agent
+- we respect HTTP cookies
+- in the case of an error, the tool does 3 retries, the time it waits
+  between tries is longer for each retry
+- image download is parallized using small time differences to look
+  more natural
+- same images are not being overwritten on subsequent download
+
+
+The latter needs to be elaborated a bit more:
+
+If you publish an ad on kleinanzeigen.de and post images, those images
+will be reduced in size by the site (by compressing and down sizing
+them). This reduced images will be downloaded by kleingebäck. However,
+you may still own the original images and may want to put them into
+that backup directory so that you have all things for one ad together.
+
+You can easily do that, because kleingebäck won't overwrite those
+original images. It uses something called a distance hash using
+[goimagehash](https://github.com/corona10/goimagehash). This
+algorithmus checks the similarity of images. If an image has been
+resized it is still very similar to the original one. We accept a
+maximum of a distance of 5, everything above leads to overwrite.
+
+This works with resizes, cropped and otherwise manipulated images as
+long as the image still shows the original contents good enough.
+
+Also note, that this is NOT a caching mechanism: the images will be
+downloaded anyway during each run. We also can't look at the file
+names because kleinanzeigen.de renames all images to numbers. And
+those might even change if the user re-arranges the images.
+
+You can override this behavior using the **--force** option. Another
+option, **--ignoreerrors**, can be used to ignore all kinds of image
+errors. 
+
 ## Documentation
 
 You can read the documentation [online](https://github.com/TLINDEN/kleingebaeck/blob/main/kleingebaeck.pod) or locally once you have installed kleingebaeck with: `kleingebaeck --manual`.
