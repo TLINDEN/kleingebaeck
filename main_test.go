@@ -334,14 +334,14 @@ type Adsource struct {
 }
 
 // Render a HTML template for an adlisting or an ad
-func GetTemplate(adconfigs []AdConfig, adconfig AdConfig, htmltemplate string) string {
+func GetTemplate(adconfigs []AdConfig, adconfig *AdConfig, htmltemplate string) string {
 	tmpl, err := tpl.New("template").Parse(htmltemplate)
 	if err != nil {
 		panic(err)
 	}
 
 	var out bytes.Buffer
-	if len(adconfig.ID) == 0 {
+	if adconfig.ID == "" {
 		err = tmpl.Execute(&out, adconfigs)
 	} else {
 		err = tmpl.Execute(&out, adconfig)
@@ -376,15 +376,15 @@ func InitValidSources() []Adsource {
 	ads := []Adsource{
 		{
 			uri:     fmt.Sprintf("%s%s?userId=1", Baseuri, Listuri),
-			content: GetTemplate(list1, empty, LISTTPL),
+			content: GetTemplate(list1, &empty, LISTTPL),
 		},
 		{
 			uri:     fmt.Sprintf("%s%s?userId=1&pageNum=2", Baseuri, Listuri),
-			content: GetTemplate(list2, empty, LISTTPL),
+			content: GetTemplate(list2, &empty, LISTTPL),
 		},
 		{
 			uri:     fmt.Sprintf("%s%s?userId=1&pageNum=3", Baseuri, Listuri),
-			content: GetTemplate(list3, empty, LISTTPL),
+			content: GetTemplate(list3, &empty, LISTTPL),
 		},
 	}
 
@@ -392,7 +392,7 @@ func InitValidSources() []Adsource {
 	for _, ad := range adsrc {
 		ads = append(ads, Adsource{
 			uri:     fmt.Sprintf("%s/s-anzeige/%s/%s", Baseuri, ad.Slug, ad.ID),
-			content: GetTemplate(nil, ad, ADTPL),
+			content: GetTemplate(nil, &ad, ADTPL),
 		})
 	}
 
@@ -405,28 +405,28 @@ func InitInvalidSources() []Adsource {
 		{
 			// valid ad page but without content
 			uri:     fmt.Sprintf("%s/s-anzeige/empty/1", Baseuri),
-			content: GetTemplate(nil, empty, EMPTYPAGE),
+			content: GetTemplate(nil, &empty, EMPTYPAGE),
 		},
 		{
 			// some random foreign webpage
 			uri:     INVALIDURI,
-			content: GetTemplate(nil, empty, "<html>foo</html>"),
+			content: GetTemplate(nil, &empty, "<html>foo</html>"),
 		},
 		{
 			// some invalid page path
 			uri:     fmt.Sprintf("%s/anzeige/name/1", Baseuri),
-			content: GetTemplate(nil, empty, "<html></html>"),
+			content: GetTemplate(nil, &empty, "<html></html>"),
 		},
 		{
 			// some none-ad page
 			uri:     fmt.Sprintf("%s/anzeige/name/1/foo/bar", Baseuri),
-			content: GetTemplate(nil, empty, "<html>HTTP 404: /eine-anzeige/ does not exist!</html>"),
+			content: GetTemplate(nil, &empty, "<html>HTTP 404: /eine-anzeige/ does not exist!</html>"),
 			status:  404,
 		},
 		{
 			// valid ad page but 503
 			uri:     fmt.Sprintf("%s/s-anzeige/503/1", Baseuri),
-			content: GetTemplate(nil, empty, "<html>HTTP 503: service unavailable</html>"),
+			content: GetTemplate(nil, &empty, "<html>HTTP 503: service unavailable</html>"),
 			status:  503,
 		},
 	}
@@ -465,7 +465,7 @@ func SetIntercept(ads []Adsource) {
 	}
 }
 
-func VerifyAd(advertisement AdConfig) error {
+func VerifyAd(advertisement *AdConfig) error {
 	body := advertisement.Title + advertisement.Price + advertisement.ID + "Kleinanzeigen => " +
 		advertisement.Category + advertisement.Condition + advertisement.Created
 
@@ -525,7 +525,7 @@ func TestMain(t *testing.T) {
 
 	// verify if downloaded ads match
 	for _, ad := range adsrc {
-		if err := VerifyAd(ad); err != nil {
+		if err := VerifyAd(&ad); err != nil {
 			t.Errorf(err.Error())
 		}
 	}
