@@ -49,7 +49,10 @@ func init() {
 			fmt.Println("Please open a command shell and run it from there.")
 			fmt.Println()
 			fmt.Print("Press any key to quit: ")
-			bufio.NewReader(os.Stdin).ReadString('\n')
+			_, err := bufio.NewReader(os.Stdin).ReadString('\n')
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }
