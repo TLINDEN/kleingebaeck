@@ -18,13 +18,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io"
 	"log/slog"
 	"os"
+	"runtime"
 	"runtime/debug"
 
+	"github.com/inconshreveable/mousetrap"
 	"github.com/lmittmann/tint"
 	"github.com/tlinden/yadu"
 )
@@ -33,6 +36,22 @@ const LevelNotice = slog.Level(2)
 
 func main() {
 	os.Exit(Main(os.Stdout))
+}
+
+func init() {
+	// if we're running on Windows  AND if the user double clicked the
+	// exe  file from explorer, we  tell them and then  wait until any
+	// key has been hit, which  will make the cmd window disappear and
+	// thus give the user time to read it.
+	if runtime.GOOS == "windows" {
+		if mousetrap.StartedByExplorer() {
+			fmt.Println("Do no double click kleingebaeck.exe!")
+			fmt.Println("Please open a command shell and run it from there.")
+			fmt.Println()
+			fmt.Print("Press any key to quit: ")
+			bufio.NewReader(os.Stdin).ReadString('\n')
+		}
+	}
 }
 
 func Main(output io.Writer) int {
