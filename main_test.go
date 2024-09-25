@@ -526,7 +526,7 @@ func TestMain(t *testing.T) {
 	// verify if downloaded ads match
 	for _, ad := range adsrc {
 		if err := VerifyAd(&ad); err != nil {
-			t.Errorf(err.Error())
+			t.Error(err.Error())
 		}
 	}
 }
