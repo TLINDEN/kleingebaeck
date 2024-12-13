@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.9"
+	VERSION    string = "0.3.10"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
@@ -183,13 +183,22 @@ func InitConfig(output io.Writer) (*Config, error) {
 
 	// Load the config file[s]
 	for _, cfgfile := range configfiles {
-		if path, err := os.Stat(cfgfile); !os.IsNotExist(err) {
-			if !path.IsDir() {
-				if err := kloader.Load(file.Provider(cfgfile), toml.Parser()); err != nil {
-					return nil, fmt.Errorf("error loading config file: %w", err)
-				}
+		path, err := os.Stat(cfgfile)
+
+		if err != nil {
+			// ignore non-existent files, but bail out on any other errors
+			if !os.IsNotExist(err) {
+				return nil, fmt.Errorf("failed to stat config file: %w", err)
 			}
-		} // else: we ignore the file if it doesn't exists
+
+			continue
+		}
+
+		if !path.IsDir() {
+			if err := kloader.Load(file.Provider(cfgfile), toml.Parser()); err != nil {
+				return nil, fmt.Errorf("error loading config file: %w", err)
+			}
+		}
 	}
 
 	// env overrides config file
