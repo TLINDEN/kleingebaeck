@@ -172,7 +172,7 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 		imguri := imguri
 
 		// we append the suffix later in NewImage() based on image format
-		file := filepath.Join(adpath, fmt.Sprintf("%d", img))
+		basefilename := filepath.Join(adpath, fmt.Sprintf("%d", img))
 
 		egroup.Go(func() error {
 			// wait a little
@@ -194,7 +194,7 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 
 			reader := bytes.NewReader(buf.Bytes())
 
-			image, err := NewImage(reader, file, imguri)
+			image, err := NewImage(reader, basefilename, imguri)
 			if err != nil {
 				return err
 			}
