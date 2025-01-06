@@ -62,7 +62,10 @@ func NewImage(buf *bytes.Reader, filename, uri string) (*Image, error) {
 		return nil, fmt.Errorf("failed to decode image: %w", err)
 	}
 
-	buf.Seek(0, 0)
+	_, err = buf.Seek(0, 0)
+	if err != nil {
+		return nil, fmt.Errorf("failed to seek(0) on image buffer: %w", err)
+	}
 
 	if imgconfig == "jpeg" {
 		// we're  using the  format as file  extension, but  have used
