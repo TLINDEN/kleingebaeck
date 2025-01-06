@@ -170,7 +170,9 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 
 	for _, imguri := range advertisement.Images {
 		imguri := imguri
-		file := filepath.Join(adpath, fmt.Sprintf("%d.jpg", img))
+
+		// we append the suffix later in NewImage() based on image format
+		file := filepath.Join(adpath, fmt.Sprintf("%d", img))
 
 		egroup.Go(func() error {
 			// wait a little
@@ -192,7 +194,11 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 
 			reader := bytes.NewReader(buf.Bytes())
 
-			image := NewImage(reader, file, imguri)
+			image, err := NewImage(reader, file, imguri)
+			if err != nil {
+				return err
+			}
+
 			err = image.CalcHash()
 			if err != nil {
 				return err
@@ -211,7 +217,7 @@ func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {
 				return fmt.Errorf("failed to seek(0) on image reader: %w", err)
 			}
 
-			err = WriteImage(file, reader)
+			err = WriteImage(image.Filename, reader)
 			if err != nil {
 				return err
 			}

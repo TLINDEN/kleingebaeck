@@ -20,10 +20,15 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"image/jpeg"
+	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"log/slog"
 	"os"
 	"path/filepath"
+
+	_ "golang.org/x/image/webp"
 
 	"github.com/corona10/goimagehash"
 )
@@ -35,6 +40,7 @@ type Image struct {
 	Hash     *goimagehash.ImageHash
 	Data     *bytes.Reader
 	URI      string
+	Mime     string
 }
 
 // used for logging to avoid printing Data
@@ -49,21 +55,49 @@ func (img *Image) LogValue() slog.Value {
 // holds all images of an ad
 type Cache []*goimagehash.ImageHash
 
-func NewImage(buf *bytes.Reader, filename, uri string) *Image {
+// filename comes from the scraper, it contains directory/base w/o suffix
+func NewImage(buf *bytes.Reader, filename, uri string) (*Image, error) {
+	_, imgconfig, err := image.DecodeConfig(buf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode image: %w", err)
+	}
+
+	buf.Seek(0, 0)
+
+	if imgconfig == "jpeg" {
+		// we're  using the  format as file  extension, but  have used
+		// "jpg" in the past, so to be backwards compatible, stay with
+		// it.
+		imgconfig = "jpg"
+	}
+
+	if imgconfig == "" {
+		return nil, fmt.Errorf("failed to process image: unknown or unsupported image format (supported: jpg,png,gif,webp)")
+	}
+
+	filename += "." + imgconfig
+
 	img := &Image{
 		Filename: filename,
 		URI:      uri,
 		Data:     buf,
+		Mime:     imgconfig,
 	}
 
-	return img
+	slog.Debug("image MIME", "mime", img.Mime)
+
+	return img, nil
 }
 
 // Calculate diff hash of the image
 func (img *Image) CalcHash() error {
-	jpgdata, err := jpeg.Decode(img.Data)
+	jpgdata, format, err := image.Decode(img.Data)
 	if err != nil {
-		return fmt.Errorf("failed to decode JPEG image: %w", err)
+		return fmt.Errorf("failed to decode image: %w", err)
+	}
+
+	if format == "" {
+		return fmt.Errorf("failed to decode image: unknown or unsupported image format (supported: jpg,png,gif,webp)")
 	}
 
 	hash1, err := goimagehash.DifferenceHash(jpgdata)
@@ -78,6 +112,10 @@ func (img *Image) CalcHash() error {
 
 // checks if 2 images are similar enough to be considered the same
 func (img *Image) Similar(hash *goimagehash.ImageHash) bool {
+	if img.Mime != "jpeg" {
+		return false
+	}
+
 	distance, err := img.Hash.Distance(hash)
 	if err != nil {
 		slog.Debug("failed to compute diff hash distance", "error", err)
@@ -133,12 +171,19 @@ func ReadImages(addir string, dont bool) (Cache, error) {
 
 			reader := bytes.NewReader(data.Bytes())
 
-			img := NewImage(reader, filename, "")
+			img, err := NewImage(reader, filename, "")
+			if err != nil {
+				return nil, err
+			}
+
 			if err := img.CalcHash(); err != nil {
 				return nil, err
 			}
 
-			slog.Debug("Caching image from file system", "image", img, "hash", img.Hash.ToString())
+			if img.Hash != nil {
+				slog.Debug("Caching image from file system", "image", img, "hash", img.Hash.ToString())
+			}
+
 			cache = append(cache, img.Hash)
 		}
 	}
