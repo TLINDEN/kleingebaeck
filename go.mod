@@ -17,7 +17,8 @@ require (
 	github.com/mattn/go-isatty v0.0.20
 	github.com/spf13/pflag v1.0.5
 	github.com/tlinden/yadu v0.1.3
-	golang.org/x/sync v0.9.0
+	golang.org/x/image v0.23.0
+	golang.org/x/sync v0.10.0
 )
 
 require (
@@ -32,7 +33,6 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	golang.org/x/image v0.23.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
