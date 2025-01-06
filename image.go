@@ -115,10 +115,6 @@ func (img *Image) CalcHash() error {
 
 // checks if 2 images are similar enough to be considered the same
 func (img *Image) Similar(hash *goimagehash.ImageHash) bool {
-	if img.Mime != "jpeg" {
-		return false
-	}
-
 	distance, err := img.Hash.Distance(hash)
 	if err != nil {
 		slog.Debug("failed to compute diff hash distance", "error", err)
