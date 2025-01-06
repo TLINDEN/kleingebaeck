@@ -182,13 +182,13 @@ var tests = []Tests{
 	{
 		name:     "download-all-ads",
 		args:     base + " -o t/out -u 1",
-		expect:   "Successfully downloaded 6 ads with 12 images to t/out",
+		expect:   "Successfully downloaded 7 ads with 16 images to t/out",
 		exitcode: 0,
 	},
 	{
 		name:     "download-all-ads-using-config",
 		args:     "kleingebaeck -c t/fullconfig.conf",
-		expect:   "Successfully downloaded 6 ads with 12 images to t/out",
+		expect:   "Successfully downloaded 7 ads with 16 images to t/out",
 		exitcode: 0,
 	},
 }
@@ -321,6 +321,17 @@ var adsrc = []AdConfig{
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},
+	{
+		Title:     "Ad with multiple img formats",
+		ID:        "7",
+		Price:     "5€",
+		Category:  "Klunker",
+		Text:      "Thing to sale",
+		Slug:      "seventh-ad",
+		Condition: "works",
+		Created:   "Yesterday",
+		Images:    []string{"t/1.png", "t/1.gif", "t/1.webp", "t/1.jpg"},
+	},
 }
 
 // An  Adsource  is used  to  construct  a  httpmock responder  for  a
@@ -363,7 +374,7 @@ func InitValidSources() []Adsource {
 
 	// valid ad listing page 2
 	list2 := []AdConfig{
-		adsrc[3], adsrc[4], adsrc[5],
+		adsrc[3], adsrc[4], adsrc[5], adsrc[6],
 	}
 
 	// valid ad listing page 3, which is empty
@@ -459,7 +470,7 @@ func SetIntercept(ads []Adsource) {
 	}
 
 	// we just use 2 images, put this here
-	for _, image := range []string{"t/1.jpg", "t/2.jpg"} {
+	for _, image := range []string{"t/1.jpg", "t/2.jpg", "t/1.png", "t/1.gif", "t/1.webp"} {
 		httpmock.RegisterResponder("GET", image,
 			httpmock.NewBytesResponder(200, GetImage(image)).HeaderAdd(headers))
 	}
