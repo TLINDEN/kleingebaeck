@@ -17,6 +17,15 @@ Anzeige gespeichert werden. In dem Verzeichnis wird eine Datei
 `Adlisting.txt` erstellt, in der sich die Inhalte der Anzeige wie
 Titel, Preis, Text etc befinden. Bilder werden natürlich auch heruntergeladen.
 
+## ACHTUNG - SICHERHEITS-UPDATE
+
+Fertige vorcompilierte Programme älter als Version `v0.3.12` sind von
+Schwachstellen in der Behandlung von HTTP und Zertifikaten
+betroffen. Falls Du eine ältere Kleingebäck-Version im Einsatz hast,
+bitte update auf Version `v0.3.12` oder höher. Bitte lies auch die [Release Notes für
+v0.3.12](https://github.com/TLINDEN/kleingebaeck/releases/tag/v0.3.12)
+für mehr Details.
+
 ## Screenshots
 
 Das ist die Hauptseite meines kleinanzeigen.de Accounts:

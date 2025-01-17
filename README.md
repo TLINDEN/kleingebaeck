@@ -18,6 +18,15 @@ directory, each ad into its own subdirectory. The backup will contain
 a textfile `Adlisting.txt` which contains the ad contents as the
 title, body, price etc. All images will be downloaded as well.
 
+## CAUTION - SECURITY UPDATE
+
+Binary releases prior to version `v0.3.11` are affected by
+vulnerabilities in HTTP and certificate handling. If you are using
+such a binary, please update to `v0.3.12` or higher. Please also refer
+to the [Release Notes of
+v0.3.12](https://github.com/TLINDEN/kleingebaeck/releases/tag/v0.3.12)
+for more details.
+
 ## Screenshots
 
 This is the index of my kleinanzeigen.de Account:
