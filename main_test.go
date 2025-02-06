@@ -256,6 +256,7 @@ type AdConfig struct {
 	Images    []string // files in ./t/
 }
 
+// used to generate ad listings returned by httpmock using templates
 var adsrc = []AdConfig{
 	{
 		Title: "First Ad",
@@ -263,7 +264,7 @@ var adsrc = []AdConfig{
 		Category:  "Klimbim",
 		Text:      "Thing to sale",
 		Slug:      "first-ad",
-		Condition: "works",
+		Condition: "Sehr Gut",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},
@@ -273,7 +274,7 @@ var adsrc = []AdConfig{
 		Category:  "Kram",
 		Text:      "Thing to sale",
 		Slug:      "second-ad",
-		Condition: "works",
+		Condition: "Gut",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},
@@ -284,7 +285,7 @@ var adsrc = []AdConfig{
 		Category:  "Kuddelmuddel",
 		Text:      "Thing to sale",
 		Slug:      "third-ad",
-		Condition: "works",
+		Condition: "In Ordnung",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},
@@ -295,7 +296,7 @@ var adsrc = []AdConfig{
 		Category:  "Krempel",
 		Text:      "Thing to sale",
 		Slug:      "fourth-ad",
-		Condition: "works",
+		Condition: "Neu",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},
@@ -306,7 +307,7 @@ var adsrc = []AdConfig{
 		Category:  "Kladderadatsch",
 		Text:      "Thing to sale",
 		Slug:      "fifth-ad",
-		Condition: "works",
+		Condition: "Sehr Gut",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},
@@ -317,7 +318,7 @@ var adsrc = []AdConfig{
 		Category:  "Klunker",
 		Text:      "Thing to sale",
 		Slug:      "sixth-ad",
-		Condition: "works",
+		Condition: "Sehr Gut",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},
@@ -328,7 +329,7 @@ var adsrc = []AdConfig{
 		Category:  "Klunker",
 		Text:      "Thing to sale",
 		Slug:      "seventh-ad",
-		Condition: "works",
+		Condition: "Sehr Gut",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.png", "t/1.gif", "t/1.webp", "t/1.jpg"},
 	},

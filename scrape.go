@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log/slog"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -122,6 +123,15 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 		slog.Debug("got ad", "ad", advertisement)
 
 		return fmt.Errorf("could not extract ad data from page, got empty struct")
+	}
+
+	for _, detail := range advertisement.Details {
+		if slices.Contains(CONDITIONS, detail) {
+			advertisement.Condition = detail
+		} else {
+			advertisement.Type = detail
+		}
+
 	}
 
 	advertisement.CalculateExpire()

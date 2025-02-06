@@ -31,7 +31,9 @@ type Ad struct {
 	Title        string `goquery:"h1"`
 	Slug         string
 	ID           string
-	Condition    string `goquery:".addetailslist--detail--value,text"`
+	Details      []string `goquery:".addetailslist--detail--value,text"`
+	Condition    string   // post processed from details
+	Type         string   // post processed from details
 	Category     string
 	CategoryTree []string `goquery:".breadcrump-link,text"`
 	Price        string   `goquery:"h2#viewad-price"`
@@ -55,6 +57,9 @@ func (ad *Ad) LogValue() slog.Value {
 		slog.String("expire", ad.Expire),
 	)
 }
+
+// static set of conditions available, used for post processing details
+var CONDITIONS = []string{"Neu", "Gut", "Sehr Gut", "In Ordnung"}
 
 // check for  completeness.  I  erected these  fields to  be mandatory
 // (though I really don't know if  they really are). I consider images

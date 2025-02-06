@@ -46,6 +46,7 @@ CONFIGURATION
         Id: {{.ID}}
         Category: {{.Category}}
         Condition: {{.Condition}}
+        Type: {{.Type}}
         Created: {{.Created}}
 
         {{.Text}}
@@ -111,6 +112,7 @@ TEMPLATES
         Id: {{.ID}}
         Category: {{.Category}}
         Condition: {{.Condition}}
+        Type: {{.Type}}
         Created: {{.Created}}
         Expire: {{.Expire}}
     
