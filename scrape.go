@@ -128,6 +128,7 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 	for _, detail := range advertisement.Details {
 		if slices.Contains(CONDITIONS, detail) {
 			advertisement.Condition = detail
+			break
 		}
 
 	}
