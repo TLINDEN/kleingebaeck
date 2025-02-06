@@ -40,11 +40,11 @@ const (
 	Defaultdir string = "."
 
 	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.ID}}\n" +
-		"Category: {{.Category}}\nCondition: {{.Condition}}\n" +
+		"Category: {{.Category}}\nCondition: {{.Condition}}\nType: {{.Type}}\n" +
 		"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 
 	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.ID}}\r\n" +
-		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\n" +
+		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\nType: {{.Type}}\r\n" +
 		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
 
 	DefaultUserAgent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +

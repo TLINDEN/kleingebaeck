@@ -32,7 +32,8 @@ type Ad struct {
 	Slug         string
 	ID           string
 	Details      []string `goquery:".addetailslist--detail--value,text"`
-	Condition    string   // post processed
+	Condition    string   // post processed from details
+	Type         string   // post processed from details
 	Category     string
 	CategoryTree []string `goquery:".breadcrump-link,text"`
 	Price        string   `goquery:"h2#viewad-price"`
