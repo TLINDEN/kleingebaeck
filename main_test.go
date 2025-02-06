@@ -93,6 +93,10 @@ const ADTPL string = `DOCTYPE html>
         <li class="addetailslist--detail">
           Zustand<span class="addetailslist--detail--value" >
           {{ .Condition }}</span>
+          Farbe<span class="addetailslist--detail--value" >
+          {{ .Color }}</span>
+          Art<span class="addetailslist--detail--value" >
+          {{ .Type }}</span>
         </li>
       </ul>
     </div>
@@ -251,6 +255,8 @@ type AdConfig struct {
 	Price     string
 	Category  string
 	Condition string
+	Type      string
+	Color     string
 	Created   string
 	Text      string
 	Images    []string // files in ./t/
@@ -265,6 +271,8 @@ var adsrc = []AdConfig{
 		Text:      "Thing to sale",
 		Slug:      "first-ad",
 		Condition: "Sehr Gut",
+		Color:     "Grün",
+		Type:      "Ball",
 		Created:   "Yesterday",
 		Images:    []string{"t/1.jpg", "t/2.jpg"},
 	},

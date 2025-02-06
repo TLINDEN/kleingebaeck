@@ -34,6 +34,7 @@ type Ad struct {
 	Details      []string `goquery:".addetailslist--detail--value,text"`
 	Condition    string   // post processed from details
 	Type         string   // post processed from details
+	Color        string   // post processed from details
 	Category     string
 	CategoryTree []string `goquery:".breadcrump-link,text"`
 	Price        string   `goquery:"h2#viewad-price"`
@@ -60,6 +61,10 @@ func (ad *Ad) LogValue() slog.Value {
 
 // static set of conditions available, used for post processing details
 var CONDITIONS = []string{"Neu", "Gut", "Sehr Gut", "In Ordnung"}
+var COLORS = []string{"Beige", "Blau", "Braun", "Bunt", "Burgunderrot",
+	"Creme", "Gelb", "Gold", "Grau", "Grün", "Holz", "Khaki", "Lavelndel",
+	"Lila", "Orange", "Pink", "Print", "Rot", "Schwarz", "Silber",
+	"Transparent", "Türkis", "Weiß", "Sonstige"}
 
 // check for  completeness.  I  erected these  fields to  be mandatory
 // (though I really don't know if  they really are). I consider images
