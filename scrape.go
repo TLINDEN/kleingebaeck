@@ -126,12 +126,14 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 	}
 
 	for _, detail := range advertisement.Details {
-		if slices.Contains(CONDITIONS, detail) {
+		switch {
+		case slices.Contains(CONDITIONS, detail):
 			advertisement.Condition = detail
-		} else {
+		case slices.Contains(COLORS, detail):
+			advertisement.Color = detail
+		default:
 			advertisement.Type = detail
 		}
-
 	}
 
 	advertisement.CalculateExpire()

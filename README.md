@@ -204,6 +204,7 @@ Price: 99 € VB
 Id: 1919191919
 Category: Sachbücher
 Condition: Sehr Gut
+Type: Buch
 Created: 10.12.2023
 
 This is the description text.
