@@ -34,17 +34,25 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.15"
+	VERSION    string = "0.3.16"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
 
+	/*
+		   Also possible: loop through .Attributes:
+
+		DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.ID}}\n" +
+			"Category: {{.Category}}\n{{ range $key,$val := .Attributes }}{{ $key }}: {{ $val }}\n{{ end }}" +
+			"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
+
+	*/
 	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.ID}}\n" +
-		"Category: {{.Category}}\n{{ range $key,$val := .Attributes }}{{ $key }}: {{ $val }}\n{{ end }}" +
+		"Category: {{.Category}}\nCondition: {{.Condition}}\nType: {{.Type}}\nColor: {{.Color}}\n" +
 		"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 
 	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.ID}}\r\n" +
-		"Category: {{.Category}}\r\n{{ range $key,$val := .Attributes }}{{ $key }}: {{ $val }}\r\n{{ end }}\r\n" +
+		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\nType: {{.Type}}\r\nColor: {{.Color}}\r\n" +
 		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
 
 	DefaultUserAgent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +

@@ -18,7 +18,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"log/slog"
@@ -125,8 +124,7 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 		return fmt.Errorf("could not extract ad data from page, got empty struct")
 	}
 
-	advertisement.Attributes = DecodeAttributes(advertisement.Details)
-
+	advertisement.DecodeAttributes()
 	advertisement.CalculateExpire()
 
 	// prepare ad dir name
@@ -156,35 +154,6 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 	DirsVisited[addir] = 1
 
 	return ScrapeImages(fetch, advertisement, addir)
-}
-
-func DecodeAttributes(attributes string) map[string]string {
-	rd := strings.NewReader(attributes)
-	scanner := bufio.NewScanner(rd)
-
-	isattr := true
-	attr := ""
-	attrmap := map[string]string{}
-
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-
-		if line == "" {
-			continue
-		}
-
-		if isattr {
-			attr = line
-		} else {
-			attrmap[attr] = line
-		}
-
-		isattr = !isattr
-	}
-
-	fmt.Println(attributes)
-
-	return attrmap
 }
 
 func ScrapeImages(fetch *Fetcher, advertisement *Ad, addir string) error {

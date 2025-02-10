@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
+	"bufio"
 	"log/slog"
 	"strings"
 	"time"
@@ -33,6 +34,10 @@ type Ad struct {
 	ID           string
 	Details      string            `goquery:".addetailslist--detail,text"`
 	Attributes   map[string]string // processed afterwards
+	Condition    string            // post processed from details for backward compatibility
+	Type         string            // post processed from details for backward compatibility
+	Color        string            // post processed from details for backward compatibility
+	Material     string            // post processed from details for backward compatibility
 	Category     string
 	CategoryTree []string `goquery:".breadcrump-link,text"`
 	Price        string   `goquery:"h2#viewad-price"`
@@ -78,5 +83,66 @@ func (ad *Ad) CalculateExpire() {
 		if err == nil {
 			ad.Expire = ts.AddDate(0, ExpireMonths, ExpireDays).Format("02.01.2006")
 		}
+	}
+}
+
+/*
+Decode attributes like color or condition. See
+https://github.com/TLINDEN/kleingebaeck/issues/117
+for more details. In short: the HTML delivered by
+kleinanzeigen.de has no css attribute for the keys
+so we cannot extract key=>value mappings of the
+ad details but have to parse them manually.
+
+The ad.Details member contains this after goq run:
+
+Art
+
+	Weitere Kinderzimmermöbel
+
+	Farbe
+	Holz
+
+	Zustand
+	In Ordnung
+
+We parse this into ad.Attributes and fill in some
+static members for backward compatibility reasons.
+*/
+func (ad *Ad) DecodeAttributes() {
+	rd := strings.NewReader(ad.Details)
+	scanner := bufio.NewScanner(rd)
+
+	isattr := true
+	attr := ""
+	attrmap := map[string]string{}
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		if line == "" {
+			continue
+		}
+
+		if isattr {
+			attr = line
+		} else {
+			attrmap[attr] = line
+		}
+
+		isattr = !isattr
+	}
+
+	ad.Attributes = attrmap
+
+	switch {
+	case Exists(ad.Attributes, "Zustand"):
+		ad.Condition = ad.Attributes["Zustand"]
+	case Exists(ad.Attributes, "Farbe"):
+		ad.Color = ad.Attributes["Farbe"]
+	case Exists(ad.Attributes, "Art"):
+		ad.Type = ad.Attributes["Type"]
+	case Exists(ad.Attributes, "Material"):
+		ad.Material = ad.Attributes["Material"]
 	}
 }

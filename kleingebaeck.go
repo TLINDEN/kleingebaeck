@@ -46,8 +46,6 @@ CONFIGURATION
         Id: {{.ID}}
         Category: {{.Category}}
         Condition: {{.Condition}}
-        Type: {{.Type}}
-        Color: {{.Color}}
         Created: {{.Created}}
 
         {{.Text}}
