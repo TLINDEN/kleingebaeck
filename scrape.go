@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"log/slog"
 	"path/filepath"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -125,17 +124,7 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 		return fmt.Errorf("could not extract ad data from page, got empty struct")
 	}
 
-	for _, detail := range advertisement.Details {
-		switch {
-		case slices.Contains(CONDITIONS, detail):
-			advertisement.Condition = detail
-		case slices.Contains(COLORS, detail):
-			advertisement.Color = detail
-		default:
-			advertisement.Type = detail
-		}
-	}
-
+	advertisement.DecodeAttributes()
 	advertisement.CalculateExpire()
 
 	// prepare ad dir name
