@@ -45,9 +45,8 @@ Format is pretty simple:
     Price: {{.Price}}
     Id: {{.ID}}
     Category: {{.Category}}
-    Condition: {{.Condition}}
-    Type: {{.Type}}
-    Color: {{.Color}}
+    {{ range $key,$val := .Attributes }}{{ $key }}: {{ $val }}
+    {{ end }}
     Created: {{.Created}}
 
     {{.Text}}

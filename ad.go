@@ -31,10 +31,8 @@ type Ad struct {
 	Title        string `goquery:"h1"`
 	Slug         string
 	ID           string
-	Details      []string `goquery:".addetailslist--detail--value,text"`
-	Condition    string   // post processed from details
-	Type         string   // post processed from details
-	Color        string   // post processed from details
+	Details      string            `goquery:".addetailslist--detail,text"`
+	Attributes   map[string]string // processed afterwards
 	Category     string
 	CategoryTree []string `goquery:".breadcrump-link,text"`
 	Price        string   `goquery:"h2#viewad-price"`
@@ -53,18 +51,10 @@ func (ad *Ad) LogValue() slog.Value {
 		slog.Int("imagecount", len(ad.Images)),
 		slog.Int("bodysize", len(ad.Text)),
 		slog.String("categorytree", strings.Join(ad.CategoryTree, "+")),
-		slog.String("condition", ad.Condition),
 		slog.String("created", ad.Created),
 		slog.String("expire", ad.Expire),
 	)
 }
-
-// static set of conditions available, used for post processing details
-var CONDITIONS = []string{"Neu", "Gut", "Sehr Gut", "In Ordnung"}
-var COLORS = []string{"Beige", "Blau", "Braun", "Bunt", "Burgunderrot",
-	"Creme", "Gelb", "Gold", "Grau", "Grün", "Holz", "Khaki", "Lavelndel",
-	"Lila", "Orange", "Pink", "Print", "Rot", "Schwarz", "Silber",
-	"Transparent", "Türkis", "Weiß", "Sonstige"}
 
 // check for  completeness.  I  erected these  fields to  be mandatory
 // (though I really don't know if  they really are). I consider images
