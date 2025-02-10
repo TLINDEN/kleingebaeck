@@ -1,5 +1,5 @@
 /*
-Copyright © 2023-2024 Thomas von Dein
+Copyright © 2023-2025 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ func OutDirName(conf *Config) (string, error) {
 	now := time.Now()
 	data := OutdirData{
 		Year:  now.Format("2006"),
-		Month: now.Format("02"),
-		Day:   now.Format("01"),
+		Month: now.Format("01"),
+		Day:   now.Format("02"),
 	}
 
 	err = tmpl.Execute(&buf, data)
