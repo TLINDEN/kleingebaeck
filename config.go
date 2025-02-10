@@ -1,5 +1,5 @@
 /*
-Copyright © 2023-2024 Thomas von Dein
+Copyright © 2023-2025 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.16"
+	VERSION    string = "0.3.17"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
