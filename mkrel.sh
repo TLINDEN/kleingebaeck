@@ -53,7 +53,8 @@ for D in $DIST; do
     tardir="${tool}-${os}-${arch}-${version}"
     tarfile="releases/${tool}-${os}-${arch}-${version}.tar.gz"
     set -x
-    GOOS=${os} GOARCH=${arch} go build -tags osusergo,netgo -ldflags "-extldflags=-static" -o ${binfile}
+    GOOS=${os} GOARCH=${arch} go build -tags osusergo,netgo -ldflags "-extldflags=-static -w" --trimpath -buildmode=pie -o ${binfile}
+    strip --strip-all ${binfile}
     mkdir -p ${tardir}
     cp ${binfile} README.md LICENSE ${tardir}/
     echo 'tool = kleingebaeck
