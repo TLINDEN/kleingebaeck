@@ -45,15 +45,20 @@ for D in $DIST; do
     os=${D/\/*/}
     arch=${D/*\//}
     binfile="releases/${tool}-${os}-${arch}-${version}"
+    pie=""
 
     if test "$os" = "windows"; then
         binfile="${binfile}.exe"
+    fi
+
+    if test "$D" = "linux/amd64"; then
+        pie="-buildmode=pie"
     fi
     
     tardir="${tool}-${os}-${arch}-${version}"
     tarfile="releases/${tool}-${os}-${arch}-${version}.tar.gz"
     set -x
-    GOOS=${os} GOARCH=${arch} go build -tags osusergo,netgo -ldflags "-extldflags=-static -w" --trimpath -buildmode=pie -o ${binfile}
+    GOOS=${os} GOARCH=${arch} go build -tags osusergo,netgo -ldflags "-extldflags=-static -w" --trimpath $pie -o ${binfile}
     strip --strip-all ${binfile}
     mkdir -p ${tardir}
     cp ${binfile} README.md LICENSE ${tardir}/
