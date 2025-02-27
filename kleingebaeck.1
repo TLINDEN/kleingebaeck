@@ -133,7 +133,7 @@
 .\" ========================================================================
 .\"
 .IX Title "KLEINGEBAECK 1"
-.TH KLEINGEBAECK 1 "2025-02-10" "1" "User Commands"
+.TH KLEINGEBAECK 1 "2025-02-27" "1" "User Commands"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -260,6 +260,29 @@ The ad directory name can be modified using the following ad values:
 .PP
 It can only be configured in the config file. By default only
 \&\f(CW\*(C`{{.Slug}}\*(C'\fR is being used, this is the title of the ad in url format.
+.SS "\s-1AD NAME TEMPLATE\s0"
+.IX Subsection "AD NAME TEMPLATE"
+The name of the directory per ad can be tuned as well:
+.ie n .IP """{{.Year}}""" 4
+.el .IP "\f(CW{{.Year}}\fR" 4
+.IX Item "{{.Year}}"
+.PD 0
+.ie n .IP """{{.Month}}""" 4
+.el .IP "\f(CW{{.Month}}\fR" 4
+.IX Item "{{.Month}}"
+.ie n .IP """{{.Day}}""" 4
+.el .IP "\f(CW{{.Day}}\fR" 4
+.IX Item "{{.Day}}"
+.ie n .IP """{{.Slug}}""" 4
+.el .IP "\f(CW{{.Slug}}\fR" 4
+.IX Item "{{.Slug}}"
+.ie n .IP """{{.Category}}""" 4
+.el .IP "\f(CW{{.Category}}\fR" 4
+.IX Item "{{.Category}}"
+.ie n .IP """{{.ID}}""" 4
+.el .IP "\f(CW{{.ID}}\fR" 4
+.IX Item "{{.ID}}"
+.PD
 .SS "\s-1AD TEMPLATE\s0"
 .IX Subsection "AD TEMPLATE"
 The ad listing itself can be modified as well, using the same
@@ -344,7 +367,7 @@ Also there's currently no parallelization implemented. This will
 change in the future.
 .SH "LICENSE"
 .IX Header "LICENSE"
-Copyright 2023\-2024 Thomas von Dein
+Copyright 2023\-2025 Thomas von Dein
 .PP
 This program is free software: you can redistribute it and/or modify
 it under the terms of the \s-1GNU\s0 General Public License as published by
