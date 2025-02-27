@@ -1,5 +1,5 @@
 /*
-Copyright © 2023-2024 Thomas von Dein
+Copyright © 2023-2025 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -88,7 +88,13 @@ func ScrapeUser(fetch *Fetcher) error {
 
 // scrape an ad. uri is the full uri of the ad, dir is the basedir
 func ScrapeAd(fetch *Fetcher, uri string) error {
-	advertisement := &Ad{}
+	now := time.Now()
+
+	advertisement := &Ad{
+		Year:  now.Format("2006"),
+		Month: now.Format("01"),
+		Day:   now.Format("02"),
+	}
 
 	// extract slug and id from uri
 	uriparts := strings.Split(uri, "/")

@@ -100,6 +100,16 @@ TEMPLATES
     It can only be configured in the config file. By default only
     "{{.Slug}}" is being used, this is the title of the ad in url format.
 
+  AD NAME TEMPLATE
+    The name of the directory per ad can be tuned as well:
+
+    "{{.Year}}"
+    "{{.Month}}"
+    "{{.Day}}"
+    "{{.Slug}}"
+    "{{.Category}}"
+    "{{.ID}}"
+
   AD TEMPLATE
     The ad listing itself can be modified as well, using the same variables
     as the ad name template above.
@@ -174,7 +184,7 @@ LIMITATIONS
     in the future.
 
 LICENSE
-    Copyright 2023-2024 Thomas von Dein
+    Copyright 2023-2025 Thomas von Dein
 
     This program is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the

@@ -1,5 +1,5 @@
 /*
-Copyright © 2023-2024 Thomas von Dein
+Copyright © 2023-2025 Thomas von Dein
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -45,6 +45,9 @@ type Ad struct {
 	Text         string   `goquery:"p#viewad-description-text,html"`
 	Images       []string `goquery:".galleryimage-element img,[src]"`
 	Expire       string
+
+	// runtime computed
+	Year, Day, Month string
 }
 
 // Used by slog to pretty print an ad
