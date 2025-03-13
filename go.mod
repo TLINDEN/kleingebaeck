@@ -1,6 +1,7 @@
 module kleingebaeck
 
 go 1.21
+toolchain go1.23.7
 
 require (
 	astuart.co/goq v1.0.0
@@ -23,7 +24,6 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
-	github.com/alecthomas/repr v0.4.0 // indirect
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -34,8 +34,8 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 
 )
