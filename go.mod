@@ -1,6 +1,7 @@
 module kleingebaeck
 
 go 1.21
+toolchain go1.24.1
 
 require (
 	astuart.co/goq v1.0.0
@@ -17,13 +18,12 @@ require (
 	github.com/mattn/go-isatty v0.0.20
 	github.com/spf13/pflag v1.0.6
 	github.com/tlinden/yadu v0.1.3
-	golang.org/x/image v0.23.0
+	golang.org/x/image v0.25.0
 	golang.org/x/sync v0.10.0
 )
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
-	github.com/alecthomas/repr v0.4.0 // indirect
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
