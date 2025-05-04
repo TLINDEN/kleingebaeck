@@ -50,7 +50,11 @@ func ScrapeUser(fetch *Fetcher) error {
 		if err != nil {
 			return err
 		}
-		defer body.Close()
+		defer func() {
+			if err := body.Close(); err != nil {
+				panic(err)
+			}
+		}()
 
 		err = goq.NewDecoder(body).Decode(&index)
 		if err != nil {
@@ -112,7 +116,11 @@ func ScrapeAd(fetch *Fetcher, uri string) error {
 	if err != nil {
 		return err
 	}
-	defer body.Close()
+	defer func() {
+		if err := body.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
 	// extract ad contents with goquery/goq
 	err = goq.NewDecoder(body).Decode(&advertisement)

@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.18"
+	VERSION    string = "0.3.19"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
@@ -150,7 +150,11 @@ func InitConfig(output io.Writer) (*Config, error) {
 	// setup custom usage
 	flagset := flag.NewFlagSet("config", flag.ContinueOnError)
 	flagset.Usage = func() {
-		fmt.Fprintln(output, Usage)
+		_, err := fmt.Fprintln(output, Usage)
+		if err != nil {
+			panic(err)
+		}
+
 		os.Exit(0)
 	}
 

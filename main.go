@@ -86,13 +86,19 @@ func Main(output io.Writer) int {
 	}
 
 	if conf.Showversion {
-		fmt.Fprintf(output, "This is kleingebaeck version %s\n", VERSION)
+		_, err := fmt.Fprintf(output, "This is kleingebaeck version %s\n", VERSION)
+		if err != nil {
+			panic(err)
+		}
 
 		return 0
 	}
 
 	if conf.Showhelp {
-		fmt.Fprintln(output, Usage)
+		_, err := fmt.Fprintln(output, Usage)
+		if err != nil {
+			panic(err)
+		}
 
 		return 0
 	}
@@ -175,10 +181,16 @@ func Main(output io.Writer) int {
 			adstr = "ad"
 		}
 
-		fmt.Fprintf(output, "Successfully downloaded %d %s with %d images to %s.\n",
+		_, err := fmt.Fprintf(output, "Successfully downloaded %d %s with %d images to %s.\n",
 			conf.StatsCountAds, adstr, conf.StatsCountImages, conf.Outdir)
+		if err != nil {
+			panic(err)
+		}
 	} else {
-		fmt.Fprintf(output, "No ads found.")
+		_, err := fmt.Fprintf(output, "No ads found.")
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return 0
