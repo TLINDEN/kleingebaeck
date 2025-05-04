@@ -88,7 +88,11 @@ func WriteAd(conf *Config, advertisement *Ad, addir string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create Adlisting.txt: %w", err)
 	}
-	defer listingfd.Close()
+	defer func() {
+		if err := listingfd.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
 	if runtime.GOOS == WIN {
 		advertisement.Text = strings.ReplaceAll(advertisement.Text, "<br/>", "\r\n")
@@ -116,7 +120,11 @@ func WriteImage(filename string, reader *bytes.Reader) error {
 	if err != nil {
 		return fmt.Errorf("failed to open image file: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
 	_, err = reader.WriteTo(file)
 

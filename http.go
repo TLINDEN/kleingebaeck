@@ -80,7 +80,9 @@ func drainBody(resp *http.Response) {
 				panic(err)
 			}
 
-			resp.Body.Close()
+			if err := resp.Body.Close(); err != nil {
+				panic(err)
+			}
 		}
 	}
 }
