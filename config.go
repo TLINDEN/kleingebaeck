@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.19"
+	VERSION    string = "0.3.20"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
@@ -56,7 +56,7 @@ const (
 		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
 
 	DefaultUserAgent string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-		"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+		"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
 
 	DefaultAdNameTemplate string = "{{.Slug}}"
 
