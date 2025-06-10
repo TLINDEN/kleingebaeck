@@ -8,19 +8,19 @@ require (
 	astuart.co/goq v1.0.0
 	github.com/corona10/goimagehash v1.1.0
 	github.com/inconshreveable/mousetrap v1.1.0
-	github.com/jarcoal/httpmock v1.3.1
+	github.com/jarcoal/httpmock v1.4.0
 	github.com/knadh/koanf/parsers/toml v0.1.0
 	github.com/knadh/koanf/providers/confmap v1.0.0
-	github.com/knadh/koanf/providers/env v1.0.0
+	github.com/knadh/koanf/providers/env v1.1.0
 	github.com/knadh/koanf/providers/file v1.1.2
-	github.com/knadh/koanf/providers/posflag v1.0.0
-	github.com/knadh/koanf/v2 v2.1.2
-	github.com/lmittmann/tint v1.0.7
+	github.com/knadh/koanf/providers/posflag v1.0.1
+	github.com/knadh/koanf/v2 v2.2.0
+	github.com/lmittmann/tint v1.1.1
 	github.com/mattn/go-isatty v0.0.20
 	github.com/spf13/pflag v1.0.6
 	github.com/tlinden/yadu v0.1.3
 	golang.org/x/image v0.26.0
-	golang.org/x/sync v0.13.0
+	golang.org/x/sync v0.14.0
 )
 
 require (
