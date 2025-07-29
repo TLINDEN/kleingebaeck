@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.20"
+	VERSION    string = "0.3.21"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
