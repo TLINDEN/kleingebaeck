@@ -63,6 +63,7 @@ func (ad *Ad) LogValue() slog.Value {
 		slog.String("created", ad.Created),
 		slog.String("expire", ad.Expire),
 		slog.String("shipping", ad.Shipping),
+		slog.String("details", ad.Details),
 	)
 }
 
@@ -140,16 +141,23 @@ func (ad *Ad) DecodeAttributes() {
 
 	ad.Attributes = attrmap
 
-	switch {
-	case Exists(ad.Attributes, "Zustand"):
+	if Exists(ad.Attributes, "Zustand") {
 		ad.Condition = ad.Attributes["Zustand"]
-	case Exists(ad.Attributes, "Farbe"):
+	}
+
+	if Exists(ad.Attributes, "Farbe") {
 		ad.Color = ad.Attributes["Farbe"]
-	case Exists(ad.Attributes, "Art"):
-		ad.Type = ad.Attributes["Type"]
-	case Exists(ad.Attributes, "Material"):
+	}
+
+	if Exists(ad.Attributes, "Art") {
+		ad.Type = ad.Attributes["Art"]
+	}
+
+	if Exists(ad.Attributes, "Material") {
 		ad.Material = ad.Attributes["Material"]
 	}
+
+	slog.Debug("parsed attributes", "attributes", ad.Attributes)
 
 	ad.Shipping = strings.Replace(ad.Shipping, "+ Versand ab ", "", 1)
 }
