@@ -69,8 +69,12 @@ const (
 	// we extract the slug from the uri
 	SlugURIPartNum int = 6
 
-	ExpireMonths int = 2
-	ExpireDays   int = 1
+	// We have  to calculate the ad expiry because  the real value can
+	// only be seen by logged in users. The initial ad lifetime is 120
+	// days. It can be extended by the user 8 days before expire by 60
+	// days. But this is unknown to us, so we'll stick with our 120
+	// days. They may be wrong for older ads. Don't rely on it!
+	ExpireDays int = 120
 
 	WIN string = "windows"
 )

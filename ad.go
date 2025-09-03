@@ -84,7 +84,7 @@ func (ad *Ad) CalculateExpire() {
 	if ad.Created != "" {
 		ts, err := time.Parse("02.01.2006", ad.Created)
 		if err == nil {
-			ad.Expire = ts.AddDate(0, ExpireMonths, ExpireDays).Format("02.01.2006")
+			ad.Expire = ts.AddDate(0, 0, ExpireDays).Format("02.01.2006")
 		}
 	}
 }
