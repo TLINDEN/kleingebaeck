@@ -44,6 +44,7 @@ type Ad struct {
 	Created      string   `goquery:"#viewad-extra-info,text"`
 	Text         string   `goquery:"p#viewad-description-text,html"`
 	Images       []string `goquery:".galleryimage-element img,[src]"`
+	Shipping     string   `goquery:".boxedarticle--details--shipping,text"` // not always filled
 	Expire       string
 
 	// runtime computed
@@ -61,6 +62,8 @@ func (ad *Ad) LogValue() slog.Value {
 		slog.String("categorytree", strings.Join(ad.CategoryTree, "+")),
 		slog.String("created", ad.Created),
 		slog.String("expire", ad.Expire),
+		slog.String("shipping", ad.Shipping),
+		slog.String("details", ad.Details),
 	)
 }
 
@@ -84,7 +87,7 @@ func (ad *Ad) CalculateExpire() {
 	if ad.Created != "" {
 		ts, err := time.Parse("02.01.2006", ad.Created)
 		if err == nil {
-			ad.Expire = ts.AddDate(0, ExpireMonths, ExpireDays).Format("02.01.2006")
+			ad.Expire = ts.AddDate(0, 0, ExpireDays).Format("02.01.2006")
 		}
 	}
 }
@@ -138,14 +141,23 @@ func (ad *Ad) DecodeAttributes() {
 
 	ad.Attributes = attrmap
 
-	switch {
-	case Exists(ad.Attributes, "Zustand"):
+	if Exists(ad.Attributes, "Zustand") {
 		ad.Condition = ad.Attributes["Zustand"]
-	case Exists(ad.Attributes, "Farbe"):
+	}
+
+	if Exists(ad.Attributes, "Farbe") {
 		ad.Color = ad.Attributes["Farbe"]
-	case Exists(ad.Attributes, "Art"):
-		ad.Type = ad.Attributes["Type"]
-	case Exists(ad.Attributes, "Material"):
+	}
+
+	if Exists(ad.Attributes, "Art") {
+		ad.Type = ad.Attributes["Art"]
+	}
+
+	if Exists(ad.Attributes, "Material") {
 		ad.Material = ad.Attributes["Material"]
 	}
+
+	slog.Debug("parsed attributes", "attributes", ad.Attributes)
+
+	ad.Shipping = strings.Replace(ad.Shipping, "+ Versand ab ", "", 1)
 }

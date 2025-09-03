@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.21"
+	VERSION    string = "0.3.22"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
@@ -47,11 +47,11 @@ const (
 			"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 
 	*/
-	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.ID}}\n" +
+	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nShipping: {{.Shipping}}\nId: {{.ID}}\n" +
 		"Category: {{.Category}}\nCondition: {{.Condition}}\nType: {{.Type}}\nColor: {{.Color}}\n" +
 		"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 
-	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.ID}}\r\n" +
+	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nShipping: {{.Shipping}}\r\nId: {{.ID}}\r\n" +
 		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\nType: {{.Type}}\r\nColor: {{.Color}}\r\n" +
 		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
 
@@ -69,8 +69,12 @@ const (
 	// we extract the slug from the uri
 	SlugURIPartNum int = 6
 
-	ExpireMonths int = 2
-	ExpireDays   int = 1
+	// We have  to calculate the ad expiry because  the real value can
+	// only be seen by logged in users. The initial ad lifetime is 120
+	// days. It can be extended by the user 8 days before expire by 60
+	// days. But this is unknown to us, so we'll stick with our 120
+	// days. They may be wrong for older ads. Don't rely on it!
+	ExpireDays int = 120
 
 	WIN string = "windows"
 )
