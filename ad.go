@@ -44,6 +44,7 @@ type Ad struct {
 	Created      string   `goquery:"#viewad-extra-info,text"`
 	Text         string   `goquery:"p#viewad-description-text,html"`
 	Images       []string `goquery:".galleryimage-element img,[src]"`
+	Shipping     string   `goquery:".boxedarticle--details--shipping,text"` // not always filled
 	Expire       string
 
 	// runtime computed
@@ -61,6 +62,7 @@ func (ad *Ad) LogValue() slog.Value {
 		slog.String("categorytree", strings.Join(ad.CategoryTree, "+")),
 		slog.String("created", ad.Created),
 		slog.String("expire", ad.Expire),
+		slog.String("shipping", ad.Shipping),
 	)
 }
 
@@ -148,4 +150,6 @@ func (ad *Ad) DecodeAttributes() {
 	case Exists(ad.Attributes, "Material"):
 		ad.Material = ad.Attributes["Material"]
 	}
+
+	ad.Shipping = strings.Replace(ad.Shipping, "+ Versand ab ", "", 1)
 }

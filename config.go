@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	VERSION    string = "0.3.21"
+	VERSION    string = "0.3.22"
 	Baseuri    string = "https://www.kleinanzeigen.de"
 	Listuri    string = "/s-bestandsliste.html"
 	Defaultdir string = "."
@@ -47,11 +47,11 @@ const (
 			"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 
 	*/
-	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nId: {{.ID}}\n" +
+	DefaultTemplate string = "Title: {{.Title}}\nPrice: {{.Price}}\nShipping: {{.Shipping}}\nId: {{.ID}}\n" +
 		"Category: {{.Category}}\nCondition: {{.Condition}}\nType: {{.Type}}\nColor: {{.Color}}\n" +
 		"Created: {{.Created}}\nExpire: {{.Expire}}\n\n{{.Text}}\n"
 
-	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nId: {{.ID}}\r\n" +
+	DefaultTemplateWin string = "Title: {{.Title}}\r\nPrice: {{.Price}}\r\nShipping: {{.Shipping}}\r\nId: {{.ID}}\r\n" +
 		"Category: {{.Category}}\r\nCondition: {{.Condition}}\r\nType: {{.Type}}\r\nColor: {{.Color}}\r\n" +
 		"Created: {{.Created}}\r\nExpires: {{.Expire}}\r\n\r\n{{.Text}}\r\n"
 

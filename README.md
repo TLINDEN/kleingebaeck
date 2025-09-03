@@ -201,6 +201,7 @@ somewhat like this:
 ```default
 Title: A book I sell
 Price: 99 € VB
+Shipping: 6,90 €
 Id: 1919191919
 Category: Sachbücher
 Condition: Sehr Gut
