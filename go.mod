@@ -20,7 +20,7 @@ require (
 	github.com/spf13/pflag v1.0.9
 	github.com/tlinden/yadu v0.1.3
 	golang.org/x/image v0.30.0
-	golang.org/x/sync v0.16.0
+	golang.org/x/sync v0.17.0
 )
 
 require (
