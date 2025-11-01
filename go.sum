@@ -66,8 +66,8 @@ github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXl
 github.com/tlinden/yadu v0.1.3 h1:5cRCUmj+l5yvlM2irtpFBIJwVV2DPEgYSaWvF19FtcY=
 github.com/tlinden/yadu v0.1.3/go.mod h1:l3bRmHKL9zGAR6pnBHY2HRPxBecf7L74BoBgOOpTcUA=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
-golang.org/x/image v0.31.0 h1:mLChjE2MV6g1S7oqbXC0/UcKijjm5fnJLUYKIYrLESA=
-golang.org/x/image v0.31.0/go.mod h1:R9ec5Lcp96v9FTF+ajwaH3uGxPH4fKfHHAVbUILxghA=
+golang.org/x/image v0.32.0 h1:6lZQWq75h7L5IWNk0r+SCpUJ6tUVd3v4ZHnbRKLkUDQ=
+golang.org/x/image v0.32.0/go.mod h1:/R37rrQmKXtO6tYXAjtDLwQgFLHmhW+V6ayXlxzP2Pc=
 golang.org/x/net v0.0.0-20180218175443-cbe0f9307d01/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20181114220301-adae6a3d119a/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20190606173856-1492cefac77f/go.mod h1:HSz+uSET+XFnRR8LxR5pz3Of3rY3CfYBVs4xY44aLks=
