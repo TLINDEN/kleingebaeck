@@ -1,13 +1,12 @@
 ## Kleingebäck - kleinanzeigen.de Backup
 
-![Kleingebaeck Logo](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleingebaecklogo-small.png)
+![Kleingebaeck Logo](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/kleingebaecklogo-small.png)
 
 [![Go Report Card](https://goreportcard.com/badge/codeberg.org/scip/kleingebaeck)](https://goreportcard.com/report/codeberg.org/scip/kleingebaeck) 
 [![status-badge](https://ci.codeberg.org/api/badges/15530/status.svg)](https://ci.codeberg.org/repos/15530)
-[![Go Coverage](https://codeberg.org/scip/kleingebaeck/wiki/coverage.svg)](https://raw.githack.com/wiki/tlinden/kleingebaeck/coverage.html)
 ![GitHub License](https://img.shields.io/github/license/tlinden/kleingebaeck)
 [![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://codeberg.org/scip/kleingebaeck/releases)
-[![German](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/german.png)](https://codeberg.org/scip/kleingebaeck/raw/branch/README-de.md)
+[![German](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/german.png)](https://codeberg.org/scip/kleingebaeck/raw/branch/main/README-de.md)
 
 [Die deutsche Version des READMEs findet Ihr hier](README-de.md).
 
@@ -31,33 +30,33 @@ for more details.
 
 This is the index of my kleinanzeigen.de Account:
 
-![Index](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-index.png)
+![Index](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/kleinanzeigen-index.png)
 
 Here I download my ads on the commandline:
 
-![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-download.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/kleinanzeigen-download.png)
 
 And this is the backup directory after download:
 
-![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-backup.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/kleinanzeigen-backup.png)
 
 Here's a directory for one ad:
 
-![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-ad.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/kleinanzeigen-ad.png)
 
 **The same thing under windows:**
 
 Downloading ads:
 
-![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/cmd-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/cmd-windows.jpg)
 
 Backup directory after download:
 
-![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/liste-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/liste-windows.jpg)
 
 And one ad listing directory:
 
-![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/adlisting-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/main/.github/assets/adlisting-windows.jpg)
 
 ## Installation
 
@@ -262,7 +261,7 @@ errors.
 
 ## Documentation
 
-You can read the documentation [online](https://codeberg.org/scip/kleingebaeck/raw/branch/kleingebaeck.pod) or locally once you have installed kleingebaeck with: `kleingebaeck --manual`.
+You can read the documentation [online](https://codeberg.org/scip/kleingebaeck/raw/branch/main/kleingebaeck.pod) or locally once you have installed kleingebaeck with: `kleingebaeck --manual`.
 
 ## Kleingebäck?
 
