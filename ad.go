@@ -94,7 +94,7 @@ func (ad *Ad) CalculateExpire() {
 
 /*
 Decode attributes like color or condition. See
-https://github.com/TLINDEN/kleingebaeck/issues/117
+https://codeberg.org/scip/kleingebaeck/issues/117
 for more details. In short: the HTML delivered by
 kleinanzeigen.de has no css attribute for the keys
 so we cannot extract key=>value mappings of the

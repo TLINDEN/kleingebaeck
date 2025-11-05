@@ -170,7 +170,7 @@ ENVIRONMENT VARIABLES
 BUGS
     In order to report a bug, unexpected behavior, feature requests or to
     submit a patch, please open an issue on github:
-    <https://github.com/TLINDEN/kleingebaeck/issues>.
+    <https://codeberg.org/scip/kleingebaeck/issues>.
 
     Please repeat the failing command with debugging enabled "-d" and
     include the output in the issue.

@@ -1,13 +1,13 @@
 ## Kleingebäck - kleinanzeigen.de Backup
 
-![Kleingebaeck Logo](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleingebaecklogo-small.png)
+![Kleingebaeck Logo](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleingebaecklogo-small.png)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/tlinden/kleingebaeck)](https://goreportcard.com/report/github.com/tlinden/kleingebaeck) 
-[![Actions](https://github.com/tlinden/kleingebaeck/actions/workflows/ci.yaml/badge.svg)](https://github.com/tlinden/kleingebaeck/actions)
-[![Go Coverage](https://github.com/tlinden/kleingebaeck/wiki/coverage.svg)](https://raw.githack.com/wiki/tlinden/kleingebaeck/coverage.html)
+[![Go Report Card](https://goreportcard.com/badge/codeberg.org/scip/kleingebaeck)](https://goreportcard.com/report/codeberg.org/scip/kleingebaeck) 
+[![status-badge](https://ci.codeberg.org/api/badges/15530/status.svg)](https://ci.codeberg.org/repos/15530)
+[![Go Coverage](https://codeberg.org/scip/kleingebaeck/wiki/coverage.svg)](https://raw.githack.com/wiki/tlinden/kleingebaeck/coverage.html)
 ![GitHub License](https://img.shields.io/github/license/tlinden/kleingebaeck)
-[![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://github.com/TLINDEN/kleingebaeck/releases/latest)
-[![English](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/english.png)](https://github.com/tlinden/kleingebaeck/blob/main/README.md)
+[![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://codeberg.org/scip/kleingebaeck/releases)
+[![English](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/english.png)](https://codeberg.org/scip/kleingebaeck/raw/branch/README.md)
 
 Mit diesem Tool kann man seine Anzeigen bei https://kleinanzeigen.de sichern.
 
@@ -23,40 +23,40 @@ Fertige vorcompilierte Programme älter als Version `v0.3.12` sind von
 Schwachstellen in der Behandlung von HTTP und Zertifikaten
 betroffen. Falls Du eine ältere Kleingebäck-Version im Einsatz hast,
 bitte update auf Version `v0.3.12` oder höher. Bitte lies auch die [Release Notes für
-v0.3.12](https://github.com/TLINDEN/kleingebaeck/releases/tag/v0.3.12)
+v0.3.12](https://codeberg.org/scip/kleingebaeck/releases/tag/v0.3.12)
 für mehr Details.
 
 ## Screenshots
 
 Das ist die Hauptseite meines kleinanzeigen.de Accounts:
 
-![Index](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-index.png)
+![Index](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-index.png)
 
 Sichern ich meine Anzeigen:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-download.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-download.png)
 
 Backupverzeichnis nach dem Download:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-backup.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-backup.png)
 
 Verzeichnis einer Anzeige:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-ad.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-ad.png)
 
 **Das gleiche unter Windows:**
 
 Anzeigen Sichern:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/cmd-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/cmd-windows.jpg)
 
 Backupverzeichnis nach dem Download
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/liste-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/liste-windows.jpg)
 
 Und eine Anzeige:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/adlisting-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/adlisting-windows.jpg)
 
 ## Installation
 
@@ -66,7 +66,7 @@ für seine Plattform herunter und kann direkt loslegen.
 
 ### Installation des vorcompilierten Programms
 
-Auf der Seite [des letzten Releases](https://github.com/TLINDEN/kleingebaeck/releases/latest) findet man das Program für sein Betriebssystem und die Plattform (z.b. Windows + Intel)
+Auf der Seite [des letzten Releases](https://codeberg.org/scip/kleingebaeck/releases) findet man das Program für sein Betriebssystem und die Plattform (z.b. Windows + Intel)
  
 Es gibt 2 Varianten:
 
@@ -105,7 +105,7 @@ hilfreich, aber nicht unbedingt erforderlich.
 Um das Programm zu compilieren, muss man folgende Schritte ausführen:
 
 ```shell
-git clone https://github.com/TLINDEN/kleingebaeck.git
+git clone https://codeberg.org/scip/kleingebaeck.git
 cd kleingebaeck
 go mod tidy
 make # (oder make)
@@ -146,7 +146,7 @@ gemountet.
 Die Optionen `-u XXX -v` sind kleingebäck Optionen. Ersetze `XXX`
 durch Deine tatsächliche kleinanzeigen.de Userid.
 
-Eine Liste verfügbarer Images findet man [hier](https://github.com/tlinden/kleingebaeck/pkgs/container/kleingebaeck/versions?filters%5Bversion_type%5D=tagged)
+Eine Liste verfügbarer Images findet man [hier](https://codeberg.org/scip/kleingebaeck/pkgs/container/kleingebaeck/versions?filters%5Bversion_type%5D=tagged)
 
 ## Kommandozeilen Optionen:
 
@@ -277,7 +277,7 @@ ignorieren, die beim Bilderdownload auftreten könnten.
 ## Documentation
 
 Die Dokumentation kann man
-[online](https://github.com/TLINDEN/kleingebaeck/blob/main/kleingebaeck.pod)
+[online](https://codeberg.org/scip/kleingebaeck/raw/branch/kleingebaeck.pod)
 oder lokal lesen mit: `kleingebaeck --manual`. Hat man das Tool mit
 dem Tarball installiert, funktioniert auch `man kleingebaeck`.
 
@@ -293,7 +293,7 @@ das doch der beste Weg, die Anfrage zu übersehen und zu vergessen.
 
 Um einen Fehler, ein unerwartetes Verhalten, eine Feature Request oder
 einen Patch zu übermitteln, eröffne daher bitte einen Issue unter:
-https://github.com/TLINDEN/kleingebaeck/issues. Danke!
+https://codeberg.org/scip/kleingebaeck/issues. Danke!
 
 Bitte gebe den fehlgeschlagenen Befehl an, rufe es auch mit Debugging
 `-d` auf.

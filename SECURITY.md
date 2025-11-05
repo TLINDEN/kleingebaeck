@@ -11,7 +11,7 @@ I don't agree with the "responsible disclosure" process most projects
 (and companies) work these days.
 
 So, if you find a vulnerability of any kind, please just open an
-[issue](https://github.com/TLINDEN/kleingebaeck/issues). Please add
+[issue](https://codeberg.org/scip/kleingebaeck/issues). Please add
 all details required to reproduce the vulnerability. You won't be chased.
 
 That's just all about it.

@@ -1,13 +1,13 @@
 ## Kleingebäck - kleinanzeigen.de Backup
 
-![Kleingebaeck Logo](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleingebaecklogo-small.png)
+![Kleingebaeck Logo](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleingebaecklogo-small.png)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/tlinden/kleingebaeck)](https://goreportcard.com/report/github.com/tlinden/kleingebaeck) 
-[![Actions](https://github.com/tlinden/kleingebaeck/actions/workflows/ci.yaml/badge.svg)](https://github.com/tlinden/kleingebaeck/actions)
-[![Go Coverage](https://github.com/tlinden/kleingebaeck/wiki/coverage.svg)](https://raw.githack.com/wiki/tlinden/kleingebaeck/coverage.html)
+[![Go Report Card](https://goreportcard.com/badge/codeberg.org/scip/kleingebaeck)](https://goreportcard.com/report/codeberg.org/scip/kleingebaeck) 
+[![status-badge](https://ci.codeberg.org/api/badges/15530/status.svg)](https://ci.codeberg.org/repos/15530)
+[![Go Coverage](https://codeberg.org/scip/kleingebaeck/wiki/coverage.svg)](https://raw.githack.com/wiki/tlinden/kleingebaeck/coverage.html)
 ![GitHub License](https://img.shields.io/github/license/tlinden/kleingebaeck)
-[![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://github.com/TLINDEN/kleingebaeck/releases/latest)
-[![German](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/german.png)](https://github.com/tlinden/kleingebaeck/blob/main/README-de.md)
+[![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://codeberg.org/scip/kleingebaeck/releases)
+[![German](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/german.png)](https://codeberg.org/scip/kleingebaeck/raw/branch/README-de.md)
 
 [Die deutsche Version des READMEs findet Ihr hier](README-de.md).
 
@@ -24,40 +24,40 @@ Binary releases prior to version `v0.3.11` are affected by
 vulnerabilities in HTTP and certificate handling. If you are using
 such a binary, please update to `v0.3.12` or higher. Please also refer
 to the [Release Notes of
-v0.3.12](https://github.com/TLINDEN/kleingebaeck/releases/tag/v0.3.12)
+v0.3.12](https://codeberg.org/scip/kleingebaeck/releases/tag/v0.3.12)
 for more details.
 
 ## Screenshots
 
 This is the index of my kleinanzeigen.de Account:
 
-![Index](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-index.png)
+![Index](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-index.png)
 
 Here I download my ads on the commandline:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-download.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-download.png)
 
 And this is the backup directory after download:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-backup.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-backup.png)
 
 Here's a directory for one ad:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/kleinanzeigen-ad.png)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/kleinanzeigen-ad.png)
 
 **The same thing under windows:**
 
 Downloading ads:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/cmd-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/cmd-windows.jpg)
 
 Backup directory after download:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/liste-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/liste-windows.jpg)
 
 And one ad listing directory:
 
-![Download](https://github.com/TLINDEN/kleingebaeck/blob/main/.github/assets/adlisting-windows.jpg)
+![Download](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/adlisting-windows.jpg)
 
 ## Installation
 
@@ -68,7 +68,7 @@ releases page and you're good to go.
 ### Installation using a pre-compiled binary
 
 Go            to             the            [latest            release
-page](https://github.com/TLINDEN/kleingebaeck/releases/latest)     and
+page](https://codeberg.org/scip/kleingebaeck/releases)     and
 look for your OS and platform. There are two options to install the binary:
 
 1.    Directly   download    the    binary    for   your    platform,
@@ -138,7 +138,7 @@ docker run. And the local directory `myads` will be mapped to
 The options `-u XXX -v` are kleingebaeck options, replace `XXX` with
 your actual kleinanzeigen.de user id.
 
-A list of available images is  [here](https://github.com/tlinden/kleingebaeck/pkgs/container/kleingebaeck/versions?filters%5Bversion_type%5D=tagged)
+A list of available images is  [here](https://codeberg.org/scip/kleingebaeck/pkgs/container/kleingebaeck/versions?filters%5Bversion_type%5D=tagged)
 
 ## Commandline options:
 
@@ -262,7 +262,7 @@ errors.
 
 ## Documentation
 
-You can read the documentation [online](https://github.com/TLINDEN/kleingebaeck/blob/main/kleingebaeck.pod) or locally once you have installed kleingebaeck with: `kleingebaeck --manual`.
+You can read the documentation [online](https://codeberg.org/scip/kleingebaeck/raw/branch/kleingebaeck.pod) or locally once you have installed kleingebaeck with: `kleingebaeck --manual`.
 
 ## Kleingebäck?
 
@@ -278,7 +278,7 @@ that's the best way for me to forget to do something.
 
 In order to report a bug,  unexpected behavior, feature requests or to
 submit    a    patch,    please    open   an    issue    on    github:
-https://github.com/TLINDEN/kleingebaeck/issues.
+https://codeberg.org/scip/kleingebaeck/issues.
 
 Please repeat the failing command with debugging enabled `-d` and
 include the output in the issue.
