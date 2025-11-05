@@ -9,6 +9,9 @@
 [![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://codeberg.org/scip/kleingebaeck/releases)
 [![English](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/english.png)](https://codeberg.org/scip/kleingebaeck/raw/branch/README.md)
 
+> [!IMPORTANT]
+> Diese Software wird jetzt bei Codeberg weitergepflegt: [Codeberg](https://codeberg.org/scip/kleingebaeck/).
+
 Mit diesem Tool kann man seine Anzeigen bei https://kleinanzeigen.de sichern.
 
 Es kann alle Anzeigen eines Users (oder nur eine Ausgewählte)

@@ -9,6 +9,9 @@
 [![GitHub release](https://img.shields.io/github/v/release/tlinden/kleingebaeck?color=%2300a719)](https://codeberg.org/scip/kleingebaeck/releases)
 [![German](https://codeberg.org/scip/kleingebaeck/raw/branch/.github/assets/german.png)](https://codeberg.org/scip/kleingebaeck/raw/branch/README-de.md)
 
+> [!IMPORTANT]
+> This software is now being maintained on [Codeberg](https://codeberg.org/scip/kleingebaeck/).
+
 [Die deutsche Version des READMEs findet Ihr hier](README-de.md).
 
 This tool can be used to backup ads on the german ad page https://kleinanzeigen.de
